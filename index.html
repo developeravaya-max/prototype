@@ -3,93 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROTOTYPE | Final v1.4</title>
+    <title>CARDEL | Custom Metal Card</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body {
-            margin: 0;
-            background-color: #050505;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            overflow-y: auto;
+        :root {
+            --primary-blue: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --glass-bg: rgba(20, 20, 20, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
-        /* --- 1. BACKGROUND LAYER --- */
+        body {
+            margin: 0;
+            background-color: #080808;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; 
+        }
+
+        /* --- BACKGROUND --- */
         #bg-video-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; opacity: 0.3; pointer-events: none;
+            z-index: 0; opacity: 0.2; pointer-events: none;
+            /* Fallback gradient if video is missing */
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
         }
         #bg-video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- 2. CANVAS --- */
+        /* --- 3D CANVAS --- */
         #canvas-container {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 10; outline: none;
         }
 
-        /* --- 3. UI OVERLAYS --- */
-        
-        /* Nav */
-        nav {
-            position: fixed; top: 0; width: 100%; padding: 25px 60px;
+        /* ================= HEADER (Reference Style) ================= */
+        .main-header {
+            position: fixed; top: 0; width: 100%; 
+            padding: 25px 60px;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 50;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-        }
-        .nav-links a { margin: 0 20px; color: #888; transition: 0.3s; font-size: 0.9rem; }
-        .nav-links a:hover { color: white; }
-
-        /* Hero Text (Left Aligned) */
-        .hero-section {
-            position: fixed; top: 180px; left: 60px;
-            z-index: 40; pointer-events: none;
-            transition: opacity 0.5s;
-        }
-        .step-label { font-family: 'Share Tech Mono'; color: #6366f1; margin-bottom: 10px; display: block; letter-spacing: 2px; }
-        h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 4rem; line-height: 1; font-weight: 700;
-            background: linear-gradient(to right, #fff, #999);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        /* Glass Dock (Bottom) */
-        .glass-dock {
-            position: fixed; bottom: 40px; left: 50%;
-            transform: translateX(-50%) translateY(150px);
-            background: rgba(15, 15, 15, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px;
-            padding: 20px 30px;
-            display: flex; gap: 20px; align-items: center;
             z-index: 100;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
+            font-size: 0.9rem; font-weight: 500;
         }
-        .glass-dock.visible { transform: translateX(-50%) translateY(0); }
 
-        /* Thumbnails */
-        .mat-thumb {
-            width: 50px; height: 50px; border-radius: 12px;
-            cursor: pointer; transition: 0.3s;
-            border: 2px solid rgba(255,255,255,0.1);
-            position: relative;
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
+        .logo .accent { color: var(--primary-blue); display: inline-block; width: 20px; height: 2px; background: var(--primary-blue); margin-left: 2px; vertical-align: middle; }
+
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { color: #a1a1aa; text-decoration: none; transition: 0.3s; position: relative; padding-bottom: 5px; }
+        .nav-links a:hover, .nav-links a.active { color: white; }
+        /* Active underline effect */
+        .nav-links a.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--primary-blue);
+            box-shadow: 0 0 10px var(--accent-glow);
         }
-        .mat-thumb:hover { transform: translateY(-5px); }
-        .mat-thumb.active { border-color: #6366f1; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
 
-        .t-silver { background: linear-gradient(135deg, #e0e0e0, #999); }
-        .t-gold { background: linear-gradient(135deg, #FFD700, #B8860B); }
-        .t-black { background: linear-gradient(135deg, #333, #000); }
+        .nav-tools { display: flex; gap: 25px; align-items: center; color: #a1a1aa; }
+        .tool-item { cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .tool-item:hover { color: white; }
+        .tool-icon { font-size: 1.1rem; }
 
-      
-        .scroll-spacer { height: 350vh; }
+
+        /* ================= HERO TEXT (Left Aligned) ================= */
+        .hero-section {
+            position: fixed; top: 28%; left: 80px; z-index: 40; pointer-events: none;
+            text-align: left; max-width: 500px;
+        }
+        h1 {
+            font-size: 4rem; line-height: 1.1; font-weight: 800; margin: 0;
+            background: linear-gradient(to bottom right, #ffffff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px;
+        }
+        p.sub-text { color: #94a3b8; margin-top: 20px; line-height: 1.6; font-size: 1.1rem; }
+        
+        .step-indicator { margin-top: 40px; font-family: 'Share Tech Mono', monospace; color: #a1a1aa; letter-spacing: 2px; font-size: 0.9rem;}
+        .step-num { color: white; font-weight: 700; }
+
+
+        /* ================= MATERIAL SELECTOR DOCK (Moved Up) ================= */
+        .glass-dock {
+            position: fixed; 
+            bottom: 160px; /* Lifted up to make room for footer */
+            left: 50%; transform: translateX(-50%);
+            
+            background: var(--glass-bg); backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 10px 20px;
+            display: flex; gap: 20px; align-items: center; z-index: 90;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-dock.hidden-ui { transform: translateX(-50%) translateY(100px); opacity: 0; pointer-events: none; }
+
+        /* Material Buttons */
+        .mat-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 8px 12px; transition: 0.2s; }
+        .mat-btn:hover { transform: translateY(-2px); }
+        .thumb-box {
+            width: 60px; height: 40px; border-radius: 8px; border: 2px solid var(--glass-border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; overflow: hidden;
+        }
+        /* Fallback gradients */
+        .t-silver { background: linear-gradient(135deg, #e2e2e2, #9ca3af); }
+        .t-gold { background: linear-gradient(135deg, #fcd34d, #b45309); }
+        .t-black { background: linear-gradient(135deg, #27272a, #000); }
+        .t-eco { background: linear-gradient(135deg, #059669, #022c22); }
+        .thumb-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .mat-btn.active .thumb-box { border-color: var(--primary-blue); box-shadow: 0 0 20px var(--accent-glow); }
+        .mat-name { font-size: 0.65rem; font-weight: 700; color: #71717a; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; }
+        .mat-btn.active .mat-name { color: white; }
+
+        /* ================= FOOTER (Reference Style) ================= */
+        .process-footer {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 900px; z-index: 100;
+            display: flex; flex-direction: column; gap: 20px;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .process-footer.hidden-ui { transform: translateX(-50%) translateY(150px); opacity: 0; pointer-events: none; }
+
+        /* Main Control Bar */
+        .control-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--glass-bg); backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 10px 15px;
+            box-shadow: 0 20px 40px -20px rgba(0,0,0,0.9);
+        }
+
+        .footer-btn {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 24px; border-radius: 14px;
+            font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: 0.3s;
+            border: 1px solid transparent; color: #e4e4e7;
+        }
+        .footer-btn i { font-size: 0.9rem; }
+
+        /* Secondary Button style */
+        .btn-secondary { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: white; color: white; }
+
+        /* Primary "Next Step" Button style - Glowing */
+        .btn-primary-glow {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4), inset 0 0 10px rgba(255,255,255,0.2);
+            padding: 14px 40px; font-size: 1.1rem;
+        }
+        .btn-primary-glow:hover { box-shadow: 0 6px 30px rgba(59, 130, 246, 0.6), inset 0 0 15px rgba(255,255,255,0.3); transform: translateY(-2px); }
+
+        .footer-right { display: flex; align-items: center; gap: 20px; }
+        .chat-btn {
+            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.1); border-radius: 12px; cursor: pointer; transition: 0.3s;
+            font-size: 1.2rem; color: #e4e4e7;
+        }
+        .chat-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+
+        /* Bottom "Need Help" link */
+        .help-link {
+            align-self: flex-start; margin-left: 20px;
+            color: #a1a1aa; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .help-link:hover { color: white; }
+        .help-icon { color: #71717a; background: rgba(255,255,255,0.1); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.8rem;}
+
+
+        /* HIDDEN INPUT */
         #text-input { position: fixed; top: -1000px; opacity: 0; }
     </style>
 </head>
@@ -101,364 +184,463 @@
         </video>
     </div>
 
-    <nav>
-        <div class="text-2xl font-bold tracking-tighter">CARDEL<span class="text-indigo-500">.</span></div>
-        <div class="hidden md:flex nav-links">
-            <a href="#">Products</a>
-            <a href="#" class="text-white">Customize</a>
-            <a href="#">Enterprise</a>
+    <nav class="main-header">
+        <div class="logo">
+            CARDEL<span class="accent"></span>
         </div>
-        <div class="text-sm font-medium opacity-80">
-            <i class="far fa-user"></i> LOGIN
+
+        <div class="hidden md:flex nav-links">
+            <a href="#" class="active">Home</a>
+            <a href="#">Select Material</a>
+            <a href="#">Need Help?</a>
+        </div>
+
+        <div class="hidden md:flex nav-tools">
+            <div class="tool-item">EUR €</div>
+            <div class="tool-item">Austria <i class="fas fa-chevron-down text-xs opacity-60"></i></div>
+            <div class="tool-item">English <i class="fas fa-chevron-down text-xs opacity-60"></i></div>
+            <div class="tool-item tool-icon"><i class="far fa-user"></i></div>
+            <div class="tool-item tool-icon"><i class="fas fa-shopping-bag"></i></div>
         </div>
     </nav>
 
-    <div class="hero-section" id="hero-content">
-        <span class="step-label">01 / CUSTOMIZE</span>
-        <h1>Design Your<br>Legacy.</h1>
-        <p class="text-gray-400 mt-4 max-w-sm leading-relaxed">
-            Select premium materials and engrave your details. Scroll to begin interaction.
+
+    <div class="hero-section" id="hero-panel">
+        <h1>Create Your Custom<br>Business Card...</h1>
+        <p class="sub-text">
+            Stand out from the crowd and make a great first impression with precision-milled metal.
         </p>
+
+        <div class="step-indicator">
+            STEP <span class="step-num">1</span> OF 3: ENTER YOUR DETAILS
+        </div>
     </div>
+
 
     <div id="canvas-container"></div>
-    <div class="scroll-spacer"></div>
     
     <div class="glass-dock" id="ui-dock">
-        <div class="text-xs text-gray-500 font-bold mr-2">MATERIAL</div>
-        
-        <div class="mat-thumb t-silver active" onclick="window.changeMaterial('silver')" title="Platinum"></div>
-        <div class="mat-thumb t-gold" onclick="window.changeMaterial('gold')" title="Gold"></div>
-        <div class="mat-thumb t-black" onclick="window.changeMaterial('black')" title="Carbon"></div>
-        
-        <div class="w-px h-8 bg-gray-700 mx-2"></div>
-        
-        
+        <div class="mat-btn active" onclick="window.changeMaterial('silver', this)">
+            <div class="thumb-box t-silver"><img src="image/silver_card.png" class="thumb-img" onerror="this.style.display='none'"></div>
+            <span class="mat-name">Metal</span>
+        </div>
+        <div class="mat-btn" onclick="window.changeMaterial('gold', this)">
+            <div class="thumb-box t-gold"><img src="image/gold_card.png" class="thumb-img" onerror="this.style.display='none'"></div>
+            <span class="mat-name">Gold</span>
+        </div>
+        <div class="mat-btn" onclick="window.changeMaterial('black', this)">
+            <div class="thumb-box t-black"><img src="image/premium_card.png" class="thumb-img" onerror="this.style.display='none'"></div>
+            <span class="mat-name">Matte Black</span>
+        </div>
+        <div class="mat-btn" onclick="window.changeMaterial('eco', this)">
+            <div class="thumb-box t-eco"><img src="image/eco_card.png" class="thumb-img" onerror="this.style.display='none'"></div>
+            <span class="mat-name">Eco</span>
+        </div>
     </div>
 
-    <input type="text" id="text-input" maxlength="18" autocomplete="off" value="ALEXANDER">
+    <div class="process-footer" id="footer-panel">
+        <div class="control-bar">
+            <button class="footer-btn btn-secondary">
+                <i class="fas fa-th-large opacity-60"></i> Select Material <i class="fas fa-chevron-right opacity-60 text-xs ml-2"></i>
+            </button>
+
+            <button class="footer-btn btn-primary-glow">
+                Next Step <i class="fas fa-chevron-right ml-2"></i>
+            </button>
+
+            <div class="footer-right">
+                <button class="footer-btn btn-secondary">
+                    Optional Guide <i class="fas fa-chevron-right opacity-60 text-xs ml-1"></i>
+                </button>
+                <div class="chat-btn">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-link">
+            <div class="help-icon"><i class="fas fa-question"></i></div> Need Help?
+        </div>
+    </div>
+
+
+    <input type="text" id="text-input" maxlength="18" value="JOHN SMITH">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
+        // --- GLOBAL VARIABLES ---
+        let cardMesh = null;
+        let handMesh = null;
+        let currentMaterial = 'silver'; 
+        let isEditing = false;
+
         // --- CONFIG ---
         const HAND_IMG = 'image/hand.png'; 
-        let currentMaterial = 'silver'; 
-        let currentText = "ALEXANDER";
-        let isEditing = false;
-        const POS_IDLE = { y: 0.2, rotX: 0.1 }; 
-        const POS_FOCUS = { y: 1.5, z: 3.5, rotX: 0 }; 
-        const TEX_W = 2048; const TEX_H = 1290; 
+        const SCALE_GLOBAL = 0.85; 
+        
+        // POSITIONS
+        const POS_HAND_START = -8;
+        const POS_HAND_END = -1.3; // Lifted slightly
+        const POS_HAND_Z = -0.3; 
 
-        // --- 1. SETUP (Modified for Transparency) ---
+        const POS_CARD_START = 10;
+        const POS_CARD_END = 1.0; 
+        const POS_CARD_Z = 0.1;
+
+        // --- 1. SCENE SETUP ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
-        // scene.background = new THREE.Color(0x050505);  <-- REMOVED
-        scene.background = null; // <-- ADDED FOR VIDEO TRANSPARENCY
-        // scene.fog = new THREE.Fog(0x050505, 10, 40); <-- REMOVED FOG (Conflicts with transparent bg)
-
-        const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+        
+        const camera = new THREE.PerspectiveCamera(32, window.innerWidth / window.innerHeight, 0.1, 100);
         camera.position.set(0, 0, 14);
 
-        // Alpha: true is critical for video background
+        // Alpha enabled for transparency
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        // toneMapping handles HDR-like brightness. Adjust exposure if things are too bright/dark.
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMappingExposure = 1.1; 
         container.appendChild(renderer.domElement);
 
-        // --- 2. ENV MAP ---
-        const pmremGenerator = new THREE.PMREMGenerator(renderer);
-        pmremGenerator.compileEquirectangularShader();
-        const envScene = new THREE.Scene();
-        const boxGeo = new THREE.BoxGeometry(100, 100, 100);
-        const boxMat = new THREE.MeshBasicMaterial({ side: THREE.BackSide });
+        // --- 2. LIGHTING & ENVIRONMENT ---
+        scene.add(new THREE.AmbientLight(0xffffff, 0.4));
         
-        const cvs = document.createElement('canvas'); cvs.width=128; cvs.height=128;
-        const cx = cvs.getContext('2d');
-        const grd = cx.createLinearGradient(0,0,0,128);
-        grd.addColorStop(0, '#ffffff'); 
-        grd.addColorStop(0.5, '#222222'); 
-        grd.addColorStop(1, '#000000');
-        cx.fillStyle = grd; cx.fillRect(0,0,128,128);
-        boxMat.map = new THREE.CanvasTexture(cvs);
-        envScene.add(new THREE.Mesh(boxGeo, boxMat));
-        const envMap = pmremGenerator.fromScene(envScene).texture;
-        scene.environment = envMap; 
-
-        // --- 3. LIGHTING ---
-        const ambient = new THREE.AmbientLight(0xffffff, 0.7);
-        scene.add(ambient);
-        const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
-        keyLight.position.set(5, 8, 5);
-        keyLight.castShadow = true;
-        scene.add(keyLight);
-        const rimLight = new THREE.SpotLight(0xffffff, 4);
-        rimLight.position.set(-5, 5, -5);
+        const mainLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        mainLight.position.set(5, 10, 7);
+        scene.add(mainLight);
+        
+        // Blue rim light for accent
+        const rimLight = new THREE.SpotLight(0x3b82f6, 4);
+        rimLight.position.set(-10, 2, -5);
         scene.add(rimLight);
 
-        // --- 4. TEXTURE ENGINE (Your Logic) ---
-        const baseCanvas = document.createElement('canvas');
-        baseCanvas.width = TEX_W; baseCanvas.height = TEX_H;
-        const baseCtx = baseCanvas.getContext('2d');
+        // Environment Map (Crucial for metallic reflections)
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+        
+        const envScene = new THREE.Scene();
+        const boxGeo = new THREE.BoxGeometry(100, 100, 100);
+        const boxMat = new THREE.MeshBasicMaterial();
+        const cvsEnv = document.createElement('canvas'); 
+        cvsEnv.width = 256; cvsEnv.height = 256;
+        const ctxEnv = cvsEnv.getContext('2d');
+        // Create a studio-like reflection gradient
+        const grdEnv = ctxEnv.createLinearGradient(0,0,0,256);
+        grdEnv.addColorStop(0, '#ffffff'); 
+        grdEnv.addColorStop(0.3, '#888888');
+        grdEnv.addColorStop(0.6, '#222222'); 
+        grdEnv.addColorStop(1, '#000000');
+        ctxEnv.fillStyle = grdEnv; ctxEnv.fillRect(0,0,256,256);
+        // Add some light sources to the environment texture
+        ctxEnv.fillStyle = '#ffffff';
+        ctxEnv.fillRect(20, 50, 50, 50); // Softbox 1
+        ctxEnv.fillRect(180, 100, 30, 30); // Softbox 2
 
-        const finalCanvas = document.createElement('canvas');
-        finalCanvas.width = TEX_W; finalCanvas.height = TEX_H;
-        const finalCtx = finalCanvas.getContext('2d');
+        boxMat.map = new THREE.CanvasTexture(cvsEnv);
+        boxMat.side = THREE.BackSide;
+        envScene.add(new THREE.Mesh(boxGeo, boxMat));
+        
+        const envMap = pmremGenerator.fromScene(envScene).texture;
+        scene.environment = envMap;
 
-        function drawStaticBase(type) {
-            const w = baseCanvas.width;
-            const h = baseCanvas.height;
+        // --- 3. TEXTURE ENGINE ---
+        const TEX_W = 2048, TEX_H = 1290;
+        const canvas = document.createElement('canvas');
+        canvas.width = TEX_W; canvas.height = TEX_H;
+        const ctx = canvas.getContext('2d');
 
-            const grad = baseCtx.createLinearGradient(0, 0, w, h);
-            if(type === 'gold') {
-                grad.addColorStop(0, "#E6BE8A"); grad.addColorStop(0.3, "#FFFACD"); 
-                grad.addColorStop(0.6, "#C5911F"); grad.addColorStop(1, "#996515");
-            } else if (type === 'silver') {
-                grad.addColorStop(0, "#C0C0C0"); grad.addColorStop(0.4, "#FFFFFF"); grad.addColorStop(1, "#808080");
-            } else {
-                grad.addColorStop(0, "#222"); grad.addColorStop(1, "#080808");
-            }
-            baseCtx.fillStyle = grad;
-            baseCtx.fillRect(0, 0, w, h);
+        function updateTexture(type) {
+            if (!ctx) return; 
 
-            if(type !== 'black') {
-                baseCtx.globalCompositeOperation = 'overlay';
-                baseCtx.fillStyle = "rgba(255,255,255,0.08)";
-                for (let i = 0; i < 4000; i++) {
-                    const s = Math.random() * 4 + 2;
-                    baseCtx.fillRect(Math.random() * w, Math.random() * h, s, 2);
-                }
-                baseCtx.globalCompositeOperation = 'source-over';
-            }
-
-            baseCtx.fillStyle = (type === 'gold') ? "#Dcdcdc" : "#d4af37"; 
-            baseCtx.roundRect(220, 460, 260, 200, 24);
-            baseCtx.fill();
-            baseCtx.strokeStyle = "rgba(0,0,0,0.3)";
-            baseCtx.lineWidth = 4;
-            baseCtx.beginPath();
-            baseCtx.moveTo(220, 560); baseCtx.lineTo(480, 560);
-            baseCtx.stroke();
-            baseCtx.strokeRect(310, 520, 80, 80);
-
-            baseCtx.strokeStyle = (type === 'black') ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)";
-            baseCtx.lineWidth = 8;
-            baseCtx.beginPath();
-            const nfcX = 1840, nfcY = 560;
-            baseCtx.arc(nfcX, nfcY, 20, -1.5, 1.5);
-            baseCtx.moveTo(nfcX, nfcY-40); baseCtx.arc(nfcX, nfcY, 50, -1.5, 1.5);
-            baseCtx.stroke();
-
-            baseCtx.font = "bold 48px Arial";
-            baseCtx.fillStyle = (type === 'black') ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)";
-            baseCtx.textAlign = "right";
-            baseCtx.fillText("PREMIUM", w - 120, 160);
-        }
-
-        function drawDynamicText(type) {
-            finalCtx.clearRect(0,0,TEX_W,TEX_H);
-            finalCtx.drawImage(baseCanvas, 0, 0);
-
-            let mainColor = (type === 'black') ? (isEditing ? "#FFFFFF" : "#E0E0E0") : (isEditing ? "#000000" : "#222222");
-            let subColor  = (type === 'black') ? "#888888" : "#555555";
-
-            finalCtx.font = "bold 120px 'Share Tech Mono', monospace";
-            finalCtx.textAlign = "left";
-            finalCtx.letterSpacing = "10px"; 
-
-            finalCtx.fillStyle = mainColor;
-            finalCtx.fillText(currentText, 220, 960);
-
-            finalCtx.font = "48px 'Share Tech Mono', monospace";
-            finalCtx.letterSpacing = "6px";
-            finalCtx.fillStyle = subColor;
-            finalCtx.fillText("0000 0000 0000 0000", 220, 1080);
-            finalCtx.fillText("EXP 12/30", 220, 1160);
-
-            if (isEditing) {
-                finalCtx.font = "bold 120px 'Share Tech Mono', monospace";
-                finalCtx.letterSpacing = "10px"; 
-                const textWidth = finalCtx.measureText(currentText).width;
-                if (Math.floor(Date.now() / 500) % 2 === 0) {
-                    finalCtx.fillStyle = (type === 'black') ? "#4f46e5" : "#000000";
-                    finalCtx.fillRect(220 + textWidth + 15, 870, 8, 120);
-                }
-            }
+            ctx.clearRect(0,0,TEX_W,TEX_H);
             
-            finalCtx.fillStyle = (type === 'black') ? "white" : "black";
-            finalCtx.fillRect(1700, 960, 200, 200);
-            finalCtx.fillStyle = (type === 'black') ? "black" : "white";
-            finalCtx.fillRect(1720, 980, 160, 160);
-            finalCtx.fillStyle = (type === 'black') ? "white" : "black";
-            finalCtx.fillRect(1760, 1020, 80, 80);
+            // --- A. MATERIAL GRADIENTS ---
+            const grad = ctx.createLinearGradient(0,0,TEX_W,TEX_H);
+            
+            if(type === 'gold') { 
+                // Rich Gold (Multi-stop)
+                grad.addColorStop(0.0, "#BF953F");
+                grad.addColorStop(0.25, "#FCF6BA"); // Bright highlight
+                grad.addColorStop(0.5, "#B38728");
+                grad.addColorStop(0.75, "#FBF5B7"); // Secondary highlight
+                grad.addColorStop(1.0, "#AA771C");
+            } else if (type === 'silver') { 
+                // Brushed Metal
+                grad.addColorStop(0, "#E0E0E0"); 
+                grad.addColorStop(0.3, "#FFFFFF"); 
+                grad.addColorStop(0.6, "#A0A0A0"); 
+                grad.addColorStop(1, "#D0D0D0"); 
+            } else if (type === 'eco') { 
+                // Dark Green
+                grad.addColorStop(0, "#1d3326"); grad.addColorStop(1, "#0a140f"); 
+            } else { 
+                // Matte Black
+                grad.addColorStop(0, "#222222"); grad.addColorStop(1, "#080808"); 
+            }
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,TEX_W,TEX_H);
+
+            // --- B. NOISE & BRUSHED EFFECT ---
+            ctx.globalAlpha = (type === 'black' || type === 'eco') ? 0.06 : 0.03;
+            // Add horizontal brushed lines
+            ctx.fillStyle = "#000000";
+            for(let i=0; i<TEX_H; i+=4) {
+                 if(Math.random() > 0.8) ctx.fillRect(0, i, TEX_W, 1);
+            }
+            // Add general noise
+            ctx.fillStyle = "#FFFFFF";
+            for(let i=0; i<40000; i++) {
+                const s = Math.random() * 2;
+                ctx.fillRect(Math.random()*TEX_W, Math.random()*TEX_H, s, s);
+            }
+            ctx.globalAlpha = 1.0;
+
+            // --- C. CHIP & DETAILS ---
+            const cx = 280, cy = 500, cw = 240, ch = 180;
+            // Use contrasting chip color
+            ctx.fillStyle = (type === 'gold') ? "#D1D5DB" : "#D4AF37"; 
+            ctx.roundRect(cx, cy, cw, ch, 24); ctx.fill();
+            
+            // Chip contacts lines
+            ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy+ch/2); ctx.lineTo(cx+cw, cy+ch/2); 
+            ctx.moveTo(cx+cw/3, cy); ctx.lineTo(cx+cw/3, cy+ch); 
+            ctx.moveTo(cx+2*cw/3, cy); ctx.lineTo(cx+2*cw/3, cy+ch); 
+            ctx.stroke();
+            // Chip inner rectangle detail
+            ctx.strokeRect(cx+cw/3+25, cy+ch/3+10, cw/3-50, ch/3-20); 
+
+            // --- D. TEXT (Reference Style) ---
+            const textColor = (type === 'gold' || type === 'silver') ? "rgba(0,0,0,0.8)" : "rgba(255,255,255,0.9)";
+            
+            // Main Name
+            ctx.fillStyle = textColor;
+            ctx.font = "700 100px 'Inter', sans-serif"; // Bold, professional font
+            ctx.textAlign = "left";
+            ctx.letterSpacing = "2px"; 
+            const textVal = document.getElementById('text-input') ? document.getElementById('text-input').value : "John Smith";
+            ctx.fillText(textVal, 280, 950);
+
+            // Sub Details (Smaller, lighter)
+            ctx.font = "400 42px 'Inter', sans-serif";
+            ctx.letterSpacing = "1px";
+            ctx.globalAlpha = 0.7;
+            ctx.fillText("1234 5678 9000 0000", 280, 1080);
+            ctx.fillText("john.smith@email.com", 280, 1160);
+            ctx.globalAlpha = 1.0;
+
+            // --- E. LOGO & ICONS ---
+            
+            // Top Right "NF." Logo
+            ctx.fillStyle = textColor;
+            ctx.font = "700 60px 'Inter', sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText("NF.", TEX_W - 150, 250);
+
+            // Bottom Right Contactless Symbol
+            ctx.strokeStyle = textColor; ctx.lineWidth = 6;
+            ctx.beginPath();
+            // Arcs
+            ctx.arc(1850, 1120, 30, -0.5*Math.PI, 0.5*Math.PI);
+            ctx.moveTo(1850, 1060); ctx.arc(1850, 1120, 60, -0.5*Math.PI, 0.5*Math.PI);
+            ctx.moveTo(1850, 1000); ctx.arc(1850, 1120, 90, -0.5*Math.PI, 0.5*Math.PI);
+            ctx.stroke();
+
+            // Trigger texture update on the mesh
+            if(cardMesh && cardMesh.material && cardMesh.material.map) {
+                cardMesh.material.map.needsUpdate = true;
+            }
         }
 
-        // --- 5. GEOMETRY (Your Logic) ---
+        // --- 4. GEOMETRY ---
         const group = new THREE.Group();
+        group.scale.set(SCALE_GLOBAL, SCALE_GLOBAL, SCALE_GLOBAL);
+        
+        // Shift group right to balance left text
+        group.position.set(2, 0, 0); 
         scene.add(group);
 
+        // Hand
         new THREE.TextureLoader().load(HAND_IMG, (tex) => {
-            const aspect = tex.image.width / tex.image.height;
-            const h = 4.2; const w = h * aspect;
-            const handGeo = new THREE.PlaneGeometry(w, h);
-            const handMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
-            const handMesh = new THREE.Mesh(handGeo, handMat);
-            handMesh.name = "hand";
-            handMesh.position.set(0, -8, -1.5); handMesh.raycast = () => {}; 
+            const handGeo = new THREE.PlaneGeometry(8.5, 6);
+            const handMat = new THREE.MeshBasicMaterial({ 
+                map: tex, 
+                transparent: true,
+                // Slightly dim the hand so it doesn't look too blown out
+                color: 0xcccccc 
+            });
+            handMesh = new THREE.Mesh(handGeo, handMat);
+            handMesh.position.set(0.4, POS_HAND_START, POS_HAND_Z); 
             group.add(handMesh);
+            checkLoad();
+        }, undefined, (err) => {
+            console.warn("Hand image missing. Place 'hand.png' in 'image' folder.");
         });
 
+        // Card Shape
         const shape = new THREE.Shape();
-        const cw = 3.37; const ch = 2.125; const radius = 0.15; 
-        const x = -cw/2; const y = -ch/2;
-        shape.moveTo( x, y + radius );
-        shape.lineTo( x, y + ch - radius );
-        shape.quadraticCurveTo( x, y + ch, x + radius, y + ch );
-        shape.lineTo( x + cw - radius, y + ch );
-        shape.quadraticCurveTo( x + cw, y + ch, x + cw, y + ch - radius );
-        shape.lineTo( x + cw, y + radius );
-        shape.quadraticCurveTo( x + cw, y, x + cw - radius, y );
-        shape.lineTo( x + radius, y );
-        shape.quadraticCurveTo( x, y, x, y + radius );
+        const cw = 3.37, ch = 2.125, r = 0.14;
+        const x = -cw/2, y = -ch/2;
+        // Draw rounded rectangle path
+        shape.moveTo(x,y+r); shape.lineTo(x,y+ch-r); shape.quadraticCurveTo(x,y+ch,x+r,y+ch);
+        shape.lineTo(x+cw-r,y+ch); shape.quadraticCurveTo(x+cw,y+ch,x+cw,y+ch-r);
+        shape.lineTo(x+cw,y+r); shape.quadraticCurveTo(x+cw,y,x+cw-r,y);
+        shape.lineTo(x+r,y); shape.quadraticCurveTo(x,y,x,y+r);
 
-        const extrudeSettings = { steps: 1, depth: 0.04, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2 };
-        const cardGeo = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+        // Extrude settings for 3D depth
+        const cardGeo = new THREE.ExtrudeGeometry(shape, { depth: 0.04, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 3 });
         
+        // UV Mapping Fix (Crucial for texture alignment)
         cardGeo.computeBoundingBox();
-        const min = cardGeo.boundingBox.min;
-        const max = cardGeo.boundingBox.max;
-        const uvAttr = cardGeo.attributes.uv;
-        for (let i = 0; i < uvAttr.count; i++) {
-            let u = uvAttr.getX(i); let v = uvAttr.getY(i);
-            u = (u - min.x) / (max.x - min.x); v = (v - min.y) / (max.y - min.y);
-            uvAttr.setXY(i, u, v);
+        const min = cardGeo.boundingBox.min, max = cardGeo.boundingBox.max;
+        const uv = cardGeo.attributes.uv;
+        for (let i = 0; i < uv.count; i++) {
+            let u = uv.getX(i); let v = uv.getY(i);
+            u = (u - min.x) / (max.x - min.x);
+            v = (v - min.y) / (max.y - min.y);
+            uv.setXY(i, u, v);
         }
+
+        const cardTex = new THREE.CanvasTexture(canvas);
+        // Improve texture clarity at angles
+        cardTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
         
-        drawStaticBase('silver');
-        drawDynamicText('silver');
-        const cardTexture = new THREE.CanvasTexture(finalCanvas);
-        cardTexture.anisotropy = renderer.capabilities.getMaxAnisotropy(); 
-
-        const cardMat = new THREE.MeshStandardMaterial({
-            map: cardTexture, roughness: 0.25, metalness: 1.0, envMapIntensity: 1.5
+        // Premium Metal Material
+        const cardMat = new THREE.MeshStandardMaterial({ 
+            map: cardTex, 
+            metalness: 0.9,   // High metalness for reflection
+            roughness: 0.3,   // Slight roughness for matte finish
+            envMapIntensity: 1.2 // Strength of environment reflection
         });
-
-        const cardMesh = new THREE.Mesh(cardGeo, cardMat);
-        cardMesh.castShadow = true;
-        cardMesh.geometry.center();
-        cardMesh.position.set(0, 10, 0);
-        cardMesh.rotation.set(0.5, 0, 0.2);
+        
+        cardMesh = new THREE.Mesh(cardGeo, cardMat);
+        cardMesh.position.set(0, POS_CARD_START, POS_CARD_Z);
         group.add(cardMesh);
 
-        // --- 6. LOGIC ---
-        window.changeMaterial = (type) => {
+        // Initial texture paint
+        updateTexture('silver');
+
+        // --- 5. ANIMATION & INTERACTION ---
+        
+        // Start animation when assets are ready
+        function checkLoad() {
+            if(handMesh && cardMesh) {
+                const tl = gsap.timeline();
+                // Card drops in
+                tl.to(cardMesh.position, { y: POS_CARD_END, duration: 2.0, ease: "power4.out" });
+                // Card tilts
+                tl.to(cardMesh.rotation, { x: 0.2, y: 0.1, duration: 2.0, ease: "power4.out" }, "<");
+                // Hand rises
+                tl.to(handMesh.position, { y: POS_HAND_END, duration: 2.2, ease: "power4.out" }, "<0.2");
+                
+                // Reveal UIs with slight delays
+                tl.call(() => document.getElementById('ui-dock').classList.add('visible'), null, "-=1.2");
+                tl.call(() => document.getElementById('footer-panel').classList.remove('hidden-ui'), null, "-=1.0");
+                
+                // Fade in hero text
+                gsap.from("#hero-panel", { opacity: 0, x: -30, duration: 1, delay: 0.5 });
+            }
+        }
+
+        // Fallback safety: Run animation anyway after 1s if hand image fails
+        setTimeout(() => {
+            if(!handMesh && cardMesh) {
+               gsap.to(cardMesh.position, { y: POS_CARD_END, duration: 2.0, ease: "power4.out" });
+               gsap.to(cardMesh.rotation, { x: 0.2, y: 0.1, duration: 2.0, ease: "power4.out" });
+               document.getElementById('ui-dock').classList.add('visible');
+               document.getElementById('footer-panel').classList.remove('hidden-ui');
+            }
+        }, 1000);
+
+        // Click outside UI to toggle Edit Mode
+        window.addEventListener('click', (e) => {
+            // Ignore clicks on nav, dock, or footer
+            if(e.target.closest('.glass-dock') || e.target.closest('nav') || e.target.closest('.process-footer')) return;
+            
+            isEditing = !isEditing;
+            const inp = document.getElementById('text-input');
+            const dock = document.getElementById('ui-dock');
+            const hero = document.getElementById('hero-panel');
+            const footer = document.getElementById('footer-panel');
+
+            if(isEditing) {
+                // --- ENTER EDIT MODE ---
+                inp.focus();
+                
+                // Zoom and center card
+                gsap.to(cardMesh.position, { y: 1.4, x: -1.5, z: 3.8, duration: 1, ease: "power3.inOut" });
+                gsap.to(cardMesh.rotation, { x: 0, y: 0, z: 0, duration: 1, ease: "power3.inOut" });
+                
+                // Hide UIs
+                dock.classList.add('hidden-ui');
+                footer.classList.add('hidden-ui');
+                gsap.to(hero, { opacity: 0, duration: 0.3 });
+                
+            } else {
+                // --- EXIT EDIT MODE ---
+                inp.blur();
+                
+                // Reset card position
+                gsap.to(cardMesh.position, { y: POS_CARD_END, x: 0, z: POS_CARD_Z, duration: 1.2, ease: "power3.inOut" });
+                gsap.to(cardMesh.rotation, { x: 0.2, y: 0.1, z: 0, duration: 1.2 });
+                
+                // Show UIs
+                dock.classList.remove('hidden-ui');
+                footer.classList.remove('hidden-ui');
+                gsap.to(hero, { opacity: 1, duration: 0.5 });
+            }
+        });
+
+        // Live text update
+        const inp = document.getElementById('text-input');
+        inp.addEventListener('input', () => updateTexture(currentMaterial));
+
+        // Material switching function
+        window.changeMaterial = (type, el) => {
             currentMaterial = type;
-            // Update New UI Thumbnails
-            document.querySelectorAll('.mat-thumb').forEach(b => b.classList.remove('active'));
-            document.querySelector(`.t-${type}`).classList.add('active');
-
-            const m = cardMesh.material;
-            m.color.setHex(0xffffff); 
-            if(type === 'gold') { m.roughness = 0.15; m.metalness = 1.0; m.color.setHex(0xffeebb); } 
-            else if (type === 'silver') { m.roughness = 0.25; m.metalness = 0.9; } 
-            else { m.roughness = 0.5; m.metalness = 0.6; }
-
-            drawStaticBase(type);
-            drawDynamicText(type);
-            m.map.needsUpdate = true;
+            // Update active button state
+            document.querySelectorAll('.mat-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Redraw texture
+            updateTexture(type);
+            
+            // Adjust material physics based on type
+            const mat = cardMesh.material;
+            if(type === 'eco') { mat.roughness = 0.5; mat.metalness = 0.3; }
+            else if(type === 'black') { mat.roughness = 0.4; mat.metalness = 0.7; }
+            else if(type === 'gold') { mat.roughness = 0.15; mat.metalness = 1.0; }
+            else { mat.roughness = 0.25; mat.metalness = 0.9; } 
         };
 
-        const input = document.getElementById('text-input');
-        input.addEventListener('input', (e) => {
-            currentText = e.target.value.toUpperCase();
-            drawDynamicText(currentMaterial);
-            cardMesh.material.map.needsUpdate = true;
-        });
-
-        // Animations
-        gsap.registerPlugin(ScrollTrigger);
-        const tl = gsap.timeline({
-            scrollTrigger: { trigger: ".scroll-spacer", start: "top top", end: "bottom bottom", scrub: 1.2 }
-        });
-        
-        // Hide Hero text on scroll
-        tl.to(".hero-section", { opacity: 0, x: -50, duration: 1 }, 0);
-        
-        const anim = { handY: -8, cardY: 10, cardRotX: 0.5 };
-        tl.to(anim, {
-            handY: -2.2, cardY: POS_IDLE.y, cardRotX: POS_IDLE.rotX,
-            duration: 5, ease: "power2.out",
-            onUpdate: () => {
-                const hand = group.getObjectByName("hand");
-                if(!isEditing) {
-                    if(hand) hand.position.y = anim.handY;
-                    cardMesh.position.y = anim.cardY;
-                    cardMesh.rotation.x = anim.cardRotX;
-                }
-            }
-        }, 0);
-        
-        // Show Glass Dock
-        tl.call(() => document.getElementById('ui-dock').classList.add('visible'), null, 3);
-
-        // Interaction
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        window.addEventListener('click', (e) => {
-            // Ignore if clicking UI
-            if(e.target.closest('.glass-dock') || e.target.closest('nav')) return;
-
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObject(cardMesh);
-
-            if (intersects.length > 0) {
-                if(!isEditing) {
-                    isEditing = true; input.focus();
-                    gsap.to(cardMesh.position, { y: POS_FOCUS.y, z: POS_FOCUS.z, duration: 0.8, ease: "power3.out" });
-                    gsap.to(cardMesh.rotation, { x: 0, y: 0, z: 0, duration: 0.8, ease: "power3.out" });
-                }
-            } else {
-                if(isEditing) {
-                    isEditing = false; input.blur();
-                    // FORCE REDRAW TO REMOVE CURSOR IMMEDIATELY
-                    drawDynamicText(currentMaterial);
-                    cardMesh.material.map.needsUpdate = true;
-                    
-                    gsap.to(cardMesh.position, { y: POS_IDLE.y, z: 0, duration: 1, ease: "power2.inOut" });
-                    gsap.to(cardMesh.rotation, { x: POS_IDLE.rotX, z: 0, duration: 1, ease: "power2.inOut" });
-                }
-            }
-        });
-
+        // Main animation loop
         function animate() {
             requestAnimationFrame(animate);
-            if(isEditing) { 
-                drawDynamicText(currentMaterial); 
-                cardMesh.material.map.needsUpdate = true; 
-            }
-            if(!isEditing) {
-                cardMesh.rotation.y += 0.002;
-                const hand = group.getObjectByName("hand");
-                if(hand) hand.rotation.z = Math.sin(Date.now() * 0.0008) * 0.015;
+            if(cardMesh && !isEditing) {
+                // Subtle floating movement
+                cardMesh.position.y = POS_CARD_END + Math.sin(Date.now()*0.0015)*0.05;
+                cardMesh.rotation.y = 0.1 + Math.sin(Date.now()*0.0005)*0.05;
+                
+                // Subtle hand sway
+                if(handMesh) {
+                    handMesh.position.x = 0.4 + Math.sin(Date.now()*0.001)*0.02;
+                    handMesh.rotation.z = Math.sin(Date.now()*0.0008)*0.01;
+                }
             }
             renderer.render(scene, camera);
         }
         animate();
+
+        // Handle window resizing
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
     </script>
 </body>
-
 </html>
