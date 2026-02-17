@@ -1,8 +1,8 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>CARDEL | Private Allocations</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -16,92 +16,164 @@
     <style>
         :root { --bg-color: #F9F9F9; --text-main: #111; }
         html { scroll-behavior: smooth; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Lato', sans-serif; overflow-x: hidden; margin: 0; }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: 'Lato', sans-serif; 
+            overflow-x: hidden; 
+            margin: 0; 
+            min-height: 100svh;
+        }
         .font-serif { font-family: 'Playfair Display', serif; }
         
-        /* CANVAS ON TOP */
+        /* CANVAS LAYERING */
         #global-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 50; pointer-events: none; display: block;
+            position: fixed; inset: 0;
+            width: 100vw; height: 100svh;
+            z-index: 50; pointer-events: none;
+        }
+        #global-canvas.top-layer {
+            z-index: 9999 !important;
         }
 
         /* Nav */
-        nav { transition: 0.4s ease; backdrop-filter: blur(10px); }
+        nav { 
+            transition: 0.4s ease; 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
         nav.scrolled { background: rgba(255,255,255,0.95); border-bottom: 1px solid #eee; }
 
         .page-section { position: relative; z-index: 10; }
-        .interactive { pointer-events: auto; }
+        .interactive { pointer-events: auto; touch-action: manipulation; }
         
-        .btn-primary { background: #111; color: #fff; padding: 14px 32px; font-size: 0.75rem; letter-spacing: 2px; font-weight: 700; border: 1px solid #111; transition: 0.3s; cursor: pointer; }
+        .btn-primary { 
+            background: #111; color: #fff; 
+            padding: 14px 28px; 
+            font-size: 0.8rem; letter-spacing: 2px; font-weight: 700; 
+            border: 1px solid #111; transition: 0.3s; cursor: pointer; 
+        }
         .btn-primary:hover { background: transparent; color: #111; }
-        .btn-outline { background: transparent; color: #111; padding: 14px 32px; font-size: 0.75rem; letter-spacing: 2px; font-weight: 700; border: 1px solid #111; transition: 0.3s; cursor: pointer; }
+        .btn-outline { 
+            background: transparent; color: #111; 
+            padding: 14px 28px; 
+            font-size: 0.8rem; letter-spacing: 2px; font-weight: 700; 
+            border: 1px solid #111; transition: 0.3s; cursor: pointer; 
+        }
         .btn-outline:hover { background: #111; color: #fff; }
 
-        /* FIXED: Tighter height (200px) removes vertical spacing issues */
+        @media (max-width: 640px) {
+            .btn-primary, .btn-outline { padding: 12px 24px; font-size: 0.75rem; }
+        }
+
         .alloy-placeholder { height: 200px; width: 100%; transition: transform 0.3s ease; }
         .group:hover .alloy-placeholder { transform: scale(1.05); }
 
-        /* Configurator */
-        .config-panel { background: #fff; border: 1px solid #eee; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 40px; }
-        .mat-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #ddd; cursor: pointer; transition: 0.2s; }
+        .config-panel { 
+            background: #fff; border: 1px solid #eee; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 40px; 
+            padding: 1rem;
+        }
+        .mat-btn { 
+            width: 32px; height: 32px; border-radius: 50%; 
+            border: 2px solid #fff; box-shadow: 0 0 0 1px #ddd; 
+            cursor: pointer; transition: 0.2s; 
+        }
         .mat-btn:hover { transform: scale(1.1); }
-        .mat-btn.active { box-shadow: 0 0 0 2px #111; transform: scale(1.1); }
-        .bg-silver { background: #e2e2e2; } .bg-gold { background: #d4af37; } .bg-black { background: #222; }
+        .mat-btn.active { box-shadow: 0 0 0 3px #111; transform: scale(1.1); }
+        .bg-silver { background: #e2e2e2; } 
+        .bg-gold   { background: #d4af37; } 
+        .bg-black  { background: #222; }
 
         footer { background: #050505; color: #fff; padding: 80px 0; }
+
         #name-input { position: fixed; top: -9999px; }
-        .edit-hint { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); font-family: 'Playfair Display'; font-style: italic; color: #888; opacity: 0; transition: 0.5s; }
+
+        .edit-hint { 
+            position: absolute; bottom: 100px; left: 50%; 
+            transform: translateX(-50%); 
+            font-family: 'Playfair Display'; font-style: italic; 
+            color: #888; opacity: 0; transition: 0.5s; pointer-events: none; 
+        }
         .edit-hint.show { opacity: 1; }
 
         /* MODAL */
         #material-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 100; display: none; opacity: 0;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(20px);
+            position: fixed; inset: 0;
+            z-index: 9998;
+            display: none; opacity: 0;
+            background: rgba(0,0,0,0.92); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             align-items: center; justify-content: center;
         }
         #material-modal.open { display: flex; animation: fadeIn 0.4s forwards; }
         
         .modal-content {
             width: 90%; max-width: 1100px;
-            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px;
-            color: white; pointer-events: auto;
+            max-height: 92svh; overflow-y: auto;
+            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 32px;
+            color: white; pointer-events: auto; padding: 2rem;
         }
+
+        @media (max-width: 900px) {
+            .modal-content {
+                grid-template-columns: 1fr;
+                gap: 28px;
+                padding: 1.5rem;
+            }
+            #modal-card-target { height: 340px; }
+        }
+
+        @media (max-width: 640px) {
+            .modal-content { width: 94%; padding: 1.2rem; }
+            #modal-card-target { height: 280px; }
+            h2#modal-title { font-size: 2.8rem; }
+            .spec-row { font-size: 0.92rem; padding: 12px 0; }
+        }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         .close-modal {
-            position: absolute; top: 40px; right: 40px;
-            color: white; font-size: 2rem; cursor: pointer;
-            transition: 0.3s; z-index: 101;
+            position: absolute; top: 20px; right: 20px;
+            color: white; font-size: 2.4rem; cursor: pointer;
+            transition: 0.3s; z-index: 10000;
         }
         .close-modal:hover { color: #C5A059; transform: rotate(90deg); }
 
-        /* Target for the modal's big 3D card */
         #modal-card-target { height: 400px; width: 100%; }
         
         .spec-row {
-            display: flex; justify-content: space-between; border-bottom: 1px solid #333;
-            padding: 15px 0; margin-bottom: 5px; font-size: 0.9rem; color: #888;
+            display: flex; justify-content: space-between; 
+            border-bottom: 1px solid #333; padding: 15px 0; 
+            margin-bottom: 5px; font-size: 0.9rem; color: #888;
         }
         .spec-val { color: white; font-weight: 700; letter-spacing: 1px; }
 
-        /* Engraved Inputs */
         .input-engraved {
-            width: 100%; padding: 18px 25px;
-            background-color: #050505; border-radius: 12px; border: 1px solid #1f1f1f;
-            color: #fff; font-family: 'Lato'; font-size: 0.85rem; letter-spacing: 1px; outline: none;
+            width: 100%; padding: 16px 20px;
+            background-color: #050505; border-radius: 12px; 
+            border: 1px solid #1f1f1f; color: #fff; 
+            font-family: 'Lato'; font-size: 0.9rem; letter-spacing: 1px; 
+            outline: none;
             box-shadow: inset 2px 2px 6px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
             transition: 0.3s ease;
         }
-        .input-engraved:focus { border-color: #C5A059; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.9); }
+        .input-engraved:focus { border-color: #C5A059; }
+
+        @media (max-width: 768px) {
+            nav { padding: 1rem; }
+            nav .hidden { display: none !important; }
+            h1 { font-size: 3.2rem !important; line-height: 0.95; }
+            .max-w-xl { max-width: 100%; padding-top: 5rem; }
+        }
     </style>
 </head>
 <body>
 
-  <canvas id="global-canvas"></canvas>
+    <canvas id="global-canvas"></canvas>
 
     <div id="material-modal">
-        <div class="close-modal" onclick="closeModal()">&times;</div>
+        <div class="close-modal" onclick="closeModal()">×</div>
         <div class="modal-content">
             <div class="flex items-center justify-center relative">
                 <div id="modal-card-target"></div>
@@ -140,15 +212,15 @@
         <div><a href="#contact" class="btn-primary">Login</a></div>
     </nav>
 
-    <section id="hero-wrapper" class="page-section h-screen relative">
+    <section id="hero-wrapper" class="page-section min-h-[100svh] relative flex items-center">
         <div class="container mx-auto px-6 flex flex-col justify-center h-full relative">
             <div class="max-w-xl interactive pt-20">
-                <h1 class="font-serif text-6xl md:text-7xl mb-6 leading-[0.95] text-[#111]">The weight of <br><i>influence.</i></h1>
-                <p class="font-sans text-gray-500 text-lg mb-10 max-w-md leading-relaxed">
+                <h1 class="font-serif text-5xl sm:text-6xl md:text-7xl mb-6 leading-[0.95] text-[#111]">The weight of <br><i>influence.</i></h1>
+                <p class="font-sans text-gray-500 text-base sm:text-lg mb-10 max-w-md leading-relaxed">
                     28 grams of solid surgical steel. Precision milled in Switzerland. 
                     The definitive artifact of your professional identity.
                 </p>
-                <div class="flex gap-4">
+                <div class="flex flex-wrap gap-4">
                     <button class="btn-primary">Reserve Allocation</button>
                     <button class="btn-outline">View Gallery</button>
                 </div>
@@ -163,7 +235,7 @@
                     </div>
                 </div>
             </div>
-            <div class="edit-hint" id="edit-hint">Click card to engrave name</div>
+            <div class="edit-hint" id="edit-hint">Tap card to engrave name</div>
         </div>
         <input type="text" id="name-input" maxlength="18" value="ALEXANDER VANCE" class="interactive">
     </section>
@@ -240,7 +312,7 @@
                 
                 <div class="bg-[#0f0f0f] p-10 border border-gray-800 shadow-2xl rounded-2xl">
                     <form class="space-y-6">
-                        <div class="grid grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
                                 <label class="text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2 block">First Name</label>
                                 <input type="text" class="input-engraved">
@@ -273,7 +345,7 @@
     <footer class="page-section interactive">
         <div class="container mx-auto px-6 text-center">
             <div class="font-serif text-2xl font-bold mb-4">CARDEL</div>
-            <p class="text-gray-600 text-xs mb-8">&copy; 2024 CARDEL S.A. Geneva, Switzerland.</p>
+            <p class="text-gray-600 text-xs mb-8">© 2024 CARDEL S.A. Geneva, Switzerland.</p>
         </div>
     </footer>
 
@@ -358,7 +430,7 @@
 
         function createScene(elemId, matType, isHero = false, isConcierge = false, isModal = false) {
             const elem = document.getElementById(elemId);
-            if(!elem) return;
+            if(!elem) return null;
 
             const scene = new THREE.Scene();
             scene.environment = globalEnvMap;
@@ -367,7 +439,7 @@
             if(isHero) camera.position.z = 11;
             else if(isConcierge) camera.position.z = 11;
             else if(isModal) camera.position.z = 8;
-            else camera.position.z = 8.5; // Zoomed in for smaller box
+            else camera.position.z = 8.5;
 
             const ambient = new THREE.AmbientLight(0xffffff, 0.8);
             const key = new THREE.DirectionalLight(0xffffff, 2.0); key.position.set(2,5,10); key.castShadow = true;
@@ -386,9 +458,9 @@
             const faceMat = new THREE.MeshStandardMaterial({ map: tex, metalness: 0.9, roughness: 0.3, envMapIntensity: 1.2 });
             const sideMat = new THREE.MeshStandardMaterial({ metalness: 1.0, roughness: 0.1, envMapIntensity: 2.0 });
 
-            if(matType==='gold') { faceMat.color.setHex(0xFFD700); sideMat.color.setHex(0xFFD700); } 
+            if(matType==='gold')     { faceMat.color.setHex(0xFFD700); sideMat.color.setHex(0xFFD700); } 
             else if(matType==='black') { faceMat.color.setHex(0xFFFFFF); sideMat.color.setHex(0x222222); }
-            else { faceMat.color.setHex(0xFFFFFF); sideMat.color.setHex(0xEEEEEE); }
+            else                       { faceMat.color.setHex(0xFFFFFF); sideMat.color.setHex(0xEEEEEE); }
 
             const mesh = new THREE.Mesh(geom, [faceMat, sideMat]);
             mesh.castShadow = true; mesh.receiveShadow = true;
@@ -410,38 +482,50 @@
         createScene('concierge-card-target', 'black', false, true);
         const modalMesh = createScene('modal-card-target', 'silver', false, false, true);
 
+        let resizeTimeout;
+        function onResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                renderer.setSize(w, h, false);
+
+                scenes.forEach(s => {
+                    const rect = s.elem.getBoundingClientRect();
+                    if (rect.width <= 0 || rect.height <= 0) return;
+
+                    s.camera.aspect = rect.width / rect.height;
+                    s.camera.updateProjectionMatrix();
+                });
+            }, 100);
+        }
+
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', onResize);
+
         function render() {
             requestAnimationFrame(render);
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            if (canvas.width !== w || canvas.height !== h) { renderer.setSize(w, h, false); }
 
             renderer.setScissorTest(false); renderer.clear(); renderer.setScissorTest(true);
 
             scenes.forEach(s => {
-                // IMPORTANT: If this scene is the modal scene, we MUST redraw it specifically
-                if(s.isModal) {
-                    const modalEl = document.getElementById('material-modal');
-                    if(getComputedStyle(modalEl).display === 'none') return;
-                }
+                if(s.isModal && document.getElementById('material-modal').style.display !== 'flex') return;
 
                 const rect = s.elem.getBoundingClientRect();
-                if (rect.bottom < 0 || rect.top > h || rect.width === 0) return;
-
-                if(s.isHero && rect.bottom < 100) s.mesh.visible = false;
-                else s.mesh.visible = true;
+                if (rect.bottom < 0 || rect.top > window.innerHeight || rect.width <= 0) return;
 
                 const sw = rect.width;
                 const sh = rect.height;
                 const left = rect.left;
-                const bottom = h - rect.bottom;
+                const bottom = window.innerHeight - rect.bottom;
 
                 if(s.isHero) {
-                    renderer.setViewport(0, 0, w, h); renderer.setScissor(0, 0, w, h); s.camera.aspect = w / h;
+                    renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+                    renderer.setScissor(0, 0, window.innerWidth, window.innerHeight);
                 } else {
-                    renderer.setViewport(left, bottom, sw, sh); renderer.setScissor(left, bottom, sw, sh); s.camera.aspect = sw / sh;
+                    renderer.setViewport(left, bottom, sw, sh);
+                    renderer.setScissor(left, bottom, sw, sh);
                 }
-                s.camera.updateProjectionMatrix();
 
                 const t = Date.now() * 0.001;
                 if(s.isHero) s.mesh.position.y = Math.sin(t) * 0.05;
@@ -458,17 +542,19 @@
             });
         }
         render();
+        onResize(); // initial sizing
 
         const heroObj = scenes.find(s => s.isHero);
         if(heroObj) {
             gsap.to(heroObj.mesh.position, { x: 2, duration: 1.5 });
+
             ScrollTrigger.create({
                 trigger: "#hero-wrapper", start: "top top", end: "bottom top", scrub: 1,
                 onUpdate: (self) => {
                     const p = self.progress;
                     if(p > 0.01) {
-                        heroObj.mesh.position.y = - (p * 4); // Smooth Exit Up
-                        heroObj.mesh.material.forEach(m => m.opacity = 1 - p); 
+                        heroObj.mesh.position.y = - (p * 4);
+                        heroObj.mesh.material.forEach(m => { if(m.opacity !== undefined) m.opacity = 1 - p; });
                     }
                 }
             });
@@ -487,11 +573,11 @@
                     const hint = document.getElementById('edit-hint');
                     if(isEditing) {
                         input.focus();
-                        gsap.to(heroObj.mesh.position, { x: 0, z: 3.5 });
+                        gsap.to(heroObj.mesh.position, { x: 0, z: 3.5, duration: 0.8 });
                         hint.classList.add('show');
                     } else {
                         input.blur();
-                        gsap.to(heroObj.mesh.position, { x: 2, z: 0 });
+                        gsap.to(heroObj.mesh.position, { x: 2, z: 0, duration: 0.8 });
                         hint.classList.remove('show');
                     }
                 }
@@ -499,6 +585,7 @@
 
             input.addEventListener('input', () => {
                 heroObj.faceMat.map = generateTexture(heroObj.matType, input.value.toUpperCase());
+                heroObj.faceMat.map.needsUpdate = true;
             });
 
             window.setHeroMat = (t, el) => {
@@ -506,6 +593,7 @@
                 el.classList.add('active');
                 heroObj.matType = t;
                 heroObj.faceMat.map = generateTexture(t, input.value.toUpperCase());
+                heroObj.faceMat.map.needsUpdate = true;
                 
                 if(t==='gold') { 
                     heroObj.faceMat.color.setHex(0xFFD700); heroObj.sideMat.color.setHex(0xFFD700);
@@ -522,7 +610,11 @@
 
         window.openModal = (type) => {
             modal.style.display = 'flex';
-            setTimeout(()=>modal.classList.add('open'), 10);
+            document.getElementById('global-canvas').classList.add('top-layer');
+            
+            requestAnimationFrame(() => {
+                modal.classList.add('open');
+            });
             
             const data = materialData[type];
             document.getElementById('modal-title').innerText = data.title;
@@ -531,6 +623,7 @@
 
             const tex = generateTexture(type, type.toUpperCase());
             modalObj.faceMat.map = tex;
+            modalObj.faceMat.map.needsUpdate = true;
             
             if(type==='gold') { 
                 modalObj.faceMat.color.setHex(0xFFD700); modalObj.sideMat.color.setHex(0xFFD700);
@@ -543,15 +636,20 @@
 
         window.closeModal = () => {
             modal.classList.remove('open');
-            setTimeout(()=>modal.style.display = 'none', 400);
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.getElementById('global-canvas').classList.remove('top-layer');
+            }, 400);
         };
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
 
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
-            if(window.scrollY > 50) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+            nav.classList.toggle('scrolled', window.scrollY > 50);
         });
     </script>
 </body>
 </html>
-
-
