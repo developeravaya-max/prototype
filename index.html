@@ -3,445 +3,2110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CARDEL | Private Allocations</title>
-    
+    <title>CARDEL - Luxury Business Card Customizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-color: #F9F9F9; --text-main: #111; }
-        html { scroll-behavior: smooth; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Lato', sans-serif; overflow-x: hidden; margin: 0; }
-        .font-serif { font-family: 'Playfair Display', serif; }
-        
-        /* CANVAS ON TOP */
-        #global-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 50; pointer-events: none; display: block;
+        :root {
+            --color-bg: #f5f3f0;
+            --color-text: #1a1a1a;
+            --color-gold: #c9a962;
+            --color-muted: #6b6b6b;
+            --color-light: #faf9f7;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Inter', sans-serif;
         }
 
-        /* Nav */
-        nav { transition: 0.4s ease; backdrop-filter: blur(10px); }
-        nav.scrolled { background: rgba(255,255,255,0.95); border-bottom: 1px solid #eee; }
-
-        .page-section { position: relative; z-index: 10; }
-        .interactive { pointer-events: auto; }
-        
-        .btn-primary { background: #111; color: #fff; padding: 14px 32px; font-size: 0.75rem; letter-spacing: 2px; font-weight: 700; border: 1px solid #111; transition: 0.3s; cursor: pointer; }
-        .btn-primary:hover { background: transparent; color: #111; }
-        .btn-outline { background: transparent; color: #111; padding: 14px 32px; font-size: 0.75rem; letter-spacing: 2px; font-weight: 700; border: 1px solid #111; transition: 0.3s; cursor: pointer; }
-        .btn-outline:hover { background: #111; color: #fff; }
-
-        /* FIXED: Reduced Height for Compact Look */
-        .alloy-placeholder { height: 220px; width: 100%; }
-
-        /* Configurator */
-        .config-panel { background: #fff; border: 1px solid #eee; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 40px; }
-        .mat-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #ddd; cursor: pointer; transition: 0.2s; }
-        .mat-btn:hover { transform: scale(1.1); }
-        .mat-btn.active { box-shadow: 0 0 0 2px #111; transform: scale(1.1); }
-        .bg-silver { background: #e2e2e2; } .bg-gold { background: #d4af37; } .bg-black { background: #222; }
-
-        footer { background: #050505; color: #fff; padding: 80px 0; }
-        #name-input { position: fixed; top: -9999px; }
-        .edit-hint { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); font-family: 'Playfair Display'; font-style: italic; color: #888; opacity: 0; transition: 0.5s; }
-        .edit-hint.show { opacity: 1; }
-
-        /* Engraved Form */
-        .input-engraved {
-            width: 100%; padding: 18px 25px;
-            background-color: #050505; border-radius: 12px; border: 1px solid #1f1f1f;
-            color: #fff; font-family: 'Lato'; font-size: 0.85rem; letter-spacing: 1px; outline: none;
-            box-shadow: inset 2px 2px 6px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
-            transition: 0.3s ease;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .input-engraved:focus { border-color: #C5A059; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.9); }
-        .input-engraved::placeholder { color: #444; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; font-weight: 700; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .font-serif {
+            font-family: var(--font-serif);
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease;
+        }
+
+        .loader-text {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            letter-spacing: 0.3em;
+            color: var(--color-text);
+            margin-bottom: 2rem;
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 2px;
+            background: #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--color-gold);
+            transition: width 0.3s ease;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.25rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(245, 243, 240, 0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.875rem 3rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .nav-logo {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            letter-spacing: 0.2em;
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--color-gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-gold);
+        }
+
+        .nav-btn {
+            background: var(--color-text);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background: var(--color-gold);
+            transform: translateY(-2px);
+        }
+
+        /* Sections */
+        section {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Hero Section */
+        #hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 8rem 4rem 4rem;
+        }
+
+        .hero-content {
+            max-width: 520px;
+        }
+
+        .hero-content h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(2.5rem, 4.5vw, 3.5rem);
+            font-weight: 300;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1rem;
+            color: var(--color-muted);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.06);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 10px;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-gold);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(201, 169, 98, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--color-text);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(201, 169, 98, 0.3);
+        }
+
+        /* 3D Card Preview */
+        .card-preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 100px;
+        }
+
+        .card-container-3d {
+            width: 100%;
+            max-width: 420px;
+            perspective: 1500px;
+            margin-bottom: 2rem;
+        }
+
+        .card-3d-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1.586;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .card-3d-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-3d-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face-3d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 
+                0 30px 80px rgba(0,0,0,0.2),
+                0 15px 40px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .card-face-3d.back {
+            transform: rotateY(180deg);
+        }
+
+        .card-canvas-3d {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Card shine effect */
+        .card-shine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.4) 0%,
+                rgba(255,255,255,0.1) 40%,
+                transparent 50%,
+                rgba(255,255,255,0.05) 100%
+            );
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card-3d-wrapper:hover .card-shine {
+            opacity: 1;
+        }
+
+        /* Card Controls */
+        .card-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            padding: 0.625rem 1.25rem;
+            border-radius: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            color: var(--color-muted);
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .control-btn:hover {
+            color: var(--color-gold);
+            background: rgba(201, 169, 98, 0.1);
+        }
+
+        .control-btn.active {
+            color: var(--color-gold);
+            background: rgba(201, 169, 98, 0.15);
+        }
+
+        /* Material Section */
+        #materials {
+            padding: 5rem 4rem;
+            background: var(--color-light);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 3.5vw, 2.75rem);
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-header p {
+            color: var(--color-muted);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid transparent;
+            background: white;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .category-tab:hover {
+            border-color: var(--color-gold);
+            color: var(--color-text);
+        }
+
+        .category-tab.active {
+            border-color: var(--color-gold);
+            background: rgba(201, 169, 98, 0.1);
+            color: var(--color-text);
+        }
+
+        /* Material Grid */
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .material-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 2px solid transparent;
+        }
+
+        .material-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+        }
+
+        .material-card.selected {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.2), 0 15px 40px rgba(201, 169, 98, 0.15);
+        }
+
+        .material-preview {
+            height: 160px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .mini-card {
+            width: 140px;
+            height: 88px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: perspective(500px) rotateY(-15deg) rotateX(5deg);
+            transition: transform 0.4s ease;
+        }
+
+        .material-card:hover .mini-card {
+            transform: perspective(500px) rotateY(-5deg) rotateX(2deg) scale(1.05);
+        }
+
+        .material-info {
+            padding: 1.25rem;
+        }
+
+        .material-info h3 {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            margin-bottom: 0.375rem;
+        }
+
+        .material-info p {
+            font-size: 0.8rem;
+            color: var(--color-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .material-price {
+            font-size: 0.85rem;
+            color: var(--color-gold);
+            font-weight: 600;
+        }
+
+        .material-badge {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: var(--color-gold);
+            color: white;
+            padding: 0.25rem 0.625rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* Features Section */
+        #features {
+            padding: 5rem 4rem;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: var(--color-light);
+            border-radius: 20px;
+            transition: all 0.4s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1.25rem;
+            background: linear-gradient(135deg, var(--color-gold) 0%, #b8941f 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(201, 169, 98, 0.3);
+        }
+
+        .feature-item h3 {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-item p {
+            font-size: 0.85rem;
+            color: var(--color-muted);
+            line-height: 1.7;
+        }
+
+        /* Final Preview Section */
+        #preview {
+            padding: 5rem 4rem;
+            background: var(--color-bg);
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .preview-cards {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .preview-card-box {
+            text-align: center;
+        }
+
+        .preview-card-box h4 {
+            font-family: var(--font-serif);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            color: var(--color-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .preview-card-wrapper {
+            width: 320px;
+            aspect-ratio: 1.586;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.18);
+        }
+
+        .preview-info {
+            padding: 1rem;
+        }
+
+        .preview-info h3 {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .preview-info > p {
+            color: var(--color-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .spec-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .spec-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid #e8e8e8;
+            font-size: 0.9rem;
+        }
+
+        .spec-list li:last-child {
+            border-bottom: none;
+        }
+
+        .spec-list li span:first-child {
+            color: var(--color-muted);
+        }
+
+        .spec-list li span:last-child {
+            font-weight: 500;
+        }
+
+        /* Order Section */
+        #order {
+            padding: 5rem 4rem;
+            background: var(--color-light);
+        }
+
+        .order-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .order-config {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+        }
+
+        .config-section {
+            margin-bottom: 2rem;
+        }
+
+        .config-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .config-section h4 {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--color-gold);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-family: var(--font-serif);
+            flex-shrink: 0;
+        }
+
+        .config-section > p {
+            font-size: 0.875rem;
+            color: var(--color-muted);
+            margin-bottom: 1rem;
+        }
+
+        .quantity-selector {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .quantity-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .quantity-option:hover {
+            border-color: var(--color-gold);
+        }
+
+        .quantity-option.selected {
+            border-color: var(--color-gold);
+            background: rgba(201, 169, 98, 0.08);
+        }
+
+        .quantity-option .qty-label {
+            font-size: 0.8rem;
+            color: var(--color-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .quantity-option .price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            font-size: 0.6rem;
+            background: var(--color-gold);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .addon-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .addon-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .addon-item:hover {
+            border-color: var(--color-gold);
+        }
+
+        .addon-item.selected {
+            border-color: var(--color-gold);
+            background: rgba(201, 169, 98, 0.05);
+        }
+
+        .addon-info h5 {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .addon-info p {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+        }
+
+        .addon-price {
+            color: var(--color-gold);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .toggle-switch {
+            width: 46px;
+            height: 26px;
+            background: #ddd;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-left: 1rem;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch.active {
+            background: var(--color-gold);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            padding: 1.75rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .order-summary h3 {
+            font-family: var(--font-serif);
+            font-size: 1.35rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--color-gold);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .summary-item.total {
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 2px solid #eee;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .summary-note {
+            font-size: 0.8rem;
+            color: var(--color-muted);
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1.125rem;
+            background: linear-gradient(135deg, #c9a962 0%, #b8941f 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(201, 169, 98, 0.4);
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.7rem;
+            color: var(--color-muted);
+        }
+
+        /* Partners Section */
+        #partners {
+            padding: 4rem;
+            background: var(--color-bg);
+        }
+
+        .partners-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3.5rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            opacity: 0.5;
+        }
+
+        .partner-logo {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            letter-spacing: 0.15em;
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--color-text);
+            color: white;
+            padding: 4rem 4rem 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(3, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h4 {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-section p {
+            color: #888;
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+
+        .footer-section a {
+            display: block;
+            color: #888;
+            text-decoration: none;
+            margin-bottom: 0.625rem;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--color-gold);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--color-text);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 9999;
+            font-size: 0.9rem;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            #hero {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                padding-top: 7rem;
+            }
+
+            .card-preview-section {
+                position: relative;
+                top: 0;
+                order: -1;
+            }
+
+            .card-container-3d {
+                max-width: 380px;
+            }
+
+            .preview-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .preview-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .order-container {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            #hero, #materials, #features, #preview, #order, #partners, footer {
+                padding: 3rem 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quantity-selector {
+                flex-direction: column;
+            }
+
+            .preview-card-wrapper {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .category-tabs {
+                gap: 0.5rem;
+            }
+
+            .category-tab {
+                padding: 0.625rem 1rem;
+                font-size: 0.7rem;
+            }
+        }
     </style>
+<base target="_blank">
 </head>
 <body>
-
-    <canvas id="global-canvas"></canvas>
-
-    <nav class="fixed top-0 left-0 w-full z-[60] px-8 py-6 flex justify-between items-center interactive" id="navbar">
-        <div class="flex items-center gap-4">
-            <div class="font-serif text-2xl font-bold tracking-tighter">CARDEL</div>
-            <div class="hidden md:block w-px h-6 bg-gray-300 mx-2"></div>
-            <div class="hidden md:block text-xs uppercase tracking-widest text-gray-500 font-bold">Bespoke Alloys</div>
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="loader-text">CARDEL</div>
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
         </div>
-        <div class="hidden md:flex gap-10">
-            <a href="#concierge" class="text-xs font-bold uppercase tracking-widest hover:text-gray-600 transition">Concierge</a>
-            <a href="#materials" class="text-xs font-bold uppercase tracking-widest hover:text-gray-600 transition">Materials</a>
-            <a href="#contact" class="text-xs font-bold uppercase tracking-widest hover:text-gray-600 transition">Inquire</a>
-        </div>
-        <div><a href="#contact" class="btn-primary">Login</a></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-logo">CARDEL</div>
+        <ul class="nav-links">
+            <li><a href="#hero">Design</a></li>
+            <li><a href="#materials">Materials</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#preview">Preview</a></li>
+            <li><a href="#order">Order</a></li>
+        </ul>
+        <button class="nav-btn" onclick="scrollToSection('order')">Begin</button>
     </nav>
 
-    <section id="hero-wrapper" class="page-section h-screen relative">
-        <div class="container mx-auto px-6 flex flex-col justify-center h-full relative">
-            <div class="max-w-xl interactive pt-20">
-                <h1 class="font-serif text-6xl md:text-7xl mb-6 leading-[0.95] text-[#111]">The weight of <br><i>influence.</i></h1>
-                <p class="font-sans text-gray-500 text-lg mb-10 max-w-md leading-relaxed">
-                    28 grams of solid surgical steel. Precision milled in Switzerland. 
-                    The definitive artifact of your professional identity.
-                </p>
-                <div class="flex gap-4">
-                    <button class="btn-primary">Reserve Allocation</button>
-                    <button class="btn-outline">View Gallery</button>
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="hero-content">
+            <h1>Design Your Legacy.</h1>
+            <p class="subtitle">Craft a premium business card that makes a lasting impression. Every detail is precision-engineered for those who understand the value of distinction.</p>
+            
+            <div class="hero-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="cardName" placeholder="Enter your name" value="Malik Huzaifa">
                 </div>
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" value="1234 5678 9000 0000">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="cardEmail" placeholder="your@email.com" value="malik@huzaifa.com">
+                </div>
+                <button class="btn-primary" onclick="scrollToSection('materials')">Continue to Materials</button>
             </div>
-            <div class="absolute bottom-12 right-6 md:right-12 interactive">
-                <div class="config-panel p-4 px-6 flex items-center gap-6">
-                    <span class="text-[10px] uppercase font-bold tracking-widest text-gray-400">Finish</span>
-                    <div class="flex gap-3">
-                        <div class="mat-btn bg-silver active" onclick="setHeroMat('silver', this)"></div>
-                        <div class="mat-btn bg-gold" onclick="setHeroMat('gold', this)"></div>
-                        <div class="mat-btn bg-black" onclick="setHeroMat('black', this)"></div>
+        </div>
+        
+        <div class="card-preview-section">
+            <div class="card-container-3d" id="cardContainer3d">
+                <div class="card-3d-wrapper" id="card3dWrapper">
+                    <div class="card-3d-inner" id="card3dInner">
+                        <div class="card-face-3d front">
+                            <canvas id="heroFrontCanvas" class="card-canvas-3d"></canvas>
+                            <div class="card-shine"></div>
+                        </div>
+                        <div class="card-face-3d back">
+                            <canvas id="heroBackCanvas" class="card-canvas-3d"></canvas>
+                            <div class="card-shine"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="edit-hint" id="edit-hint">Click card to engrave name</div>
-        </div>
-        <input type="text" id="name-input" maxlength="18" value="ALEXANDER VANCE" class="interactive">
-    </section>
-
-    <section id="concierge" class="page-section bg-[#080808] text-white py-32 interactive relative">
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-widest text-[#C5A059]">Concierge</span>
-                    <h2 class="font-serif text-5xl mt-4 mb-8 leading-tight">Access,<br>Granted.</h2>
-                    <p class="text-gray-400 text-lg mb-10 leading-relaxed max-w-md">
-                        Membership unlocks a dedicated 24/7 global team. From private aviation to priority reservations at the world's top 50 restaurants.
-                    </p>
-                    <ul class="space-y-6">
-                        <li class="flex items-center gap-4 text-sm text-gray-300 border-b border-gray-800 pb-4">
-                            <span class="text-[#C5A059] text-lg"><i class="fas fa-plane"></i></span> Global Mobility & Private Aviation
-                        </li>
-                        <li class="flex items-center gap-4 text-sm text-gray-300 border-b border-gray-800 pb-4">
-                            <span class="text-[#C5A059] text-lg"><i class="fas fa-wine-glass"></i></span> Michelin Dining Priority
-                        </li>
-                    </ul>
-                </div>
-                <div class="relative h-[500px] bg-[#111] rounded-lg border border-gray-800 flex items-center justify-center overflow-hidden">
-                    <div id="concierge-card-target" class="absolute inset-0 w-full h-full"></div>
-                    <div class="absolute bottom-8 left-8">
-                        <div class="font-serif text-2xl italic">The Black Key.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="materials" class="page-section bg-white py-20 interactive border-t border-gray-100">
-        <div class="container mx-auto px-6">
-            <div class="mb-16 text-center">
-                <span class="text-xs font-bold uppercase tracking-widest text-[#C5A059]">The Collection</span>
-                <h2 class="font-serif text-5xl mt-4 text-[#111]">Distinct Finishes.</h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <div class="group cursor-pointer p-4 rounded-2xl hover:bg-gray-50 transition duration-500 text-center">
-                    <div class="alloy-placeholder relative" id="mat-silver"></div>
-                    <h3 class="font-serif text-2xl italic mt-4 mb-2 text-[#111]">Sterling</h3>
-                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Surgical Steel</p>
-                </div>
-                <div class="group cursor-pointer p-4 rounded-2xl hover:bg-gray-50 transition duration-500 text-center">
-                    <div class="alloy-placeholder relative" id="mat-gold"></div>
-                    <h3 class="font-serif text-2xl italic mt-4 mb-2 text-[#111]">Champagne</h3>
-                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">18K Gold PVD</p>
-                </div>
-                <div class="group cursor-pointer p-4 rounded-2xl hover:bg-gray-50 transition duration-500 text-center">
-                    <div class="alloy-placeholder relative" id="mat-black"></div>
-                    <h3 class="font-serif text-2xl italic mt-4 mb-2 text-[#111]">Obsidian</h3>
-                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Matte DLC</p>
-                </div>
+            
+            <div class="card-controls">
+                <button class="control-btn active" id="frontBtn" onclick="showCardFace('front')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    </svg>
+                    Front
+                </button>
+                <button class="control-btn" id="flipBtn" onclick="flipCard()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"></path>
+                    </svg>
+                    Flip
+                </button>
+                <button class="control-btn" id="backBtn" onclick="showCardFace('back')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    </svg>
+                    Back
+                </button>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="page-section bg-[#111] text-white py-32 interactive border-t border-gray-900">
-        <div class="container mx-auto px-6">
-            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                <div>
-                    <div class="text-xs font-bold uppercase tracking-widest text-[#C5A059] mb-6">Application</div>
-                    <h2 class="font-serif text-4xl mb-6">Request Private<br>Allocation.</h2>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-8">
-                        Cardel memberships are limited by city to maintain concierge availability. Please submit your details for review by our membership committee.
-                    </p>
-                    <div class="flex gap-4 text-gray-400 text-sm">
-                        <div class="border-l border-[#333] pl-4"><span class="block text-white font-bold">Geneva</span><span class="text-xs">HQ</span></div>
-                        <div class="border-l border-[#333] pl-4"><span class="block text-white font-bold">New York</span><span class="text-xs">Americas</span></div>
+    <!-- Materials Section -->
+    <section id="materials">
+        <div class="section-header">
+            <h2>Choose Your Material</h2>
+            <p>Select from our curated collection of premium materials, each crafted to perfection</p>
+        </div>
+
+        <div class="category-tabs">
+            <div class="category-tab active" onclick="filterMaterials('metal')">Metal</div>
+            <div class="category-tab" onclick="filterMaterials('wood')">Wood</div>
+            <div class="category-tab" onclick="filterMaterials('carbon')">Carbon</div>
+            <div class="category-tab" onclick="filterMaterials('limited')">Limited</div>
+        </div>
+
+        <div class="materials-grid" id="materialsGrid">
+            <!-- Materials injected by JS -->
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="section-header">
+            <h2>Premium Features</h2>
+            <p>Every detail crafted for distinction</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">◈</div>
+                <h3>NFC Technology</h3>
+                <p>Embedded NFC chip enables instant digital contact sharing. Simply tap your card against any smartphone to transfer your complete profile, eliminating manual data entry.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">◉</div>
+                <h3>QR Code Integration</h3>
+                <p>Dynamic QR code links directly to your digital portfolio, LinkedIn, or custom landing page. Scannable by any camera app for seamless professional connections.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">✦</div>
+                <h3>Laser Engraving</h3>
+                <p>Precision laser-etched details create permanent, elegant markings that never fade. Custom logos, signatures, or patterns with micron-level accuracy.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">◆</div>
+                <h3>EMV Chip Design</h3>
+                <p>Authentic banking-grade chip aesthetic with intricate circuit patterns. Adds sophistication and signals premium quality at first glance.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Preview Section -->
+    <section id="preview">
+        <div class="section-header">
+            <h2>Your Final Design</h2>
+            <p>Review both sides of your card before placing your order</p>
+        </div>
+        
+        <div class="preview-container">
+            <div class="preview-cards">
+                <div class="preview-card-box">
+                    <h4>Front View</h4>
+                    <div class="preview-card-wrapper">
+                        <canvas id="finalFrontCanvas"></canvas>
                     </div>
+                </div>
+                <div class="preview-card-box">
+                    <h4>Back View</h4>
+                    <div class="preview-card-wrapper">
+                        <canvas id="finalBackCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-info">
+                <h3>Design Specifications</h3>
+                <p>Your card includes all premium features carefully crafted for maximum impact and lasting impression.</p>
+                
+                <ul class="spec-list">
+                    <li>
+                        <span>Material</span>
+                        <span id="specMaterial">Black Metal Matte</span>
+                    </li>
+                    <li>
+                        <span>Dimensions</span>
+                        <span>85.60 × 53.98 mm</span>
+                    </li>
+                    <li>
+                        <span>Thickness</span>
+                        <span id="specThickness">0.8mm</span>
+                    </li>
+                    <li>
+                        <span>Weight</span>
+                        <span id="specWeight">28g</span>
+                    </li>
+                    <li>
+                        <span>Finish</span>
+                        <span id="specFinish">Brushed Matte</span>
+                    </li>
+                    <li>
+                        <span>NFC Chip</span>
+                        <span id="specNFC" style="color: var(--color-gold);">Included</span>
+                    </li>
+                    <li>
+                        <span>QR Code</span>
+                        <span id="specQR">Not Included</span>
+                    </li>
+                    <li>
+                        <span>Laser Engraving</span>
+                        <span id="specLaser">Not Included</span>
+                    </li>
+                </ul>
+                
+                <button class="btn-primary" onclick="scrollToSection('order')" style="width: auto; padding: 1rem 2.5rem;">Proceed to Order</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Section -->
+    <section id="order">
+        <div class="section-header">
+            <h2>Configuration & Order</h2>
+            <p>Finalize your specifications and complete your order securely</p>
+        </div>
+        
+        <div class="order-container">
+            <div class="order-config">
+                <div class="config-section">
+                    <h4><span class="step-badge">1</span> Card Quantity</h4>
+                    <p>Select the quantity that suits your networking needs:</p>
+                    <div class="quantity-selector">
+                        <div class="quantity-option selected" onclick="selectQuantity(10, 590)">
+                            <div class="qty-label">10 Cards</div>
+                            <div class="price">$590</div>
+                        </div>
+                        <div class="quantity-option" onclick="selectQuantity(25, 1225)">
+                            <span class="popular-badge">Popular</span>
+                            <div class="qty-label">25 Cards</div>
+                            <div class="price">$1,225</div>
+                        </div>
+                        <div class="quantity-option" onclick="selectQuantity(50, 2250)">
+                            <div class="qty-label">50 Cards</div>
+                            <div class="price">$2,250</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h4><span class="step-badge">2</span> Premium Add-Ons</h4>
+                    <p>Enhance your card with these exclusive features:</p>
+                    
+                    <div class="addon-item selected" onclick="toggleAddon(this, 'nfc')">
+                        <div class="addon-info">
+                            <h5>NFC Chip</h5>
+                            <p>Digital business card technology - tap to share</p>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <span class="addon-price">Included</span>
+                            <div class="toggle-switch active"></div>
+                        </div>
+                    </div>
+
+                    <div class="addon-item" onclick="toggleAddon(this, 'qr')">
+                        <div class="addon-info">
+                            <h5>QR Code</h5>
+                            <p>Scannable link to your digital profile</p>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <span class="addon-price">+$45</span>
+                            <div class="toggle-switch"></div>
+                        </div>
+                    </div>
+
+                    <div class="addon-item" onclick="toggleAddon(this, 'laser')">
+                        <div class="addon-info">
+                            <h5>Laser Engraving</h5>
+                            <p>Custom text or logo precision engraving</p>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <span class="addon-price">+$80</span>
+                            <div class="toggle-switch"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                
+                <div class="summary-item">
+                    <span id="summaryQuantity">10x Black Metal Cards</span>
+                    <span id="summaryBasePrice">$590</span>
                 </div>
                 
-                <div class="bg-[#0f0f0f] p-10 border border-gray-800 shadow-2xl rounded-2xl">
-                    <form class="space-y-6">
-                        <div class="grid grid-cols-2 gap-6">
-                            <div>
-                                <label class="text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2 block">First Name</label>
-                                <input type="text" class="input-engraved">
-                            </div>
-                            <div>
-                                <label class="text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2 block">Last Name</label>
-                                <input type="text" class="input-engraved">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2 block">Email Address</label>
-                            <input type="email" class="input-engraved">
-                        </div>
-                        <div>
-                            <label class="text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-2 block">City of Residence</label>
-                            <input type="text" class="input-engraved">
-                        </div>
-                        
-                        <div class="pt-6">
-                            <button type="button" class="w-full bg-[#C5A059] text-black font-bold uppercase text-xs tracking-[3px] py-5 rounded-xl hover:bg-white transition duration-500 shadow-lg">
-                                Submit Request
-                            </button>
-                        </div>
-                    </form>
+                <div class="summary-item" id="summaryQRRow" style="display: none;">
+                    <span>QR Code</span>
+                    <span>+$45</span>
+                </div>
+                
+                <div class="summary-item" id="summaryLaserRow" style="display: none;">
+                    <span>Laser Engraving</span>
+                    <span>+$80</span>
+                </div>
+                
+                <div class="summary-item total">
+                    <span>Total</span>
+                    <span id="summaryTotal">$590</span>
+                </div>
+                
+                <p class="summary-note">All taxes included</p>
+                
+                <button class="checkout-btn" onclick="proceedToCheckout()">
+                    Proceed to Checkout →
+                </button>
+                
+                <div class="secure-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>Secure Checkout</span>
+                    <span style="margin: 0 0.4rem;">•</span>
+                    <span>VISA</span>
+                    <span style="margin: 0 0.4rem;">•</span>
+                    <span>MC</span>
+                    <span style="margin: 0 0.4rem;">•</span>
+                    <span>AMEX</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="page-section interactive">
-        <div class="container mx-auto px-6 text-center">
-            <div class="font-serif text-2xl font-bold mb-4">CARDEL</div>
-            <p class="text-gray-600 text-xs mb-8">&copy; 2024 CARDEL S.A. Geneva, Switzerland.</p>
+    <!-- Partners Section -->
+    <section id="partners">
+        <div class="section-header">
+            <h2>Our Valued Partners</h2>
+            <p>Preferred by elite brands around the world</p>
+        </div>
+        <div class="partners-logos">
+            <div class="partner-logo">ROLLS-ROYCE</div>
+            <div class="partner-logo">OMEGA</div>
+            <div class="partner-logo">FERRARI</div>
+            <div class="partner-logo">GOLDMAN SACHS</div>
+            <div class="partner-logo">FOUR SEASONS</div>
+            <div class="partner-logo">CREDIT SUISSE</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>CARDEL</h4>
+                <p>Crafting luxury business cards for those who understand the value of first impressions. Precision engineered, meticulously finished.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Product</h4>
+                <a href="#hero">Design</a>
+                <a href="#materials">Materials</a>
+                <a href="#features">Features</a>
+                <a href="#order">Pricing</a>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <a href="#">About</a>
+                <a href="#">Careers</a>
+                <a href="#">Press</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <a href="#">Help Center</a>
+                <a href="#">Shipping</a>
+                <a href="#">Returns</a>
+                <a href="#">Order Status</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 CARDEL. All rights reserved. Designed with precision.</p>
         </div>
     </footer>
 
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
     <script>
-        const canvas = document.getElementById('global-canvas');
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-        const pmremGenerator = new THREE.PMREMGenerator(renderer);
-        pmremGenerator.compileEquirectangularShader();
-        const envScene = new THREE.Scene();
-        const envCanvas = document.createElement('canvas');
-        envCanvas.width = 512; envCanvas.height = 512;
-        const ectx = envCanvas.getContext('2d');
-        ectx.fillStyle = '#222'; ectx.fillRect(0,0,512,512); 
-        ectx.fillStyle = '#fff'; ectx.fillRect(0, 0, 512, 100); ectx.fillRect(0, 200, 100, 200); ectx.fillRect(400, 200, 112, 200); 
-        const envTex = new THREE.CanvasTexture(envCanvas);
-        envScene.add(new THREE.Mesh(new THREE.BoxGeometry(100,100,100), new THREE.MeshBasicMaterial({side: THREE.BackSide, map: envTex})));
-        const globalEnvMap = pmremGenerator.fromScene(envScene).texture;
-
-        const scenes = [];
-
-        function generateTexture(matType, name="ALEXANDER VANCE") {
-            const cvs = document.createElement('canvas');
-            cvs.width = 1024; cvs.height = 645;
-            const ctx = cvs.getContext('2d');
-            const w = cvs.width, h = cvs.height;
-            
-            const g = ctx.createLinearGradient(0,0,w,h);
-            if(matType==='gold') { g.addColorStop(0,'#C5A059'); g.addColorStop(0.5,'#F5D686'); g.addColorStop(1,'#AA771C'); }
-            else if(matType==='black') { g.addColorStop(0,'#1a1a1a'); g.addColorStop(1,'#000000'); }
-            else { g.addColorStop(0,'#F0F0F0'); g.addColorStop(1,'#C0C0C0'); } 
-            ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
-
-            ctx.strokeStyle = (matType==='black')?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
-            ctx.lineWidth = 2; ctx.beginPath();
-            for(let y=0; y<h; y+=30) { ctx.moveTo(0,y); for(let x=0; x<w; x+=60) ctx.quadraticCurveTo(x+30,y+40,x+60,y); }
-            ctx.stroke();
-
-            const ink = (matType==='black')?'#E8CFA0':'#222';
-            ctx.fillStyle = ink; 
-            
-            ctx.font = "700 75px 'Lato'"; ctx.textAlign='left'; ctx.fillText(name, 80, 520);
-            ctx.font = "700 28px 'Lato'"; ctx.fillText("FOUNDER MEMBER", 82, 580);
-            ctx.textAlign='right'; ctx.font = "italic 700 50px 'Playfair Display'"; ctx.fillText("Cardel.", w-80, 120);
-
-            ctx.fillStyle = (matType==='black')?'#D4AF37':'#d1d1d1'; if(matType==='gold') ctx.fillStyle='#fff';
-            ctx.beginPath(); ctx.roundRect(80, 200, 140, 100, 12); ctx.fill();
-
-            return new THREE.CanvasTexture(cvs);
-        }
-
-        const shape = new THREE.Shape();
-        const cw = 3.37, ch = 2.125, r = 0.12;
-        shape.moveTo(-cw/2+r, -ch/2);
-        shape.lineTo(cw/2-r, -ch/2); shape.quadraticCurveTo(cw/2, -ch/2, cw/2, -ch/2+r);
-        shape.lineTo(cw/2, ch/2-r); shape.quadraticCurveTo(cw/2, ch/2, cw/2-r, ch/2);
-        shape.lineTo(-cw/2+r, ch/2); shape.quadraticCurveTo(-cw/2, ch/2, -cw/2, ch/2-r);
-        shape.lineTo(-cw/2, -ch/2+r); shape.quadraticCurveTo(-cw/2, -ch/2, -cw/2+r, -ch/2);
-        const geom = new THREE.ExtrudeGeometry(shape, { depth: 0.03, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02 });
-        geom.center();
-
-        const pos = geom.attributes.position;
-        const uv = geom.attributes.uv;
-        const box = new THREE.Box3().setFromObject(new THREE.Mesh(geom));
-        const size = new THREE.Vector3(); box.getSize(size);
-        for (let i = 0; i < pos.count; i++) {
-            const x = pos.getX(i); const y = pos.getY(i);
-            const u = (x - box.min.x) / size.x; const v = (y - box.min.y) / size.y;
-            uv.setXY(i, u, v);
-        }
-
-        function createScene(elemId, matType, isHero = false, isConcierge = false) {
-            const elem = document.getElementById(elemId);
-            if(!elem) return;
-
-            const scene = new THREE.Scene();
-            scene.environment = globalEnvMap;
-
-            const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-            if(isHero) camera.position.z = 11;
-            else if(isConcierge) camera.position.z = 11;
-            else camera.position.z = 8.5; // Zoomed in slightly for compact box
-
-            const ambient = new THREE.AmbientLight(0xffffff, 0.8);
-            const key = new THREE.DirectionalLight(0xffffff, 2.0); key.position.set(2,5,10); key.castShadow = true;
-            const rim = new THREE.SpotLight(0xddeeff, 2.5); rim.position.set(-5,5,-5);
-            scene.add(ambient, key, rim);
-
-            const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.ShadowMaterial({ opacity: 0.1 }));
-            shadowPlane.rotation.x = -Math.PI / 2;
-            shadowPlane.position.y = -1.6;
-            scene.add(shadowPlane);
-
-            const tex = generateTexture(matType, isHero ? "ALEXANDER VANCE" : (isConcierge ? "VIP ACCESS" : matType.toUpperCase()));
-            
-            const faceMat = new THREE.MeshStandardMaterial({ map: tex, metalness: 0.9, roughness: 0.3, envMapIntensity: 1.2 });
-            const sideMat = new THREE.MeshStandardMaterial({ metalness: 1.0, roughness: 0.1, envMapIntensity: 2.0 });
-
-            if(matType==='gold') { faceMat.color.setHex(0xFFD700); sideMat.color.setHex(0xFFD700); } 
-            else if(matType==='black') { faceMat.color.setHex(0xFFFFFF); sideMat.color.setHex(0x222222); }
-            else { faceMat.color.setHex(0xFFFFFF); sideMat.color.setHex(0xEEEEEE); }
-
-            const mesh = new THREE.Mesh(geom, [faceMat, sideMat]);
-            mesh.castShadow = true; mesh.receiveShadow = true;
-
-            if(!isHero && !isConcierge) {
-                mesh.rotation.x = 0.1; mesh.rotation.y = 0; 
+        // Global State
+        const state = {
+            cardData: {
+                name: 'Malik Huzaifa',
+                number: '1234 5678 9000 0000',
+                email: 'malik@huzaifa.com',
+                material: 'black-metal'
+            },
+            orderConfig: {
+                quantity: 10,
+                basePrice: 590,
+                addons: {
+                    nfc: true,
+                    qr: false,
+                    laser: false
+                }
+            },
+            materials: {
+                metal: [
+                    { id: 'black-metal', name: 'Black Metal Matte', color: '#0a0a0a', thickness: '0.8mm', weight: '28g', finish: 'Brushed Matte', price: 0, desc: 'Premium black stainless steel with sophisticated brushed finish' },
+                    { id: 'gold-metal', name: 'Gold Mirror', color: '#d4af37', thickness: '0.8mm', weight: '28g', finish: 'Polished Mirror', price: 150, desc: '24k gold-plated with mirror-like reflectivity' },
+                    { id: 'silver-metal', name: 'Silver Brushed', color: '#c0c0c0', thickness: '0.8mm', weight: '28g', finish: 'Brushed Satin', price: 150, desc: 'Sterling silver-plated with elegant texture' },
+                    { id: 'rose-gold', name: 'Rose Gold', color: '#b76e79', thickness: '0.8mm', weight: '28g', finish: 'Polished', price: 175, desc: '18k rose gold with warm contemporary appeal' }
+                ],
+                wood: [
+                    { id: 'walnut', name: 'Black Walnut', color: '#3d2817', thickness: '1.0mm', weight: '18g', finish: 'Oiled Natural', price: 100, desc: 'Sustainably sourced American black walnut' },
+                    { id: 'maple', name: 'White Maple', color: '#f5f5dc', thickness: '1.0mm', weight: '16g', finish: 'Matte Sealed', price: 100, desc: 'Canadian hard maple with clean bright appearance' },
+                    { id: 'ebony', name: 'African Ebony', color: '#1c1c1c', thickness: '1.0mm', weight: '22g', finish: 'High Polish', price: 200, desc: 'Rare African ebony with deep black tone' },
+                    { id: 'bamboo', name: 'Carbonized Bamboo', color: '#3d2817', thickness: '0.9mm', weight: '14g', finish: 'Natural Oil', price: 80, desc: 'Eco-friendly bamboo with unique grain' }
+                ],
+                carbon: [
+                    { id: 'carbon-fiber', name: 'Carbon Fiber Weave', color: '#1a1a1a', thickness: '0.6mm', weight: '20g', finish: 'Twill Weave', price: 100, desc: 'Aerospace-grade with signature 2x2 pattern' },
+                    { id: 'forged-carbon', name: 'Forged Carbon', color: '#2a2a2a', thickness: '0.7mm', weight: '22g', finish: 'Forged Composite', price: 250, desc: 'Hand-forged with unique marble-like patterns' }
+                ],
+                limited: [
+                    { id: 'meteorite', name: 'Meteorite Inlay', color: '#4a4a4a', thickness: '1.2mm', weight: '32g', finish: 'Etched Pattern', price: 500, desc: 'Authentic Muonionalusta meteorite, 4.5B years old', badge: 'Rare' },
+                    { id: 'mother-pearl', name: 'Mother of Pearl', color: '#f0f0f0', thickness: '0.9mm', weight: '25g', finish: 'Natural Iridescent', price: 400, desc: 'Genuine pearl with rainbow-like light refraction', badge: 'Exclusive' }
+                ]
             }
-            if(isHero) mesh.position.x = 2;
+        };
 
-            scene.add(mesh);
-            scenes.push({ scene, camera, mesh, elem, matType, isHero, isConcierge, faceMat, sideMat });
+        // Initialize
+        window.addEventListener('load', () => {
+            simulateLoading();
+            loadMaterials('metal');
+            setupInputListeners();
+            setup3DTilt();
+            setupScrollAnimations();
+            updateAllCards();
+            updateOrderSummary();
+            updateSpecs();
+        });
+
+        function simulateLoading() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('loader').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('loader').style.display = 'none';
+                        }, 800);
+                    }, 500);
+                }
+                document.querySelector('.loader-progress').style.width = progress + '%';
+            }, 120);
         }
 
-        createScene('hero-wrapper', 'silver', true);
-        createScene('mat-silver', 'silver');
-        createScene('mat-gold', 'gold');
-        createScene('mat-black', 'black');
-        createScene('concierge-card-target', 'black', false, true);
-
-        function render() {
-            requestAnimationFrame(render);
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            if (canvas.width !== w || canvas.height !== h) { renderer.setSize(w, h, false); }
-
-            renderer.setScissorTest(false); renderer.clear(); renderer.setScissorTest(true);
-
-            scenes.forEach(s => {
-                const rect = s.elem.getBoundingClientRect();
-                if (rect.bottom < 0 || rect.top > h || rect.width === 0) return;
-
-                if(s.isHero && rect.bottom < 100) s.mesh.visible = false;
-                else s.mesh.visible = true;
-
-                const sw = rect.width;
-                const sh = rect.height;
-                const left = rect.left;
-                const bottom = h - rect.bottom;
-
-                if(s.isHero) {
-                    renderer.setViewport(0, 0, w, h); renderer.setScissor(0, 0, w, h); s.camera.aspect = w / h;
-                } else {
-                    renderer.setViewport(left, bottom, sw, sh); renderer.setScissor(left, bottom, sw, sh); s.camera.aspect = sw / sh;
-                }
-                s.camera.updateProjectionMatrix();
-
-                const t = Date.now() * 0.001;
-                if(s.isHero) s.mesh.position.y = Math.sin(t) * 0.05;
-                else if(s.isConcierge) { s.mesh.rotation.y = t * 0.2; }
-                else { 
-                    s.mesh.position.y = Math.sin(t * 0.5) * 0.05;
-                    s.mesh.rotation.y = Math.sin(t * 0.5) * 0.05; 
-                }
-                renderer.render(s.scene, s.camera);
-            });
-        }
-        render();
-
-        const heroObj = scenes.find(s => s.isHero);
-        if(heroObj) {
-            gsap.to(heroObj.mesh.position, { x: 2, duration: 1.5 });
-            ScrollTrigger.create({
-                trigger: "#hero-wrapper", start: "top top", end: "bottom top", scrub: 1,
-                onUpdate: (self) => {
-                    const p = self.progress;
-                    if(p > 0.01) {
-                        // FIX: Smooth Vertical Exit (Parallax) instead of weird X shift
-                        heroObj.mesh.position.y = - (p * 4); // Move Up/Out
-                        heroObj.mesh.material.forEach(m => m.opacity = 1 - p); // Fade Out
-                    }
-                }
+        function loadMaterials(category) {
+            const grid = document.getElementById('materialsGrid');
+            grid.innerHTML = '';
+            
+            state.materials[category].forEach((mat, index) => {
+                const card = document.createElement('div');
+                card.className = `material-card ${mat.id === state.cardData.material ? 'selected' : ''}`;
+                card.onclick = () => selectMaterial(mat.id);
+                card.style.animationDelay = `${index * 0.08}s`;
+                
+                card.innerHTML = `
+                    <div class="material-preview">
+                        ${mat.badge ? `<span class="material-badge">${mat.badge}</span>` : ''}
+                        <div class="mini-card" style="background: ${mat.color}; ${getMaterialStyle(mat)}">
+                            <div style="position: absolute; top: 8px; left: 10px; width: 18px; height: 14px; background: linear-gradient(135deg, #d4af37, #b8941f); border-radius: 3px;"></div>
+                            <div style="position: absolute; bottom: 15px; left: 10px; font-family: var(--font-serif); font-size: 8px; color: ${isDarkMaterial(mat.id) ? '#c9a962' : '#1a1a1a'}; font-style: italic;">CARDEL</div>
+                            <div style="position: absolute; bottom: 8px; left: 10px; font-size: 5px; color: ${isDarkMaterial(mat.id) ? '#aaa' : '#666'};">•••• 0000</div>
+                        </div>
+                    </div>
+                    <div class="material-info">
+                        <h3>${mat.name}</h3>
+                        <p>${mat.thickness} • ${mat.weight}</p>
+                        <div class="material-price">${mat.price === 0 ? 'Included' : '+$' + mat.price}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
             });
             
-            document.addEventListener('mousemove', (e) => {
-                const x = (e.clientX / window.innerWidth) * 2 - 1;
-                const y = -(e.clientY / window.innerHeight) * 2 + 1;
-                gsap.to(heroObj.mesh.rotation, { y: x * 0.2, x: y * 0.1, duration: 0.5 });
-            });
-
-            const input = document.getElementById('name-input');
-            let isEditing = false;
-            window.addEventListener('click', (e) => {
-                if(e.target.closest('#hero-wrapper') && !e.target.closest('.config-panel') && !e.target.closest('button')) {
-                    isEditing = !isEditing;
-                    const hint = document.getElementById('edit-hint');
-                    if(isEditing) {
-                        input.focus();
-                        gsap.to(heroObj.mesh.position, { x: 0, z: 3.5 });
-                        hint.classList.add('show');
-                    } else {
-                        input.blur();
-                        gsap.to(heroObj.mesh.position, { x: 2, z: 0 });
-                        hint.classList.remove('show');
-                    }
+            // Update tabs
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(category)) {
+                    tab.classList.add('active');
                 }
             });
-
-            input.addEventListener('input', () => {
-                heroObj.faceMat.map = generateTexture(heroObj.matType, input.value.toUpperCase());
-            });
-
-            window.setHeroMat = (t, el) => {
-                document.querySelectorAll('.mat-btn').forEach(b => b.classList.remove('active'));
-                el.classList.add('active');
-                heroObj.matType = t;
-                heroObj.faceMat.map = generateTexture(t, input.value.toUpperCase());
-                
-                if(t==='gold') { 
-                    heroObj.faceMat.color.setHex(0xFFD700); heroObj.sideMat.color.setHex(0xFFD700);
-                } else if(t==='black') { 
-                    heroObj.faceMat.color.setHex(0xFFFFFF); heroObj.sideMat.color.setHex(0x111111);
-                } else { 
-                    heroObj.faceMat.color.setHex(0xFFFFFF); heroObj.sideMat.color.setHex(0xEEEEEE);
-                }
-            };
         }
 
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if(window.scrollY > 50) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+        function getMaterialStyle(mat) {
+            if (mat.id === 'carbon-fiber') {
+                return 'background: linear-gradient(45deg, #1a1a1a 25%, #2a2a2a 25%, #2a2a2a 50%, #1a1a1a 50%, #1a1a1a 75%, #2a2a2a 75%); background-size: 8px 8px;';
+            }
+            if (mat.id === 'walnut' || mat.id === 'bamboo') {
+                return `background: ${mat.color}; position: relative;`;
+            }
+            return '';
+        }
+
+        function filterMaterials(category) {
+            loadMaterials(category);
+            
+            gsap.from('.material-card', {
+                y: 30,
+                opacity: 0,
+                duration: 0.5,
+                stagger: 0.08,
+                ease: 'power2.out'
+            });
+        }
+
+        function selectMaterial(materialId) {
+            state.cardData.material = materialId;
+            
+            document.querySelectorAll('.material-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            updateAllCards();
+            updateOrderSummary();
+            updateSpecs();
+            
+            const mat = getCurrentMaterial();
+            showToast(`${mat.name} selected`);
+        }
+
+        function setupInputListeners() {
+            ['cardName', 'cardNumber', 'cardEmail'].forEach(id => {
+                document.getElementById(id).addEventListener('input', (e) => {
+                    const field = id.replace('card', '').toLowerCase();
+                    state.cardData[field === 'name' ? 'name' : field === 'number' ? 'number' : 'email'] = e.target.value;
+                    updateAllCards();
+                });
+            });
+        }
+
+        function setup3DTilt() {
+            const container = document.getElementById('cardContainer3d');
+            const wrapper = document.getElementById('card3dWrapper');
+            
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / centerY * -15;
+                const rotateY = (x - centerX) / centerX * 15;
+                
+                wrapper.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                wrapper.style.transform = 'perspective(1500px) rotateX(0deg) rotateY(0deg)';
+            });
+        }
+
+        function updateAllCards() {
+            drawCard('heroFrontCanvas', 'front', 600, 378);
+            drawCard('heroBackCanvas', 'back', 600, 378);
+            drawCard('finalFrontCanvas', 'front', 512, 322);
+            drawCard('finalBackCanvas', 'back', 512, 322);
+        }
+
+        function drawCard(canvasId, side, w, h) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            ctx.scale(dpr, dpr);
+            
+            const mat = getCurrentMaterial();
+            const isDark = isDarkMaterial(mat.id);
+            const textColor = isDark ? '#c9a962' : '#1a1a1a';
+            const subTextColor = isDark ? '#ffffff' : '#1a1a1a';
+            const accentColor = '#c9a962';
+            
+            // Background
+            drawBackground(ctx, w, h, mat);
+            
+            if (side === 'front') {
+                drawFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor);
+            } else {
+                drawBackSide(ctx, w, h, mat, isDark, subTextColor, accentColor);
+            }
+            
+            // Border shine
+            const borderGrad = ctx.createLinearGradient(0, 0, w, h);
+            borderGrad.addColorStop(0, 'rgba(255,255,255,0.35)');
+            borderGrad.addColorStop(0.5, 'rgba(255,255,255,0)');
+            borderGrad.addColorStop(1, 'rgba(255,255,255,0.15)');
+            ctx.strokeStyle = borderGrad;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(1, 1, w - 2, h - 2);
+        }
+
+        function drawBackground(ctx, w, h, mat) {
+            if (mat.id === 'carbon-fiber') {
+                ctx.fillStyle = '#0a0a0a';
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalAlpha = 0.4;
+                const size = w / 25;
+                for (let y = -size; y < h + size; y += size / 2) {
+                    for (let x = -size; x < w + size; x += size) {
+                        const offset = (y / (size / 2)) % 2 === 0 ? 0 : size / 2;
+                        ctx.fillStyle = ((x + offset) / size + y / (size / 2)) % 2 === 0 ? '#1a1a1a' : '#2a2a2a';
+                        ctx.beginPath();
+                        ctx.moveTo(x + offset, y);
+                        ctx.lineTo(x + offset + size / 2, y + size / 4);
+                        ctx.lineTo(x + offset + size, y);
+                        ctx.lineTo(x + offset + size / 2, y - size / 4);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                }
+                ctx.globalAlpha = 1;
+            } else if (mat.id === 'forged-carbon') {
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(0, 0, w, h);
+                for (let i = 0; i < 60; i++) {
+                    const x = Math.random() * w;
+                    const y = Math.random() * h;
+                    const r = Math.random() * 40 + 15;
+                    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+                    grad.addColorStop(0, `rgba(60, 60, 60, ${Math.random() * 0.4})`);
+                    grad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else if (mat.id === 'walnut' || mat.id === 'bamboo' || mat.id === 'ebony') {
+                ctx.fillStyle = mat.color;
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalAlpha = 0.15;
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 40; i++) {
+                    ctx.beginPath();
+                    const x = Math.random() * w;
+                    ctx.moveTo(x, 0);
+                    let cx = x;
+                    for (let y = 0; y < h; y += 15) {
+                        cx += (Math.random() - 0.5) * 8;
+                        ctx.lineTo(cx, y);
+                    }
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1;
+            } else if (mat.id === 'meteorite') {
+                ctx.fillStyle = '#3a3a3a';
+                ctx.fillRect(0, 0, w, h);
+                ctx.strokeStyle = 'rgba(201, 169, 98, 0.25)';
+                ctx.lineWidth = 1.5;
+                for (let i = 0; i < 25; i++) {
+                    ctx.beginPath();
+                    const sx = Math.random() * w;
+                    const sy = Math.random() * h;
+                    ctx.moveTo(sx, sy);
+                    for (let j = 0; j < 4; j++) {
+                        ctx.lineTo(sx + (Math.random() - 0.5) * 300, sy + (Math.random() - 0.5) * 300);
+                    }
+                    ctx.stroke();
+                }
+            } else if (mat.id === 'mother-pearl') {
+                const grad = ctx.createLinearGradient(0, 0, w, h);
+                grad.addColorStop(0, '#f5f5f5');
+                grad.addColorStop(0.3, '#e8e8e8');
+                grad.addColorStop(0.5, '#f0f0f0');
+                grad.addColorStop(0.7, '#e5e5e5');
+                grad.addColorStop(1, '#f5f5f5');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalAlpha = 0.08;
+                for (let i = 0; i < 15; i++) {
+                    const g = ctx.createLinearGradient(Math.random() * w, Math.random() * h, Math.random() * w, Math.random() * h);
+                    g.addColorStop(0, 'rgba(255, 200, 200, 0.4)');
+                    g.addColorStop(0.5, 'rgba(200, 255, 200, 0.4)');
+                    g.addColorStop(1, 'rgba(200, 200, 255, 0.4)');
+                    ctx.fillStyle = g;
+                    ctx.fillRect(0, 0, w, h);
+                }
+                ctx.globalAlpha = 1;
+            } else {
+                // Metallic gradient
+                const grad = ctx.createLinearGradient(0, 0, w, h);
+                grad.addColorStop(0, mat.color);
+                grad.addColorStop(0.5, adjustBrightness(mat.color, isDarkMaterial(mat.id) ? 12 : -8));
+                grad.addColorStop(1, mat.color);
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, w, h);
+                
+                // Brushed effect
+                if (mat.id.includes('metal') || mat.id.includes('gold') || mat.id.includes('silver') || mat.id.includes('rose')) {
+                    ctx.globalAlpha = 0.12;
+                    ctx.fillStyle = '#fff';
+                    for (let i = 0; i < h; i += 2) {
+                        ctx.globalAlpha = (Math.sin(i * 0.05) * 0.5 + 0.5) * 0.12;
+                        ctx.fillRect(0, i, w, 1);
+                    }
+                    ctx.globalAlpha = 1;
+                }
+            }
+        }
+
+        function drawFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor) {
+            const scale = w / 600;
+            
+            // EMV Chip
+            const chipX = 50 * scale;
+            const chipY = 65 * scale;
+            const chipW = 55 * scale;
+            const chipH = 42 * scale;
+            
+            ctx.fillStyle = '#d4af37';
+            ctx.beginPath();
+            ctx.roundRect(chipX, chipY, chipW, chipH, 6 * scale);
+            ctx.fill();
+            
+            ctx.fillStyle = '#b8941f';
+            ctx.beginPath();
+            ctx.roundRect(chipX + 4 * scale, chipY + 4 * scale, chipW - 8 * scale, chipH - 8 * scale, 4 * scale);
+            ctx.fill();
+            
+            ctx.strokeStyle = '#8b6914';
+            ctx.lineWidth = 2 * scale;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(chipX + 12 * scale + i * 14 * scale, chipY + 10 * scale);
+                ctx.lineTo(chipX + 12 * scale + i * 14 * scale, chipY + 32 * scale);
+                ctx.stroke();
+            }
+            ctx.beginPath();
+            ctx.moveTo(chipX + 12 * scale, chipY + 21 * scale);
+            ctx.lineTo(chipX + 43 * scale, chipY + 21 * scale);
+            ctx.stroke();
+            
+            // NFC Logo
+            ctx.font = `bold ${14 * scale}px Inter`;
+            ctx.fillStyle = accentColor;
+            ctx.textAlign = 'right';
+            ctx.fillText('NFC', w - 50 * scale, 45 * scale);
+            
+            // Name
+            ctx.font = `italic ${38 * scale}px "Cormorant Garamond"`;
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'left';
+            ctx.fillText(state.cardData.name, 50 * scale, 180 * scale);
+            
+            // Number
+            ctx.font = `300 ${26 * scale}px Inter`;
+            ctx.fillStyle = subTextColor;
+            ctx.letterSpacing = '4px';
+            ctx.fillText(state.cardData.number, 50 * scale, 235 * scale);
+            
+            // Email
+            ctx.font = `300 ${16 * scale}px Inter`;
+            ctx.fillStyle = isDark ? '#aaaaaa' : '#666666';
+            ctx.fillText(state.cardData.email, 50 * scale, 270 * scale);
+            
+            // Logo
+            const logoX = w - 80 * scale;
+            const logoY = 240 * scale;
+            const logoR = 28 * scale;
+            
+            ctx.beginPath();
+            ctx.arc(logoX, logoY, logoR, 0, Math.PI * 2);
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 3 * scale;
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(logoX, logoY, logoR * 0.65, 0, Math.PI, false);
+            ctx.strokeStyle = accentColor;
+            ctx.lineWidth = 2 * scale;
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(logoX, logoY, logoR * 0.25, 0, Math.PI * 2);
+            ctx.fillStyle = accentColor;
+            ctx.fill();
+            
+            // Laser indicator
+            if (state.orderConfig.addons.laser) {
+                ctx.strokeStyle = accentColor;
+                ctx.lineWidth = 1 * scale;
+                ctx.setLineDash([4 * scale, 4 * scale]);
+                ctx.strokeRect(40 * scale, 155 * scale, 320 * scale, 130 * scale);
+                ctx.setLineDash([]);
+                
+                ctx.font = `bold ${10 * scale}px Inter`;
+                ctx.fillStyle = accentColor;
+                ctx.fillText('LASER ENGRAVED', 45 * scale, 148 * scale);
+            }
+        }
+
+        function drawBackSide(ctx, w, h, mat, isDark, subTextColor, accentColor) {
+            const scale = w / 600;
+            
+            // Magnetic stripe
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 55 * scale, w, 50 * scale);
+            
+            // Signature panel
+            ctx.fillStyle = '#f8f8f8';
+            ctx.fillRect(45 * scale, 130 * scale, 220 * scale, 45 * scale);
+            
+            ctx.font = `italic ${18 * scale}px "Cormorant Garamond"`;
+            ctx.fillStyle = '#555';
+            ctx.textAlign = 'left';
+            ctx.fillText('Authorized Signature', 55 * scale, 158 * scale);
+            
+            // CVV
+            ctx.font = `bold ${16 * scale}px Inter`;
+            ctx.fillStyle = isDark ? '#fff' : '#1a1a1a';
+            ctx.fillText('CVV: 123', 285 * scale, 158 * scale);
+            
+            // QR Code
+            if (state.orderConfig.addons.qr) {
+                const qrX = w - 130 * scale;
+                const qrY = 200 * scale;
+                const qrS = 70 * scale;
+                
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(qrX - 5 * scale, qrY - 5 * scale, qrS + 10 * scale, qrS + 10 * scale);
+                
+                ctx.fillStyle = '#1a1a1a';
+                const positions = [[0, 0], [qrS - 21 * scale, 0], [0, qrS - 21 * scale]];
+                positions.forEach(([px, py]) => {
+                    ctx.fillRect(qrX + px, qrY + py, 21 * scale, 21 * scale);
+                    ctx.clearRect(qrX + px + 4 * scale, qrY + py + 4 * scale, 13 * scale, 13 * scale);
+                    ctx.fillRect(qrX + px + 7 * scale, qrY + py + 7 * scale, 7 * scale, 7 * scale);
+                });
+                
+                // Random data
+                for (let i = 0; i < 50; i++) {
+                    const rx = Math.floor(Math.random() * (qrS - 30 * scale)) + 25 * scale;
+                    const ry = Math.floor(Math.random() * (qrS - 30 * scale)) + 5 * scale;
+                    if (rx > 25 * scale && ry > 25 * scale && rx < qrS - 25 * scale && ry < qrS - 25 * scale) {
+                        ctx.fillRect(qrX + rx, qrY + ry, Math.random() * 5 * scale + 2 * scale, Math.random() * 5 * scale + 2 * scale);
+                    }
+                }
+            }
+            
+            // Contact text
+            ctx.font = `12px Inter`;
+            ctx.fillStyle = isDark ? '#aaa' : '#666';
+            ctx.textAlign = 'center';
+            if (state.orderConfig.addons.qr) {
+                ctx.fillText('Scan QR code to save contact', w / 2, h - 45 * scale);
+            }
+            
+            // NFC indicator
+            ctx.font = `bold ${10 * scale}px Inter`;
+            ctx.fillStyle = accentColor;
+            ctx.fillText('NFC ENABLED', w / 2, h - 22 * scale);
+        }
+
+        function isDarkMaterial(id) {
+            const darkMaterials = ['black-metal', 'carbon-fiber', 'forged-carbon', 'walnut', 'ebony', 'bamboo', 'meteorite'];
+            return darkMaterials.includes(id);
+        }
+
+        function adjustBrightness(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.min(255, Math.max(0, (num >> 16) + amt));
+            const G = Math.min(255, Math.max(0, (num >> 8 & 0x00FF) + amt));
+            const B = Math.min(255, Math.max(0, (num & 0x0000FF) + amt));
+            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        }
+
+        function getCurrentMaterial() {
+            for (const cat of Object.keys(state.materials)) {
+                const mat = state.materials[cat].find(m => m.id === state.cardData.material);
+                if (mat) return mat;
+            }
+            return state.materials.metal[0];
+        }
+
+        function flipCard() {
+            const inner = document.getElementById('card3dInner');
+            inner.classList.toggle('flipped');
+            
+            const isFlipped = inner.classList.contains('flipped');
+            document.getElementById('frontBtn').classList.toggle('active', !isFlipped);
+            document.getElementById('backBtn').classList.toggle('active', isFlipped);
+        }
+
+        function showCardFace(face) {
+            const inner = document.getElementById('card3dInner');
+            if (face === 'front') {
+                inner.classList.remove('flipped');
+            } else {
+                inner.classList.add('flipped');
+            }
+            
+            document.getElementById('frontBtn').classList.toggle('active', face === 'front');
+            document.getElementById('backBtn').classList.toggle('active', face === 'back');
+        }
+
+        function selectQuantity(qty, price) {
+            state.orderConfig.quantity = qty;
+            state.orderConfig.basePrice = price;
+            
+            document.querySelectorAll('.quantity-option').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            updateOrderSummary();
+        }
+
+        function toggleAddon(element, addon) {
+            const toggle = element.querySelector('.toggle-switch');
+            toggle.classList.toggle('active');
+            element.classList.toggle('selected');
+            
+            state.orderConfig.addons[addon] = toggle.classList.contains('active');
+            
+            updateOrderSummary();
+            updateAllCards();
+            updateSpecs();
+        }
+
+        function updateOrderSummary() {
+            const mat = getCurrentMaterial();
+            const materialUpcharge = mat.price * (state.orderConfig.quantity / 10);
+            
+            document.getElementById('summaryQuantity').textContent = `${state.orderConfig.quantity}x ${mat.name} Cards`;
+            document.getElementById('summaryBasePrice').textContent = `$${state.orderConfig.basePrice}`;
+            
+            document.getElementById('summaryQRRow').style.display = state.orderConfig.addons.qr ? 'flex' : 'none';
+            document.getElementById('summaryLaserRow').style.display = state.orderConfig.addons.laser ? 'flex' : 'none';
+            
+            let total = state.orderConfig.basePrice + materialUpcharge;
+            if (state.orderConfig.addons.qr) total += 45;
+            if (state.orderConfig.addons.laser) total += 80;
+            
+            document.getElementById('summaryTotal').textContent = `$${total.toLocaleString()}`;
+        }
+
+        function updateSpecs() {
+            const mat = getCurrentMaterial();
+            
+            document.getElementById('specMaterial').textContent = mat.name;
+            document.getElementById('specThickness').textContent = mat.thickness;
+            document.getElementById('specWeight').textContent = mat.weight;
+            document.getElementById('specFinish').textContent = mat.finish;
+            document.getElementById('specNFC').textContent = state.orderConfig.addons.nfc ? 'Included' : 'Not Included';
+            document.getElementById('specNFC').style.color = state.orderConfig.addons.nfc ? 'var(--color-gold)' : 'inherit';
+            document.getElementById('specQR').textContent = state.orderConfig.addons.qr ? 'Included' : 'Not Included';
+            document.getElementById('specQR').style.color = state.orderConfig.addons.qr ? 'var(--color-gold)' : 'inherit';
+            document.getElementById('specLaser').textContent = state.orderConfig.addons.laser ? 'Included' : 'Not Included';
+            document.getElementById('specLaser').style.color = state.orderConfig.addons.laser ? 'var(--color-gold)' : 'inherit';
+        }
+
+        function proceedToCheckout() {
+            const orderData = {
+                ...state.cardData,
+                ...state.orderConfig,
+                total: document.getElementById('summaryTotal').textContent,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('cardel_order', JSON.stringify(orderData));
+            showToast('Redirecting to secure checkout...');
+            
+            setTimeout(() => {
+                alert(`Order Summary:\n\nMaterial: ${getCurrentMaterial().name}\nQuantity: ${state.orderConfig.quantity}\nTotal: ${orderData.total}\n\nIn production, this would redirect to secure payment gateway.`);
+            }, 1000);
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function setupScrollAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            ScrollTrigger.create({
+                start: 'top -80',
+                end: 99999,
+                toggleClass: { className: 'scrolled', targets: '#navbar' }
+            });
+            
+            gsap.utils.toArray('section').forEach(section => {
+                gsap.from(section.querySelectorAll('h2, p, .feature-item, .material-card, .preview-card-box, .config-section'), {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    y: 25,
+                    opacity: 0,
+                    duration: 0.7,
+                    stagger: 0.08,
+                    ease: 'power2.out'
+                });
+            });
+        }
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            updateAllCards();
         });
     </script>
 </body>
