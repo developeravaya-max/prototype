@@ -93,6 +93,7 @@
             backdrop-filter: blur(8px);
             z-index: 1000;
             border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
         .nav-inner {
@@ -198,6 +199,7 @@
             max-width: 480px;
             position: sticky;
             top: 120px;
+            transition: opacity 0.4s ease, filter 0.4s ease;
         }
 
         /* HEADING */
@@ -337,26 +339,37 @@
         }
 
         /* 3D Card Preview - RIGHT SIDE */
-        .card-preview-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: sticky;
-            top: 100px;
-        }
+      .card-preview-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: sticky;
+    top: 140px; /* Increased from 100px to give more space */
+    transition: opacity 0.4s ease, filter 0.4s ease;
+    padding-top: 40px; /* Add padding to prevent cutoff */
+}
 
-        .card-container-3d {
-            width: 100%;
-            max-width: 420px;
-            perspective: 1500px;
-            position: relative;
-            animation: float 6s ease-in-out infinite;
-        }
+       .card-container-3d {
+    width: 100%;
+    max-width: 420px;
+    perspective: 1500px;
+    position: relative;
+    animation: float 6s ease-in-out infinite;
+    cursor: pointer;
+    z-index: 100;
+    will-change: transform; /* Optimize for animations */
+}
 
-        .card-container-3d:hover {
-            animation-play-state: paused;
-        }
+.card-container-3d:hover {
+    animation-play-state: paused;
+}
 
+.card-container-3d.zoomed {
+    animation: none;
+    z-index: 9999;
+    filter: none !important;
+    -webkit-filter: none !important;
+}
         .card-3d-wrapper {
             position: relative;
             width: 100%;
@@ -377,28 +390,35 @@
             transform: rotateY(180deg);
         }
 
-        .card-face-3d {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 
-                0 30px 80px rgba(0,0,0,0.2),
-                0 15px 40px rgba(0,0,0,0.15),
-                inset 0 1px 0 rgba(255,255,255,0.2);
-        }
+       .card-face-3d {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 
+        0 30px 80px rgba(0,0,0,0.2),
+        0 15px 40px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+    background: #1a1a1a; /* Fallback background */
+    transform: translateZ(0); /* Force GPU acceleration */
+}
 
         .card-face-3d.back {
             transform: rotateY(180deg);
         }
 
-        .card-canvas-3d {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+       .card-canvas-3d {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateZ(0); /* Force GPU acceleration */
+    backface-visibility: hidden;
+}
 
         /* Card shine effect */
         .card-shine {
@@ -423,100 +443,110 @@
             opacity: 1;
         }
 
-        /* Interactive Hotspots */
-        .card-hotspot {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: var(--color-gold);
-            border: 2px solid white;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 10;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            animation: pulse 2s infinite;
-        }
-
-        .card-hotspot:hover {
-            transform: scale(1.5);
-            background: #fff;
-            border-color: var(--color-gold);
-        }
-
-        .card-hotspot.active {
-            background: #fff;
-            border-color: var(--color-gold);
-            transform: scale(1.3);
-            animation: none;
-            box-shadow: 0 0 0 4px rgba(201, 169, 98, 0.3);
-        }
-
-        /* Hide hotspot when completed */
-        .card-hotspot.completed {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0);
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(201, 169, 98, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(201, 169, 98, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(201, 169, 98, 0); }
-        }
-
-        /* Floating Input */
-        .floating-input {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid var(--color-gold);
-            border-radius: 8px;
-            padding: 12px;
-            z-index: 20;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            min-width: 250px;
-            backdrop-filter: blur(10px);
-            transform: translateY(10px);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        .floating-input.show {
-            transform: translateY(0);
+        /* Direct Input Overlay on Card */
+      .card-input-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    transform: translateZ(0); /* Force GPU acceleration */
+}
+        .card-container-3d.zoomed .card-input-overlay {
             opacity: 1;
             pointer-events: all;
         }
 
-        .floating-input label {
-            display: block;
+.card-input-field {
+    position: absolute;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+    text-align: left;
+    outline: none;
+    cursor: text;
+    caret-color: #c9a962; /* Gold cursor */
+    padding: 0;
+    margin: 0;
+    /* No background, no border - completely invisible */
+}
+
+.card-input-field::placeholder {
+    color: transparent; /* Hide placeholder */
+    opacity: 0;
+}
+
+/* Only show placeholder on hover/focus hint */
+.card-input-field:hover::placeholder,
+.card-input-field:focus::placeholder {
+    color: rgba(201, 169, 98, 0.4);
+    opacity: 1;
+}
+
+       .input-name {
+    left: 8%;
+    top: 42%;
+    width: 84%;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    color: #c9a962;
+    font-weight: 400;
+    height: 2.2rem;
+    line-height: 2.2rem;
+}
+
+.input-number {
+    left: 8%;
+    top: 56%;
+    width: 84%;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: #ffffff;
+    height: 1.8rem;
+    line-height: 1.8rem;
+}
+
+.input-email {
+    left: 8%;
+    top: 66%;
+    width: 84%;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: #cccccc;
+    height: 1.6rem;
+    line-height: 1.6rem;
+}
+       
+
+        /* Close hint */
+        .close-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
             font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
-            text-transform: uppercase;
+            font-size: 0.8rem;
+            color: #666;
             letter-spacing: 0.1em;
-            color: #888;
-            margin-bottom: 6px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 10000;
+            pointer-events: none;
         }
 
-        .floating-input input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .floating-input input:focus {
-            border-color: var(--color-gold);
-        }
-
-        .floating-input .input-hint {
-            font-size: 0.7rem;
-            color: #aaa;
-            margin-top: 6px;
+        .zoom-overlay.active + .close-hint,
+        .close-hint.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* ===============================
@@ -529,6 +559,7 @@
             margin-top: 3rem;
             width: 100%;
             max-width: 600px;
+            transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
         }
 
         .material-steps {
@@ -1093,7 +1124,7 @@
             transform: translateY(100px);
             opacity: 0;
             transition: all 0.4s ease;
-            z-index: 9999;
+            z-index: 10001;
             font-size: 0.9rem;
         }
 
@@ -1123,6 +1154,23 @@
 
             .card-container-3d {
                 max-width: 340px;
+            }
+
+            .card-container-3d.zoomed {
+                max-width: 90vw;
+                transform: translate(-50%, -50%) scale(1.2) !important;
+            }
+
+            .input-name {
+                font-size: 1.4rem;
+            }
+
+            .input-number {
+                font-size: 1rem;
+            }
+
+            .input-email {
+                font-size: 0.8rem;
             }
 
             #materials {
@@ -1160,6 +1208,10 @@
             .section-box {
                 padding: 1.5rem;
             }
+
+            .card-container-3d.zoomed {
+                transform: translate(-50%, -50%) scale(1.1) !important;
+            }
         }
 
         @keyframes float {
@@ -1179,8 +1231,12 @@
         </div>
     </div>
 
+    <!-- Zoom Overlay -->
+    <div class="zoom-overlay" id="zoomOverlay"></div>
+    <div class="close-hint" id="closeHint">Click outside card to close</div>
+
     <!-- Navigation -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-inner">
             <div class="nav-left"></div>
             <div class="nav-center">
@@ -1204,7 +1260,7 @@
     <!-- Hero Section -->
     <section id="hero">
         <!-- LEFT SIDE: Content -->
-        <div class="hero-content">
+        <div class="hero-content" id="heroContent">
             <h1>Design<br>Your Legacy.</h1>
             <p class="subtitle">
                 Tailored cards for those who understand detail.
@@ -1214,7 +1270,7 @@
             <div class="checklist-container">
                 <div class="checklist-title">Complete Your Identity</div>
                 
-                <div class="checklist-item" id="check-item-1" onclick="activateHotspot(1)">
+                <div class="checklist-item" id="check-item-1">
                     <div class="check-circle">
                         <span class="check-icon">✓</span>
                     </div>
@@ -1224,7 +1280,7 @@
                     </div>
                 </div>
                 
-                <div class="checklist-item" id="check-item-2" onclick="activateHotspot(2)">
+                <div class="checklist-item" id="check-item-2">
                     <div class="check-circle">
                         <span class="check-icon">✓</span>
                     </div>
@@ -1234,7 +1290,7 @@
                     </div>
                 </div>
                 
-                <div class="checklist-item" id="check-item-3" onclick="activateHotspot(3)">
+                <div class="checklist-item" id="check-item-3">
                     <div class="check-circle">
                         <span class="check-icon">✓</span>
                     </div>
@@ -1249,29 +1305,27 @@
                 Continue to Order →
             </button>
 
-            <p class="hero-help" style="margin-top: 1.5rem; font-family: 'Playfair Display', serif; font-size: 0.9rem; color: #6b6b6b;">Click the gold dots on the card to edit</p>
+            <p class="hero-help" style="margin-top: 1.5rem; font-family: 'Playfair Display', serif; font-size: 0.9rem; color: #6b6b6b;">Click the card to edit details</p>
         </div>
         
         <!-- RIGHT SIDE: Card + Materials -->
-        <div class="card-preview-section">
+        <div class="card-preview-section" id="cardPreviewSection">
             <!-- 3D Card -->
-            <div class="card-container-3d" id="cardContainer3d">
+            <div class="card-container-3d" id="cardContainer3d" onclick="toggleCardZoom(event)">
                 <div class="card-3d-wrapper" id="card3dWrapper">
                     <div class="card-3d-inner" id="card3dInner">
                         <div class="card-face-3d front" id="cardFrontFace">
                             <canvas id="heroFrontCanvas" class="card-canvas-3d"></canvas>
                             <div class="card-shine"></div>
                             
-                            <!-- Hotspots -->
-                            <div class="card-hotspot" id="hotspot-1" style="left: 12%; top: 45%;" onclick="handleHotspotClick(1, event)"></div>
-                            <div class="card-hotspot" id="hotspot-2" style="left: 12%; top: 58%;" onclick="handleHotspotClick(2, event)"></div>
-                            <div class="card-hotspot" id="hotspot-3" style="left: 12%; top: 68%;" onclick="handleHotspotClick(3, event)"></div>
-                            
-                            <!-- Floating Input -->
-                            <div class="floating-input" id="floatingInput">
-                                <label id="inputLabel">Enter Details</label>
-                                <input type="text" id="activeInput" placeholder="">
-                                <div class="input-hint">Press Enter to confirm</div>
+                            <!-- Direct Input Overlay -->
+                            <div class="card-input-overlay" id="cardInputOverlay" onclick="event.stopPropagation()">
+                                <input type="text" class="card-input-field input-name" id="inputName" 
+                                    placeholder="Your Name" value="" autocomplete="off">
+                                <input type="text" class="card-input-field input-number" id="inputNumber" 
+                                    placeholder="•••• •••• •••• ••••" value="" autocomplete="off">
+                                <input type="email" class="card-input-field input-email" id="inputEmail" 
+                                    placeholder="email@example.com" value="" autocomplete="off">
                             </div>
                         </div>
                         <div class="card-face-3d back">
@@ -1447,6 +1501,7 @@
                 material: 'black-metal'
             },
             activeHotspot: null,
+            isZoomed: false,
             orderConfig: {
                 quantity: 10,
                 basePrice: 590,
@@ -1487,7 +1542,7 @@
             setup3DTilt();
             updateAllCards();
             updateChecklist();
-            setupInputListeners();
+            setupCardInputs();
         });
 
         function simulateLoading() {
@@ -1508,177 +1563,331 @@
             }, 120);
         }
 
-        // Hotspot and Input Logic
-        function handleHotspotClick(num, event) {
-            event.stopPropagation();
-            activateHotspot(num);
-        }
+     // Card Zoom Functionality with GSAP
+function toggleCardZoom(event) {
+    // Prevent zoom if clicking on input fields
+    if (event.target.classList.contains('card-input-field')) {
+        return;
+    }
 
-        function activateHotspot(num) {
-            if (isFieldCompleted(num)) return;
-            
-            state.activeHotspot = num;
-            
-            document.querySelectorAll('.card-hotspot').forEach((h, i) => {
-                if (i + 1 === num) {
-                    h.classList.add('active');
-                } else {
-                    h.classList.remove('active');
-                }
-            });
-            
-            const input = document.getElementById('floatingInput');
-            const activeInput = document.getElementById('activeInput');
-            const label = document.getElementById('inputLabel');
-            
-            input.classList.add('show');
-            
-            const hotspot = document.getElementById(`hotspot-${num}`);
-            
-            input.style.left = (parseFloat(hotspot.style.left) + 5) + '%';
-            input.style.top = (parseFloat(hotspot.style.top) - 15) + '%';
-            
-            if (num === 1) {
-                label.textContent = 'Full Name';
-                activeInput.value = state.cardData.name;
-                activeInput.placeholder = 'Enter your name';
-            } else if (num === 2) {
-                label.textContent = 'Card Number';
-                activeInput.value = state.cardData.number;
-                activeInput.placeholder = '0000 0000 0000 0000';
-            } else if (num === 3) {
-                label.textContent = 'Email Address';
-                activeInput.value = state.cardData.email;
-                activeInput.placeholder = 'your@email.com';
-            }
-            
-            activeInput.focus();
-            updateChecklist();
-        }
+    if (!state.isZoomed) {
+        zoomIn();
+    }
+    // Don't close when clicking the card itself - let the document handler do that
+}
 
-        function isFieldCompleted(num) {
-            if (num === 1) return state.cardData.name.length > 0;
-            if (num === 2) return state.cardData.number.length > 0;
-            if (num === 3) return state.cardData.email.length > 0;
-            return false;
+function zoomIn() {
+    state.isZoomed = true;
+    
+    const cardContainer = document.getElementById('cardContainer3d');
+    const overlay = document.getElementById('zoomOverlay');
+    const closeHint = document.getElementById('closeHint');
+    const heroContent = document.getElementById('heroContent');
+    const materialsSection = document.getElementById('materials');
+    const navbar = document.getElementById('navbar');
+    const inputs = document.querySelectorAll('.card-input-field');
+    
+    // Get card position for FLIP animation
+    const rect = cardContainer.getBoundingClientRect();
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    // Calculate translation to center
+    const translateX = centerX - (rect.left + rect.width / 2);
+    const translateY = centerY - (rect.top + rect.height / 2);
+    
+    // Add zoomed class immediately
+    cardContainer.classList.add('zoomed');
+    overlay.classList.add('active');
+    closeHint.classList.add('visible');
+    
+    // Pause floating animation
+    cardContainer.style.animation = 'none';
+    
+    // Kill any existing tweens on card
+    gsap.killTweensOf(cardContainer);
+    
+    // Animate overlay
+    gsap.to(overlay, {
+        opacity: 1,
+        duration: 0.4,
+        ease: 'power2.out'
+    });
+    
+    // Animate card to center with scale - EXPLICITLY NO BLUR
+    gsap.fromTo(cardContainer, 
+        { x: 0, y: 0, scale: 1 },
+        {
+            x: translateX,
+            y: translateY,
+            scale: 1.4,
+            duration: 0.6,
+            ease: 'power3.out',
+           onComplete: () => {
+    // Force redraw to clear canvas text before showing inputs
+    updateAllCards();
+    
+    // Inputs start invisible (no boxes), only show text when typing
+    inputs.forEach(input => {
+        input.style.opacity = '0'; // Start completely invisible
+        input.style.color = 'transparent'; // Hide text initially
+    });
+    
+    // Show inputs container but keep them invisible until clicked
+    document.getElementById('cardInputOverlay').style.opacity = '1';
+    
+    // Auto-focus first empty field to show cursor immediately
+    setTimeout(() => {
+        const nameInput = document.getElementById('inputName');
+        const numInput = document.getElementById('inputNumber');
+        const emailInput = document.getElementById('inputEmail');
+        
+        if (!state.cardData.name) {
+            nameInput.focus();
+            nameInput.style.opacity = '1';
+            nameInput.style.color = '#c9a962';
+        } else if (!state.cardData.number) {
+            numInput.focus();
+            numInput.style.opacity = '1';
+            numInput.style.color = '#ffffff';
+        } else if (!state.cardData.email) {
+            emailInput.focus();
+            emailInput.style.opacity = '1';
+            emailInput.style.color = '#cccccc';
+        } else {
+            nameInput.focus();
+            nameInput.style.opacity = '1';
+            nameInput.style.color = '#c9a962';
         }
+    }, 100);
+}
+        }
+    );
+    
+    // Fade out and blur ONLY background elements
+    gsap.to([heroContent, materialsSection, navbar], {
+        opacity: 0.2,
+        filter: 'blur(5px)',
+        duration: 0.4,
+        ease: 'power2.out'
+    });
+    
+    // Show close hint
+    gsap.to(closeHint, {
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        delay: 0.3,
+        ease: 'power2.out'
+    });
+}
 
-        function setupInputListeners() {
-            const activeInput = document.getElementById('activeInput');
-            
-            activeInput.addEventListener('input', (e) => {
-                const value = e.target.value;
-                
-                if (state.activeHotspot === 1) {
-                    state.cardData.name = value;
-                } else if (state.activeHotspot === 2) {
-                    state.cardData.number = value;
-                } else if (state.activeHotspot === 3) {
-                    state.cardData.email = value;
-                }
-                
-                updateAllCards();
-                updateChecklist();
-            });
-            
-            activeInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    document.getElementById('floatingInput').classList.remove('show');
-                    document.querySelectorAll('.card-hotspot').forEach(h => h.classList.remove('active'));
-                    
-                    if (state.activeHotspot && isFieldCompleted(state.activeHotspot)) {
-                        const hotspot = document.getElementById(`hotspot-${state.activeHotspot}`);
-                        if (hotspot) {
-                            hotspot.classList.add('completed');
-                        }
-                    }
-                    
-                    state.activeHotspot = null;
-                    updateChecklist();
-                    
-                    if (!state.cardData.name) activateHotspot(1);
-                    else if (!state.cardData.number) activateHotspot(2);
-                    else if (!state.cardData.email) activateHotspot(3);
-                }
-            });
-            
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.floating-input') && !e.target.closest('.card-hotspot') && !e.target.closest('.checklist-item')) {
-                    document.getElementById('floatingInput').classList.remove('show');
-                    document.querySelectorAll('.card-hotspot').forEach(h => h.classList.remove('active'));
-                    
-                    if (state.activeHotspot && isFieldCompleted(state.activeHotspot)) {
-                        const hotspot = document.getElementById(`hotspot-${state.activeHotspot}`);
-                        if (hotspot) {
-                            hotspot.classList.add('completed');
-                        }
-                    }
-                    
-                    state.activeHotspot = null;
-                }
-            });
-        }
+function closeCardZoom() {
+    state.isZoomed = false;
+    
+    const cardContainer = document.getElementById('cardContainer3d');
+    const overlay = document.getElementById('zoomOverlay');
+    const closeHint = document.getElementById('closeHint');
+    const heroContent = document.getElementById('heroContent');
+    const materialsSection = document.getElementById('materials');
+    const navbar = document.getElementById('navbar');
+    const inputs = document.querySelectorAll('.card-input-field');
+    
+    // Hide inputs first - make them transparent again
+inputs.forEach(input => {
+    input.blur();
+    input.style.opacity = '0';
+    input.style.color = 'transparent';
+});
+    
+    // Kill any existing tweens on card
+    gsap.killTweensOf(cardContainer);
+    
+    // Animate card back to original position - EXPLICITLY NO BLUR
+    gsap.to(cardContainer, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        duration: 0.5,
+        ease: 'power3.inOut',
+        onComplete: () => {
+    cardContainer.classList.remove('zoomed');
+    // Clear inline styles that might cause issues
+    cardContainer.style.transform = '';
+    // Resume floating animation
+    cardContainer.style.animation = '';
+    // Force redraw to restore canvas text
+    updateAllCards();
+}
+    });
+    
+    // Animate overlay out
+    gsap.to(overlay, {
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete: () => overlay.classList.remove('active')
+    });
+    
+    // Fade in background elements and remove their blur
+    gsap.to([heroContent, materialsSection, navbar], {
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.4,
+        ease: 'power2.out'
+    });
+    
+    // Hide close hint
+    gsap.to(closeHint, {
+        opacity: 0,
+        y: 20,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete: () => closeHint.classList.remove('visible')
+    });
+}
 
-        function updateChecklist() {
-            const item1 = document.getElementById('check-item-1');
-            const nameSpan = document.getElementById('check-name');
-            const hotspot1 = document.getElementById('hotspot-1');
-            
-            if (state.cardData.name) {
-                item1.classList.add('completed');
-                item1.classList.remove('active');
-                nameSpan.textContent = state.cardData.name;
-                hotspot1.classList.add('completed');
-            } else {
-                item1.classList.remove('completed');
-                if (state.activeHotspot === 1) item1.classList.add('active');
-                else item1.classList.remove('active');
-                nameSpan.textContent = 'Click card to enter';
-                hotspot1.classList.remove('completed');
-            }
-            
-            const item2 = document.getElementById('check-item-2');
-            const numSpan = document.getElementById('check-number');
-            const hotspot2 = document.getElementById('hotspot-2');
-            
-            if (state.cardData.number) {
-                item2.classList.add('completed');
-                item2.classList.remove('active');
-                numSpan.textContent = state.cardData.number;
-                hotspot2.classList.add('completed');
-            } else {
-                item2.classList.remove('completed');
-                if (state.activeHotspot === 2) item2.classList.add('active');
-                else item2.classList.remove('active');
-                numSpan.textContent = 'Click card to enter';
-                hotspot2.classList.remove('completed');
-            }
-            
-            const item3 = document.getElementById('check-item-3');
-            const emailSpan = document.getElementById('check-email');
-            const hotspot3 = document.getElementById('hotspot-3');
-            
-            if (state.cardData.email) {
-                item3.classList.add('completed');
-                item3.classList.remove('active');
-                emailSpan.textContent = state.cardData.email;
-                hotspot3.classList.add('completed');
-            } else {
-                item3.classList.remove('completed');
-                if (state.activeHotspot === 3) item3.classList.add('active');
-                else item3.classList.remove('active');
-                emailSpan.textContent = 'Click card to enter';
-                hotspot3.classList.remove('completed');
-            }
-            
-            // Show/hide next button
-            const nextBtn = document.getElementById('nextBtn');
-            if (state.cardData.name && state.cardData.number && state.cardData.email) {
-                nextBtn.classList.add('visible');
-            } else {
-                nextBtn.classList.remove('visible');
+// Close zoom when clicking outside card
+document.addEventListener('click', (e) => {
+    if (state.isZoomed) {
+        const cardContainer = document.getElementById('cardContainer3d');
+        const inputs = document.querySelectorAll('.card-input-field');
+        
+        // Check if click is outside card and not on an input
+        if (!cardContainer.contains(e.target) && 
+            !e.target.classList.contains('card-input-field')) {
+            closeCardZoom();
+        }
+    }
+});
+
+// Close on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.isZoomed) {
+        closeCardZoom();
+    }
+});
+
+// Close on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.isZoomed) {
+        closeCardZoom();
+    }
+});
+    function setupCardInputs() {
+    const nameInput = document.getElementById('inputName');
+    const numberInput = document.getElementById('inputNumber');
+    const emailInput = document.getElementById('inputEmail');
+    const inputs = [nameInput, numberInput, emailInput];
+
+    // Helper to show input with proper color
+    function showInput(input, color) {
+        input.style.opacity = '1';
+        input.style.color = color;
+    }
+
+    // Click on card area to activate fields
+    document.getElementById('cardInputOverlay').addEventListener('click', (e) => {
+        // If clicking on empty space (not on an input), focus the first empty one
+        if (e.target.id === 'cardInputOverlay') {
+            if (!state.cardData.name) {
+                showInput(nameInput, '#c9a962');
+                nameInput.focus();
+            } else if (!state.cardData.number) {
+                showInput(numberInput, '#ffffff');
+                numberInput.focus();
+            } else if (!state.cardData.email) {
+                showInput(emailInput, '#cccccc');
+                emailInput.focus();
             }
         }
+    });
+
+    // Input field interactions
+    nameInput.addEventListener('focus', () => {
+        showInput(nameInput, '#c9a962');
+    });
+    
+    numberInput.addEventListener('focus', () => {
+        showInput(numberInput, '#ffffff');
+    });
+    
+    emailInput.addEventListener('focus', () => {
+        showInput(emailInput, '#cccccc');
+    });
+
+    // Sync with state on input
+    nameInput.addEventListener('input', (e) => {
+        state.cardData.name = e.target.value;
+        updateChecklist();
+    });
+
+    numberInput.addEventListener('input', (e) => {
+        state.cardData.number = e.target.value;
+        updateChecklist();
+    });
+
+    emailInput.addEventListener('input', (e) => {
+        state.cardData.email = e.target.value;
+        updateChecklist();
+    });
+
+    // Tab navigation - show next field
+    nameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab' || e.key === 'Enter') {
+            e.preventDefault();
+            showInput(numberInput, '#ffffff');
+            numberInput.focus();
+        }
+    });
+
+    numberInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab' || e.key === 'Enter') {
+            e.preventDefault();
+            showInput(emailInput, '#cccccc');
+            emailInput.focus();
+        }
+    });
+
+    emailInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && state.cardData.name && state.cardData.number && state.cardData.email) {
+            closeCardZoom();
+        }
+    });
+}
+
+       function updateChecklist() {
+    // Just update the text and completion status, no active highlighting
+    const nameSpan = document.getElementById('check-name');
+    const numSpan = document.getElementById('check-number');
+    const emailSpan = document.getElementById('check-email');
+    
+    nameSpan.textContent = state.cardData.name || 'Click card to enter';
+    numSpan.textContent = state.cardData.number || 'Click card to enter';
+    emailSpan.textContent = state.cardData.email || 'Click card to enter';
+    
+    // Update completed states (just checkmarks, no active highlighting)
+    const item1 = document.getElementById('check-item-1');
+    const item2 = document.getElementById('check-item-2');
+    const item3 = document.getElementById('check-item-3');
+    
+    if (state.cardData.name) item1.classList.add('completed');
+    else item1.classList.remove('completed');
+    
+    if (state.cardData.number) item2.classList.add('completed');
+    else item2.classList.remove('completed');
+    
+    if (state.cardData.email) item3.classList.add('completed');
+    else item3.classList.remove('completed');
+    
+    // Show/hide next button
+    const nextBtn = document.getElementById('nextBtn');
+    if (state.cardData.name && state.cardData.number && state.cardData.email) {
+        nextBtn.classList.add('visible');
+    } else {
+        nextBtn.classList.remove('visible');
+    }
+}
 
         // Transition to Order Section
         function goToOrder() {
@@ -1964,6 +2173,8 @@
             const wrapper = document.getElementById('card3dWrapper');
             
             container.addEventListener('mousemove', (e) => {
+                if (state.isZoomed) return; // Disable tilt when zoomed
+                
                 const rect = container.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -1978,13 +2189,20 @@
             });
             
             container.addEventListener('mouseleave', () => {
-                wrapper.style.transform = 'perspective(1500px) rotateX(0deg) rotateY(0deg)';
+                if (!state.isZoomed) {
+                    wrapper.style.transform = 'perspective(1500px) rotateX(0deg) rotateY(0deg)';
+                }
             });
         }
 
         function updateAllCards() {
             drawCard('heroFrontCanvas', 'front', 600, 378);
             drawCard('heroBackCanvas', 'back', 600, 378);
+            
+            // Sync input values with state
+            document.getElementById('inputName').value = state.cardData.name;
+            document.getElementById('inputNumber').value = state.cardData.number;
+            document.getElementById('inputEmail').value = state.cardData.email;
         }
 
         function drawCard(canvasId, side, w, h) {
@@ -2167,58 +2385,69 @@
             ctx.fillRect(0, 0, w, h);
         }
 
-        function drawFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor) {
-            const scale = w / 600;
-            const chipW = 75 * scale;
-            const chipH = 54 * scale;
-            const chipX = 50 * scale;
-            const chipY = 65 * scale;
-            const r = 8 * scale;
-            const chipGrad = ctx.createLinearGradient(chipX, chipY, chipX + chipW, chipY + chipH);
-            chipGrad.addColorStop(0, '#FFF6D5');
-            chipGrad.addColorStop(0.3, '#D4AF37');
-            chipGrad.addColorStop(0.6, '#C5A028');
-            chipGrad.addColorStop(1, '#997314');
-            ctx.fillStyle = chipGrad;
-            ctx.shadowColor = 'rgba(0,0,0,0.15)';
-            ctx.shadowBlur = 2 * scale;
-            ctx.shadowOffsetY = 1 * scale;
-            ctx.beginPath();
-            ctx.rect(chipX, chipY, chipW, chipH);
-            ctx.fill();
-            ctx.shadowColor = 'transparent';
-            ctx.shadowBlur = 0;
-            ctx.shadowOffsetY = 0;
-            ctx.strokeStyle = 'rgba(80, 60, 10, 0.45)'; 
-            ctx.lineWidth = 1.2 * scale;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            const cx = chipX + chipW / 2;
-            const cy = chipY + chipH / 2;
-            ctx.beginPath(); ctx.moveTo(chipX, cy); ctx.lineTo(chipX + chipW, cy); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.33, chipY); ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.35); ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.33, chipY + chipH); ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.65); ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.66, chipY); ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.35); ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.66, chipY + chipH); ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.65); ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy); ctx.stroke();
-            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-            ctx.lineWidth = 1 * scale;
-            ctx.beginPath(); ctx.rect(chipX + 1, chipY + 1, chipW - 2, chipH - 2); ctx.stroke();
-            ctx.font = `bold ${14 * scale}px Inter`;
-            ctx.fillStyle = accentColor;
-            ctx.textAlign = 'right';
-            ctx.fillText('NFC', w - 50 * scale, 45 * scale);
-            ctx.font = `italic ${38 * scale}px "Cormorant Garamond"`;
-            ctx.fillStyle = textColor;
-            ctx.textAlign = 'left';
-            ctx.fillText(state.cardData.name || 'Your Name', 50 * scale, 180 * scale);
-            ctx.font = `300 ${26 * scale}px Inter`;
-            ctx.fillStyle = subTextColor;
-            ctx.letterSpacing = '4px';
-            ctx.fillText(state.cardData.number || '•••• •••• •••• ••••', 50 * scale, 235 * scale);
-            ctx.font = `300 ${16 * scale}px Inter`;
-            ctx.fillStyle = isDark ? '#aaaaaa' : '#666666';
-            ctx.fillText(state.cardData.email || 'email@example.com', 50 * scale, 270 * scale);
-        }
+     function drawFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor) {
+    const scale = w / 600;
+    
+    // Draw Chip
+    const chipW = 75 * scale;
+    const chipH = 54 * scale;
+    const chipX = 50 * scale;
+    const chipY = 65 * scale;
+    const chipGrad = ctx.createLinearGradient(chipX, chipY, chipX + chipW, chipY + chipH);
+    chipGrad.addColorStop(0, '#FFF6D5');
+    chipGrad.addColorStop(0.3, '#D4AF37');
+    chipGrad.addColorStop(0.6, '#C5A028');
+    chipGrad.addColorStop(1, '#997314');
+    ctx.fillStyle = chipGrad;
+    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+    ctx.shadowBlur = 2 * scale;
+    ctx.shadowOffsetY = 1 * scale;
+    ctx.beginPath();
+    ctx.rect(chipX, chipY, chipW, chipH);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    
+    // Chip details
+    ctx.strokeStyle = 'rgba(80, 60, 10, 0.45)'; 
+    ctx.lineWidth = 1.2 * scale;
+    const cx = chipX + chipW / 2;
+    const cy = chipY + chipH / 2;
+    ctx.beginPath(); ctx.moveTo(chipX, cy); ctx.lineTo(chipX + chipW, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.33, chipY); ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.35); ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.33, chipY + chipH); ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.65); ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.66, chipY); ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.35); ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.66, chipY + chipH); ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.65); ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy); ctx.stroke();
+    
+    // NFC Label
+    ctx.font = `bold ${14 * scale}px Inter`;
+    ctx.fillStyle = accentColor;
+    ctx.textAlign = 'right';
+    ctx.fillText('NFC', w - 50 * scale, 45 * scale);
+    
+    // ONLY draw text on canvas when NOT zoomed - inputs handle it when zoomed
+    if (!state.isZoomed) {
+        // Name
+        ctx.font = `italic ${38 * scale}px "Cormorant Garamond"`;
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'left';
+        const nameText = state.cardData.name || 'Your Name';
+        ctx.fillText(nameText, 50 * scale, 180 * scale);
+        
+        // Card Number
+        ctx.font = `300 ${26 * scale}px Inter`;
+        ctx.fillStyle = subTextColor;
+        const numText = state.cardData.number || '•••• •••• •••• ••••';
+        ctx.fillText(numText, 50 * scale, 235 * scale);
+        
+        // Email
+        ctx.font = `300 ${16 * scale}px Inter`;
+        ctx.fillStyle = isDark ? '#aaaaaa' : '#666666';
+        const emailText = state.cardData.email || 'email@example.com';
+        ctx.fillText(emailText, 50 * scale, 270 * scale);
+    }
+}
 
         function drawBackSide(ctx, w, h, mat, isDark, subTextColor, accentColor) {
             const scale = w / 600;
