@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -83,59 +84,88 @@
             transition: width 0.3s ease;
         }
 
-        /* Navigation */
-        nav {
+        /* ================= NAVBAR ================= */
+        .navbar {
             position: fixed;
             top: 0;
-            left: 0;
             width: 100%;
-            padding: 1.25rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: rgba(245, 243, 240, 0.96);
+            backdrop-filter: blur(8px);
             z-index: 1000;
-            background: rgba(245, 243, 240, 0.95);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        nav.scrolled {
-            padding: 0.875rem 3rem;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        .nav-inner {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 1.4rem 3rem 0.6rem 3rem;
+        }
+
+        .nav-center {
+            text-align: center;
         }
 
         .nav-logo {
-            font-family: var(--font-serif);
-            font-size: 1.5rem;
-            letter-spacing: 0.2em;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            letter-spacing: 0.35em;
             font-weight: 500;
+            color: #222;
+        }
+
+        .nav-right {
+            text-align: right;
+        }
+
+        .nav-begin {
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            color: #222;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-begin:hover {
+            opacity: 0.6;
+        }
+
+        .nav-links-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 0.8rem 0 1.2rem 0;
         }
 
         .nav-links {
             display: flex;
-            gap: 2.5rem;
+            gap: 3rem;
             list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
         .nav-links a {
             text-decoration: none;
-            color: var(--color-text);
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-            transition: color 0.3s ease;
+            color: #444;
             position: relative;
-            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .nav-links a::after {
-            content: '';
+            content: "";
             position: absolute;
-            bottom: -5px;
+            bottom: -6px;
             left: 0;
             width: 0;
             height: 1px;
-            background: var(--color-gold);
+            background: #b89a60;
             transition: width 0.3s ease;
         }
 
@@ -144,26 +174,7 @@
         }
 
         .nav-links a:hover {
-            color: var(--color-gold);
-        }
-
-        .nav-btn {
-            background: var(--color-text);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-btn:hover {
-            background: var(--color-gold);
-            transform: translateY(-2px);
+            color: #b89a60;
         }
 
         /* Sections */
@@ -172,121 +183,179 @@
             width: 100%;
         }
 
-        /* Hero Section */
         #hero {
             min-height: 100vh;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 520px 1fr;
+            align-items: start;
+            padding: 9rem 6rem 5rem;
+            margin-top: 0;
             gap: 4rem;
-            align-items: center;
-            padding: 8rem 4rem 4rem;
         }
 
+        /* LEFT CONTENT WRAPPER */
         .hero-content {
-            max-width: 520px;
+            max-width: 480px;
+            position: sticky;
+            top: 120px;
         }
 
+        /* HEADING */
         .hero-content h1 {
-            font-family: var(--font-serif);
-            font-size: clamp(2.5rem, 4.5vw, 3.5rem);
+            font-family: 'Playfair Display', serif;
+            font-size: 3.4rem;
             font-weight: 300;
-            line-height: 1.15;
-            margin-bottom: 1rem;
+            line-height: 1.05;
             letter-spacing: -0.02em;
+            margin-bottom: 1.2rem;
+            color: #1f1f1f;
         }
 
-        .hero-content .subtitle {
-            font-size: 1rem;
-            color: var(--color-muted);
-            margin-bottom: 2.5rem;
-            line-height: 1.7;
+        /* SUBTITLE */
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            font-weight: 400;
+            line-height: 1.6;
+            color: #5e5e5e;
+            margin-bottom: 2.4rem;
+            max-width: 380px;
         }
 
-        .hero-form {
-            background: white;
+        /* Checklist Styles */
+        .checklist-container {
+            margin-top: 2rem;
             padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.06);
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            border: 1px solid #e5e5e5;
         }
 
-        .form-group {
-            margin-bottom: 1.25rem;
+        .checklist-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #1f1f1f;
+            letter-spacing: 0.05em;
         }
 
-        .form-group label {
-            display: block;
-            font-size: 0.65rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--color-muted);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            border: 1.5px solid #e8e8e8;
-            border-radius: 10px;
-            font-family: var(--font-sans);
-            font-size: 0.95rem;
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             transition: all 0.3s ease;
-            background: #fafafa;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--color-gold);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(201, 169, 98, 0.1);
-        }
-
-        .btn-primary {
-            background: var(--color-text);
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
+            opacity: 0.5;
             cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            font-weight: 500;
-            margin-top: 0.5rem;
         }
 
-        .btn-primary:hover {
+        .checklist-item:hover {
+            opacity: 0.8;
+        }
+
+        .checklist-item.active {
+            opacity: 1;
+        }
+
+        .checklist-item.completed {
+            opacity: 0.6;
+        }
+
+        .checklist-item.completed .check-circle {
             background: var(--color-gold);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(201, 169, 98, 0.3);
+            border-color: var(--color-gold);
         }
 
-        /* 3D Card Preview */
+        .checklist-item.completed .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .check-circle {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .check-icon {
+            color: white;
+            font-size: 12px;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+
+        .check-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .check-text span {
+            font-size: 0.75rem;
+            color: #888;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Next Button */
+        .next-btn {
+            margin-top: 2rem;
+            padding: 1rem 3rem;
+            background: #1e1e1e;
+            color: #ffffff;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+        }
+
+        .next-btn.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* 3D Card Preview - RIGHT SIDE */
         .card-preview-section {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             position: sticky;
             top: 100px;
         }
 
         .card-container-3d {
-    width: 100%;
-    max-width: 420px;
-    perspective: 1500px;
-    margin-bottom: 2rem;
-    
-    /* ADD THIS LINE: */
-    animation: float 6s ease-in-out infinite;
-}
+            width: 100%;
+            max-width: 420px;
+            perspective: 1500px;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
 
-/* ADD THIS RULE: Pause floating when user interacts to prevent "slippery" feel */
-.card-container-3d:hover {
-    animation-play-state: paused;
-}
+        .card-container-3d:hover {
+            animation-play-state: paused;
+        }
 
         .card-3d-wrapper {
             position: relative;
@@ -354,656 +423,664 @@
             opacity: 1;
         }
 
-        /* Card Controls */
-        .card-controls {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            padding: 0.625rem 1.25rem;
-            border-radius: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
+        /* Interactive Hotspots */
+        .card-hotspot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--color-gold);
+            border: 2px solid white;
+            border-radius: 50%;
             cursor: pointer;
-            padding: 0.5rem 1rem;
-            color: var(--color-muted);
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-radius: 20px;
-            font-weight: 500;
+            animation: pulse 2s infinite;
         }
 
-        .control-btn:hover {
-            color: var(--color-gold);
-            background: rgba(201, 169, 98, 0.1);
+        .card-hotspot:hover {
+            transform: scale(1.5);
+            background: #fff;
+            border-color: var(--color-gold);
         }
 
-        .control-btn.active {
-            color: var(--color-gold);
-            background: rgba(201, 169, 98, 0.15);
+        .card-hotspot.active {
+            background: #fff;
+            border-color: var(--color-gold);
+            transform: scale(1.3);
+            animation: none;
+            box-shadow: 0 0 0 4px rgba(201, 169, 98, 0.3);
         }
 
-        /* Material Section */
+        /* Hide hotspot when completed */
+        .card-hotspot.completed {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(201, 169, 98, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(201, 169, 98, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(201, 169, 98, 0); }
+        }
+
+        /* Floating Input */
+        .floating-input {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--color-gold);
+            border-radius: 8px;
+            padding: 12px;
+            z-index: 20;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            min-width: 250px;
+            backdrop-filter: blur(10px);
+            transform: translateY(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .floating-input.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .floating-input label {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .floating-input input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .floating-input input:focus {
+            border-color: var(--color-gold);
+        }
+
+        .floating-input .input-hint {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 6px;
+        }
+
+        /* ===============================
+           MATERIAL SECTION - BELOW CARD
+        ================================== */
         #materials {
-            padding: 5rem 4rem;
-            background: var(--color-light);
-        }
-
-        .section-header {
+            padding: 2rem 0;
+            background: transparent;
             text-align: center;
-            margin-bottom: 3rem;
+            margin-top: 3rem;
+            width: 100%;
+            max-width: 600px;
         }
 
-        .section-header h2 {
-            font-family: var(--font-serif);
-            font-size: clamp(2rem, 3.5vw, 2.75rem);
-            font-weight: 400;
-            margin-bottom: 0.75rem;
+        .material-steps {
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #8a8a8a;
+            margin-bottom: 1.5rem;
         }
 
-        .section-header p {
-            color: var(--color-muted);
-            font-size: 1rem;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* Category Tabs */
         .category-tabs {
             display: flex;
             justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 2.5rem;
+            gap: 2.5rem;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
         }
 
         .category-tab {
-            padding: 0.75rem 1.5rem;
-            border: 2px solid transparent;
-            background: white;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: var(--color-muted);
+            color: #7d7d7d;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 500;
+            position: relative;
         }
 
         .category-tab:hover {
-            border-color: var(--color-gold);
-            color: var(--color-text);
+            color: #000;
         }
 
         .category-tab.active {
-            border-color: var(--color-gold);
-            background: rgba(201, 169, 98, 0.1);
-            color: var(--color-text);
+            color: #000;
         }
 
-        /* Material Grid */
+        .category-tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 2px;
+            background: #000;
+        }
+
         .materials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .material-card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
+            background: none;
+            border: none;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            border: 2px solid transparent;
+            text-align: center;
+            transition: transform 0.3s ease;
+            width: 130px;
+            flex: 0 0 auto;
         }
 
         .material-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-        }
-
-        .material-card.selected {
-            border-color: var(--color-gold);
-            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.2), 0 15px 40px rgba(201, 169, 98, 0.15);
+            transform: translateY(-3px);
         }
 
         .material-preview {
-            height: 160px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 130px;
+            height: 60px;
+            border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 0.75rem;
+            position: relative;
         }
 
         .mini-card {
-            width: 140px;
-            height: 88px;
-            border-radius: 10px;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 6px;
             position: relative;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            transform: perspective(500px) rotateY(-15deg) rotateX(5deg);
-            transition: transform 0.4s ease;
-        }
-
-        .material-card:hover .mini-card {
-            transform: perspective(500px) rotateY(-5deg) rotateX(2deg) scale(1.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .material-info {
-            padding: 1.25rem;
+            padding: 0;
         }
 
         .material-info h3 {
-            font-family: var(--font-serif);
-            font-size: 1.1rem;
-            margin-bottom: 0.375rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: #6e6e6e;
+            margin-bottom: 2px;
         }
 
         .material-info p {
-            font-size: 0.8rem;
-            color: var(--color-muted);
-            margin-bottom: 0.5rem;
+            font-size: 0.6rem;
+            color: #999;
+            margin-bottom: 2px;
         }
 
         .material-price {
-            font-size: 0.85rem;
-            color: var(--color-gold);
-            font-weight: 600;
+            font-size: 0.7rem;
+            color: #c9a962;
+            font-weight: 500;
+        }
+
+        .material-dots {
+            margin-top: 6px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .material-dots span {
+            width: 5px;
+            height: 5px;
+            background: #bdbdbd;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .material-card.selected .material-dots span:first-child {
+            background: #000;
         }
 
         .material-badge {
             position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            background: var(--color-gold);
-            color: white;
-            padding: 0.25rem 0.625rem;
+            top: 4px;
+            right: 4px;
+            background: #c9a962;
+            color: #1a1a1a;
+            font-size: 0.5rem;
+            padding: 2px 6px;
             border-radius: 20px;
-            font-size: 0.65rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            font-weight: 500;
+            z-index: 2;
         }
 
-        /* Features Section */
-        #features {
-            padding: 5rem 4rem;
-            background: white;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-item {
-            text-align: center;
-            padding: 2rem 1.5rem;
-            background: var(--color-light);
-            border-radius: 20px;
-            transition: all 0.4s ease;
-        }
-
-        .feature-item:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            background: white;
-        }
-
-        .feature-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 1.25rem;
-            background: linear-gradient(135deg, var(--color-gold) 0%, #b8941f 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            color: white;
-            box-shadow: 0 10px 30px rgba(201, 169, 98, 0.3);
-        }
-
-        .feature-item h3 {
-            font-family: var(--font-serif);
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .feature-item p {
-            font-size: 0.85rem;
-            color: var(--color-muted);
-            line-height: 1.7;
-        }
-
-        /* Final Preview Section */
-        #preview {
-            padding: 5rem 4rem;
-            background: var(--color-bg);
-        }
-
-        .preview-container {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 4rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            align-items: center;
-        }
-
-        .preview-cards {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-        }
-
-        .preview-card-box {
-            text-align: center;
-        }
-
-        .preview-card-box h4 {
-            font-family: var(--font-serif);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            color: var(--color-muted);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        .preview-card-wrapper {
-            width: 320px;
-            aspect-ratio: 1.586;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.18);
-        }
-
-        .preview-info {
-            padding: 1rem;
-        }
-
-        .preview-info h3 {
-            font-family: var(--font-serif);
-            font-size: 2rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .preview-info > p {
-            color: var(--color-muted);
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-        }
-
-        .spec-list {
-            list-style: none;
-            margin-bottom: 2rem;
-        }
-
-        .spec-list li {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.875rem 0;
-            border-bottom: 1px solid #e8e8e8;
-            font-size: 0.9rem;
-        }
-
-        .spec-list li:last-child {
-            border-bottom: none;
-        }
-
-        .spec-list li span:first-child {
-            color: var(--color-muted);
-        }
-
-        .spec-list li span:last-child {
-            font-weight: 500;
-        }
-
-        /* Order Section */
+        /* ===============================
+           ORDER SECTION
+        ================================== */
         #order {
-            padding: 5rem 4rem;
-            background: var(--color-light);
+            min-height: 100vh;
+            padding: 6rem 4rem;
+            background: #faf9f7;
+            display: none;
+            opacity: 0;
+        }
+
+        #order.visible {
+            display: block;
         }
 
         .order-container {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 3rem;
             max-width: 1200px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
         }
 
-        .order-config {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+        .order-header {
+            margin-bottom: 3rem;
         }
 
-        .config-section {
-            margin-bottom: 2rem;
-        }
-
-        .config-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .config-section h4 {
-            font-family: var(--font-serif);
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .step-badge {
+        .order-number {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
-            background: var(--color-gold);
-            color: white;
+            width: 32px;
+            height: 32px;
+            border: 2px solid #1a1a1a;
             border-radius: 50%;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            margin-right: 1rem;
+        }
+
+        .order-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            color: #1a1a1a;
+            display: inline;
+        }
+
+        .order-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #6b6b6b;
+            margin-top: 0.5rem;
+            margin-left: 3rem;
+        }
+
+        .section-box {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .section-label {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-label::before {
+            content: "▭";
             font-size: 0.8rem;
-            font-family: var(--font-serif);
-            flex-shrink: 0;
+            color: #999;
         }
 
-        .config-section > p {
-            font-size: 0.875rem;
-            color: var(--color-muted);
-            margin-bottom: 1rem;
+        .section-sublabel {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 1.5rem;
         }
 
-        .quantity-selector {
+        .quantity-options {
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .quantity-option {
             flex: 1;
-            padding: 1rem;
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
+            min-width: 140px;
+            padding: 1.2rem;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: center;
             position: relative;
+            background: white;
         }
 
         .quantity-option:hover {
-            border-color: var(--color-gold);
+            border-color: #c9a962;
         }
 
         .quantity-option.selected {
-            border-color: var(--color-gold);
-            background: rgba(201, 169, 98, 0.08);
+            border-color: #1a1a1a;
+            background: #faf9f7;
         }
 
-        .quantity-option .qty-label {
-            font-size: 0.8rem;
-            color: var(--color-muted);
-            margin-bottom: 0.25rem;
+        .quantity-radio {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            margin-bottom: 0.8rem;
+            position: relative;
+            transition: all 0.3s ease;
         }
 
-        .quantity-option .price {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--color-text);
+        .quantity-option.selected .quantity-radio {
+            border-color: #c9a962;
+            background: #c9a962;
+        }
+
+        .quantity-option.selected .quantity-radio::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .quantity-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .quantity-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #1a1a1a;
+            margin-top: 0.3rem;
         }
 
         .popular-badge {
             position: absolute;
             top: -10px;
             right: 10px;
-            font-size: 0.6rem;
-            background: var(--color-gold);
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
+            background: #f5f3f0;
+            color: #666;
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .addon-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 1rem;
-            border: 1.5px solid #e8e8e8;
+            justify-content: space-between;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .addon-item:last-child {
+            border-bottom: none;
+        }
+
+        .addon-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .addon-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .addon-radio.checked {
+            border-color: #c9a962;
+            background: #c9a962;
+        }
+
+        .addon-radio.checked::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .addon-radio.included {
+            border-color: #c9a962;
+            background: #c9a962;
+            cursor: default;
+        }
+
+        .addon-radio.included::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .addon-text h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .addon-text p {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .addon-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .addon-price.included {
+            color: #c9a962;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: #e5e5e5;
             border-radius: 12px;
-            margin-bottom: 0.75rem;
+            position: relative;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .addon-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .addon-item:hover {
-            border-color: var(--color-gold);
-        }
-
-        .addon-item.selected {
-            border-color: var(--color-gold);
-            background: rgba(201, 169, 98, 0.05);
-        }
-
-        .addon-info h5 {
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-            font-weight: 500;
-        }
-
-        .addon-info p {
-            font-size: 0.75rem;
-            color: var(--color-muted);
-        }
-
-        .addon-price {
-            color: var(--color-gold);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .toggle-switch {
-            width: 46px;
-            height: 26px;
-            background: #ddd;
-            border-radius: 13px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-left: 1rem;
-            flex-shrink: 0;
-        }
-
         .toggle-switch.active {
-            background: var(--color-gold);
+            background: #c9a962;
         }
 
         .toggle-switch::after {
-            content: '';
+            content: "";
             position: absolute;
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
             top: 2px;
             left: 2px;
-            transition: transform 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .toggle-switch.active::after {
-            transform: translateX(20px);
+            left: 22px;
         }
 
-        /* Order Summary */
-        .order-summary {
-            background: white;
-            padding: 1.75rem;
-            border-radius: 20px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.05);
+        .order-preview-section {
             position: sticky;
-            top: 100px;
-            height: fit-content;
+            top: 120px;
         }
 
-        .order-summary h3 {
-            font-family: var(--font-serif);
-            font-size: 1.35rem;
-            margin-bottom: 1.25rem;
+        .final-card-container {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto 2rem;
+            perspective: 1000px;
+        }
+
+        .final-card {
+            width: 100%;
+            aspect-ratio: 1.586;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .order-summary-box {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .summary-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid var(--color-gold);
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .summary-item {
+        .summary-line {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             font-size: 0.9rem;
         }
 
-        .summary-item.total {
-            margin-top: 1.25rem;
-            padding-top: 1.25rem;
-            border-top: 2px solid #eee;
-            font-size: 1.2rem;
-            font-weight: 600;
+        .summary-line.total {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid #1a1a1a;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 500;
         }
 
-        .summary-note {
-            font-size: 0.8rem;
-            color: var(--color-muted);
+        .summary-label {
+            color: #555;
+        }
+
+        .summary-value {
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .tax-note {
+            font-size: 0.75rem;
+            color: #888;
             text-align: right;
             margin-top: 0.5rem;
         }
 
         .checkout-btn {
             width: 100%;
-            padding: 1.125rem;
+            margin-top: 1.5rem;
+            padding: 1.2rem;
             background: linear-gradient(135deg, #c9a962 0%, #b8941f 100%);
             color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
-            margin-top: 1.5rem;
             transition: all 0.3s ease;
-            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(201, 169, 98, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
         .checkout-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(201, 169, 98, 0.4);
+            box-shadow: 0 6px 20px rgba(201, 169, 98, 0.4);
         }
 
-        .secure-badge {
+        .checkout-btn::after {
+            content: "→";
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .checkout-btn:hover::after {
+            transform: translateX(4px);
+        }
+
+        .security-badges {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            font-size: 0.7rem;
-            color: var(--color-muted);
-        }
-
-        /* Partners Section */
-        #partners {
-            padding: 4rem;
-            background: var(--color-bg);
-        }
-
-        .partners-logos {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 3.5rem;
+            gap: 1rem;
+            margin-top: 1.5rem;
             flex-wrap: wrap;
-            margin-top: 2rem;
-            opacity: 0.5;
         }
 
-        .partner-logo {
-            font-family: var(--font-serif);
-            font-size: 1.1rem;
-            letter-spacing: 0.15em;
-            color: var(--color-text);
-            font-weight: 500;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--color-text);
-            color: white;
-            padding: 4rem 4rem 2rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: 1.5fr repeat(3, 1fr);
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-section h4 {
-            font-family: var(--font-serif);
-            font-size: 1.25rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .footer-section p {
-            color: #888;
-            font-size: 0.875rem;
-            line-height: 1.7;
-        }
-
-        .footer-section a {
-            display: block;
-            color: #888;
-            text-decoration: none;
-            margin-bottom: 0.625rem;
-            font-size: 0.875rem;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section a:hover {
-            color: var(--color-gold);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #333;
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.7rem;
             color: #666;
-            font-size: 0.8rem;
         }
 
-        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -1033,6 +1110,11 @@
                 padding-top: 7rem;
             }
 
+            .hero-content {
+                position: relative;
+                top: 0;
+            }
+
             .card-preview-section {
                 position: relative;
                 top: 0;
@@ -1040,87 +1122,53 @@
             }
 
             .card-container-3d {
-                max-width: 380px;
+                max-width: 340px;
             }
 
-            .preview-container {
-                grid-template-columns: 1fr;
-                gap: 3rem;
-            }
-
-            .preview-cards {
-                flex-direction: column;
-                align-items: center;
+            #materials {
+                margin-left: 0;
             }
 
             .order-container {
                 grid-template-columns: 1fr;
+                gap: 3rem;
             }
 
-            .order-summary {
+            .order-preview-section {
                 position: relative;
                 top: 0;
             }
         }
 
         @media (max-width: 768px) {
-            nav {
-                padding: 1rem 1.5rem;
-            }
-
             .nav-links {
                 display: none;
             }
 
-            #hero, #materials, #features, #preview, #order, #partners, footer {
+            #hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            #order {
                 padding: 3rem 1.5rem;
             }
 
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .materials-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .quantity-selector {
+            .quantity-options {
                 flex-direction: column;
             }
 
-            .preview-card-wrapper {
-                width: 100%;
-                max-width: 300px;
-            }
-
-            .footer-content {
-                grid-template-columns: 1fr 1fr;
-                gap: 2rem;
-            }
-
-            .category-tabs {
-                gap: 0.5rem;
-            }
-
-            .category-tab {
-                padding: 0.625rem 1rem;
-                font-size: 0.7rem;
+            .section-box {
+                padding: 1.5rem;
             }
         }
-        /* Floating Animation Keyframes */
-@keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
-    100% {
-        transform: translateY(0px);
-    }
-}
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
     </style>
-<base target="_blank">
+    <base target="_blank">
 </head>
 <body>
     <!-- Loading Screen -->
@@ -1132,48 +1180,99 @@
     </div>
 
     <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-logo">CARDEL</div>
-        <ul class="nav-links">
-            <li><a href="#hero">Design</a></li>
-            <li><a href="#materials">Materials</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#preview">Preview</a></li>
-            <li><a href="#order">Order</a></li>
-        </ul>
-        <button class="nav-btn" onclick="scrollToSection('order')">Begin</button>
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="nav-left"></div>
+            <div class="nav-center">
+                <div class="nav-logo">CARDEL</div>
+            </div>
+            <div class="nav-right">
+                <a href="#order" class="nav-begin">Begin</a>
+            </div>
+        </div>
+        <div class="nav-links-wrapper">
+            <ul class="nav-links">
+                <li><a href="#">Design</a></li>
+                <li><a href="#">Materials</a></li>
+                <li><a href="#">Atelier</a></li>
+                <li><a href="#">Order</a></li>
+                <li><a href="#">Help</a></li>
+            </ul>
+        </div>
     </nav>
 
     <!-- Hero Section -->
     <section id="hero">
+        <!-- LEFT SIDE: Content -->
         <div class="hero-content">
-            <h1>Design Your Legacy.</h1>
-            <p class="subtitle">Craft a premium business card that makes a lasting impression. Every detail is precision-engineered for those who understand the value of distinction.</p>
+            <h1>Design<br>Your Legacy.</h1>
+            <p class="subtitle">
+                Tailored cards for those who understand detail.
+            </p>
             
-            <div class="hero-form">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="cardName" placeholder="Enter your name" value="Malik Huzaifa">
+            <!-- Checklist -->
+            <div class="checklist-container">
+                <div class="checklist-title">Complete Your Identity</div>
+                
+                <div class="checklist-item" id="check-item-1" onclick="activateHotspot(1)">
+                    <div class="check-circle">
+                        <span class="check-icon">✓</span>
+                    </div>
+                    <div class="check-text">
+                        Full Name
+                        <span id="check-name">Click card to enter</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Card Number</label>
-                    <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" value="1234 5678 9000 0000">
+                
+                <div class="checklist-item" id="check-item-2" onclick="activateHotspot(2)">
+                    <div class="check-circle">
+                        <span class="check-icon">✓</span>
+                    </div>
+                    <div class="check-text">
+                        Card Number
+                        <span id="check-number">Click card to enter</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="cardEmail" placeholder="your@email.com" value="malik@huzaifa.com">
+                
+                <div class="checklist-item" id="check-item-3" onclick="activateHotspot(3)">
+                    <div class="check-circle">
+                        <span class="check-icon">✓</span>
+                    </div>
+                    <div class="check-text">
+                        Email Address
+                        <span id="check-email">Click card to enter</span>
+                    </div>
                 </div>
-                <button class="btn-primary" onclick="scrollToSection('materials')">Continue to Materials</button>
             </div>
+
+            <button class="next-btn" id="nextBtn" onclick="goToOrder()">
+                Continue to Order →
+            </button>
+
+            <p class="hero-help" style="margin-top: 1.5rem; font-family: 'Playfair Display', serif; font-size: 0.9rem; color: #6b6b6b;">Click the gold dots on the card to edit</p>
         </div>
         
+        <!-- RIGHT SIDE: Card + Materials -->
         <div class="card-preview-section">
+            <!-- 3D Card -->
             <div class="card-container-3d" id="cardContainer3d">
                 <div class="card-3d-wrapper" id="card3dWrapper">
                     <div class="card-3d-inner" id="card3dInner">
-                        <div class="card-face-3d front">
+                        <div class="card-face-3d front" id="cardFrontFace">
                             <canvas id="heroFrontCanvas" class="card-canvas-3d"></canvas>
                             <div class="card-shine"></div>
+                            
+                            <!-- Hotspots -->
+                            <div class="card-hotspot" id="hotspot-1" style="left: 12%; top: 45%;" onclick="handleHotspotClick(1, event)"></div>
+                            <div class="card-hotspot" id="hotspot-2" style="left: 12%; top: 58%;" onclick="handleHotspotClick(2, event)"></div>
+                            <div class="card-hotspot" id="hotspot-3" style="left: 12%; top: 68%;" onclick="handleHotspotClick(3, event)"></div>
+                            
+                            <!-- Floating Input -->
+                            <div class="floating-input" id="floatingInput">
+                                <label id="inputLabel">Enter Details</label>
+                                <input type="text" id="activeInput" placeholder="">
+                                <div class="input-hint">Press Enter to confirm</div>
+                            </div>
                         </div>
                         <div class="card-face-3d back">
                             <canvas id="heroBackCanvas" class="card-canvas-3d"></canvas>
@@ -1182,310 +1281,158 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="card-controls">
-                <button class="control-btn active" id="frontBtn" onclick="showCardFace('front')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                    </svg>
-                    Front
-                </button>
-                <button class="control-btn" id="flipBtn" onclick="flipCard()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"></path>
-                    </svg>
-                    Flip
-                </button>
-                <button class="control-btn" id="backBtn" onclick="showCardFace('back')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                    </svg>
-                    Back
-                </button>
-            </div>
-        </div>
-    </section>
 
-    <!-- Materials Section -->
-    <section id="materials">
-        <div class="section-header">
-            <h2>Choose Your Material</h2>
-            <p>Select from our curated collection of premium materials, each crafted to perfection</p>
-        </div>
-
-        <div class="category-tabs">
-            <div class="category-tab active" onclick="filterMaterials('metal')">Metal</div>
-            <div class="category-tab" onclick="filterMaterials('wood')">Wood</div>
-            <div class="category-tab" onclick="filterMaterials('carbon')">Carbon</div>
-            <div class="category-tab" onclick="filterMaterials('limited')">Limited</div>
-        </div>
-
-        <div class="materials-grid" id="materialsGrid">
-            <!-- Materials injected by JS -->
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features">
-        <div class="section-header">
-            <h2>Premium Features</h2>
-            <p>Every detail crafted for distinction</p>
-        </div>
-        
-        <div class="features-grid">
-            <div class="feature-item">
-                <div class="feature-icon">◈</div>
-                <h3>NFC Technology</h3>
-                <p>Embedded NFC chip enables instant digital contact sharing. Simply tap your card against any smartphone to transfer your complete profile, eliminating manual data entry.</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">◉</div>
-                <h3>QR Code Integration</h3>
-                <p>Dynamic QR code links directly to your digital portfolio, LinkedIn, or custom landing page. Scannable by any camera app for seamless professional connections.</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">✦</div>
-                <h3>Laser Engraving</h3>
-                <p>Precision laser-etched details create permanent, elegant markings that never fade. Custom logos, signatures, or patterns with micron-level accuracy.</p>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">◆</div>
-                <h3>EMV Chip Design</h3>
-                <p>Authentic banking-grade chip aesthetic with intricate circuit patterns. Adds sophistication and signals premium quality at first glance.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Final Preview Section -->
-    <section id="preview">
-        <div class="section-header">
-            <h2>Your Final Design</h2>
-            <p>Review both sides of your card before placing your order</p>
-        </div>
-        
-        <div class="preview-container">
-            <div class="preview-cards">
-                <div class="preview-card-box">
-                    <h4>Front View</h4>
-                    <div class="preview-card-wrapper">
-                        <canvas id="finalFrontCanvas"></canvas>
-                    </div>
+            <!-- Materials Section - BELOW CARD -->
+            <div id="materials">
+                <div class="material-steps">
+                    STEP 1 : IDENTITY · STEP 2 : MATERIAL · FINISH
                 </div>
-                <div class="preview-card-box">
-                    <h4>Back View</h4>
-                    <div class="preview-card-wrapper">
-                        <canvas id="finalBackCanvas"></canvas>
-                    </div>
+
+                <div class="category-tabs">
+                    <div class="category-tab active" onclick="filterMaterials('metal')">Metal</div>
+                    <div class="category-tab" onclick="filterMaterials('wood')">Wood</div>
+                    <div class="category-tab" onclick="filterMaterials('carbon')">Carbon</div>
+                    <div class="category-tab" onclick="filterMaterials('limited')">Limited</div>
                 </div>
-            </div>
-            
-            <div class="preview-info">
-                <h3>Design Specifications</h3>
-                <p>Your card includes all premium features carefully crafted for maximum impact and lasting impression.</p>
-                
-                <ul class="spec-list">
-                    <li>
-                        <span>Material</span>
-                        <span id="specMaterial">Black Metal Matte</span>
-                    </li>
-                    <li>
-                        <span>Dimensions</span>
-                        <span>85.60 × 53.98 mm</span>
-                    </li>
-                    <li>
-                        <span>Thickness</span>
-                        <span id="specThickness">0.8mm</span>
-                    </li>
-                    <li>
-                        <span>Weight</span>
-                        <span id="specWeight">28g</span>
-                    </li>
-                    <li>
-                        <span>Finish</span>
-                        <span id="specFinish">Brushed Matte</span>
-                    </li>
-                    <li>
-                        <span>NFC Chip</span>
-                        <span id="specNFC" style="color: var(--color-gold);">Included</span>
-                    </li>
-                    <li>
-                        <span>QR Code</span>
-                        <span id="specQR">Not Included</span>
-                    </li>
-                    <li>
-                        <span>Laser Engraving</span>
-                        <span id="specLaser">Not Included</span>
-                    </li>
-                </ul>
-                
-                <button class="btn-primary" onclick="scrollToSection('order')" style="width: auto; padding: 1rem 2.5rem;">Proceed to Order</button>
+
+                <div class="materials-grid" id="materialsGrid"></div>
             </div>
         </div>
     </section>
 
     <!-- Order Section -->
     <section id="order">
-        <div class="section-header">
-            <h2>Configuration & Order</h2>
-            <p>Finalize your specifications and complete your order securely</p>
-        </div>
-        
         <div class="order-container">
-            <div class="order-config">
-                <div class="config-section">
-                    <h4><span class="step-badge">1</span> Card Quantity</h4>
-                    <p>Select the quantity that suits your networking needs:</p>
-                    <div class="quantity-selector">
-                        <div class="quantity-option selected" onclick="selectQuantity(10, 590)">
-                            <div class="qty-label">10 Cards</div>
-                            <div class="price">$590</div>
-                        </div>
-                        <div class="quantity-option" onclick="selectQuantity(25, 1225)">
-                            <span class="popular-badge">Popular</span>
-                            <div class="qty-label">25 Cards</div>
-                            <div class="price">$1,225</div>
-                        </div>
-                        <div class="quantity-option" onclick="selectQuantity(50, 2250)">
-                            <div class="qty-label">50 Cards</div>
-                            <div class="price">$2,250</div>
-                        </div>
-                    </div>
+            <!-- Left Side - Configuration -->
+            <div class="order-left">
+                <div class="order-header">
+                    <span class="order-number">3</span>
+                    <h2 class="order-title">Configuration & Order</h2>
+                    <p class="order-subtitle">Finalize your card specifications and complete your order securely.</p>
                 </div>
 
-                <div class="config-section">
-                    <h4><span class="step-badge">2</span> Premium Add-Ons</h4>
-                    <p>Enhance your card with these exclusive features:</p>
+                <!-- Card Type / Quantity -->
+                <div class="section-box">
+                    <div class="section-label">Card Type</div>
+                    <div class="section-sublabel">Select quantity:</div>
                     
-                    <div class="addon-item selected" onclick="toggleAddon(this, 'nfc')">
-                        <div class="addon-info">
-                            <h5>NFC Chip</h5>
-                            <p>Digital business card technology - tap to share</p>
+                    <div class="quantity-options">
+                        <div class="quantity-option selected" onclick="selectQuantity(10, 590, this)">
+                            <div class="quantity-radio"></div>
+                            <div class="quantity-label">10 Cards</div>
+                            <div class="quantity-price">$590</div>
                         </div>
-                        <div style="display: flex; align-items: center;">
-                            <span class="addon-price">Included</span>
-                            <div class="toggle-switch active"></div>
+                        
+                        <div class="quantity-option" onclick="selectQuantity(25, 1225, this)">
+                            <div class="popular-badge">Popular</div>
+                            <div class="quantity-radio"></div>
+                            <div class="quantity-label">25 Cards</div>
+                            <div class="quantity-price">$1,225</div>
+                        </div>
+                        
+                        <div class="quantity-option" onclick="selectQuantity(50, 2250, this)">
+                            <div class="quantity-radio"></div>
+                            <div class="quantity-label">50 Cards</div>
+                            <div class="quantity-price">$2,250</div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="addon-item" onclick="toggleAddon(this, 'qr')">
+                <!-- Add-ons -->
+                <div class="section-box">
+                    <div class="section-label">Add-Ons</div>
+                    <div class="section-sublabel">Enhance your card:</div>
+                    
+                    <div class="addon-item">
                         <div class="addon-info">
-                            <h5>QR Code</h5>
-                            <p>Scannable link to your digital profile</p>
+                            <div class="addon-radio included"></div>
+                            <div class="addon-text">
+                                <h4>NFC Chip</h4>
+                                <p>Tap to share contact info</p>
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center;">
-                            <span class="addon-price">+$45</span>
-                            <div class="toggle-switch"></div>
-                        </div>
+                        <div class="addon-price included">Included</div>
                     </div>
-
-                    <div class="addon-item" onclick="toggleAddon(this, 'laser')">
+                    
+                    <div class="addon-item">
                         <div class="addon-info">
-                            <h5>Laser Engraving</h5>
-                            <p>Custom text or logo precision engraving</p>
+                            <div class="toggle-switch" id="qrToggle" onclick="toggleAddon('qr')"></div>
+                            <div class="addon-text">
+                                <h4>QR Code</h4>
+                                <p>Digital link</p>
+                            </div>
                         </div>
-                        <div style="display: flex; align-items: center;">
-                            <span class="addon-price">+$80</span>
-                            <div class="toggle-switch"></div>
+                        <div class="addon-price" id="qrPrice">+$45</div>
+                    </div>
+                    
+                    <div class="addon-item">
+                        <div class="addon-info">
+                            <div class="toggle-switch" id="laserToggle" onclick="toggleAddon('laser')"></div>
+                            <div class="addon-text">
+                                <h4>Laser Engraving</h4>
+                                <p>Custom text or logo</p>
+                            </div>
                         </div>
+                        <div class="addon-price" id="laserPrice">+$80</div>
                     </div>
                 </div>
             </div>
 
-            <div class="order-summary">
-                <h3>Order Summary</h3>
-                
-                <div class="summary-item">
-                    <span id="summaryQuantity">10x Black Metal Cards</span>
-                    <span id="summaryBasePrice">$590</span>
+            <!-- Right Side - Preview & Summary -->
+            <div class="order-preview-section">
+                <div class="final-card-container">
+                    <div class="final-card" id="finalCard">
+                        <canvas id="finalCanvas" style="width: 100%; height: 100%;"></canvas>
+                    </div>
                 </div>
-                
-                <div class="summary-item" id="summaryQRRow" style="display: none;">
-                    <span>QR Code</span>
-                    <span>+$45</span>
-                </div>
-                
-                <div class="summary-item" id="summaryLaserRow" style="display: none;">
-                    <span>Laser Engraving</span>
-                    <span>+$80</span>
-                </div>
-                
-                <div class="summary-item total">
-                    <span>Total</span>
-                    <span id="summaryTotal">$590</span>
-                </div>
-                
-                <p class="summary-note">All taxes included</p>
-                
-                <button class="checkout-btn" onclick="proceedToCheckout()">
-                    Proceed to Checkout →
-                </button>
-                
-                <div class="secure-badge">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                    <span>Secure Checkout</span>
-                    <span style="margin: 0 0.4rem;">•</span>
-                    <span>VISA</span>
-                    <span style="margin: 0 0.4rem;">•</span>
-                    <span>MC</span>
-                    <span style="margin: 0 0.4rem;">•</span>
-                    <span>AMEX</span>
+
+                <div class="order-summary-box">
+                    <div class="summary-title">Order Summary</div>
+                    
+                    <div class="summary-line">
+                        <span class="summary-label" id="summaryQty">10x Black Metal Cards</span>
+                        <span class="summary-value" id="summaryBasePrice">$590</span>
+                    </div>
+                    
+                    <div class="summary-line" id="qrSummaryLine" style="display: none;">
+                        <span class="summary-label">QR Code</span>
+                        <span class="summary-value">+$45</span>
+                    </div>
+                    
+                    <div class="summary-line" id="laserSummaryLine" style="display: none;">
+                        <span class="summary-label">Laser Engraving</span>
+                        <span class="summary-value">+$80</span>
+                    </div>
+                    
+                    <div class="summary-line total">
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value" id="summaryTotal">$590</span>
+                    </div>
+                    
+                    <div class="tax-note">All taxes included</div>
+                    
+                    <button class="checkout-btn" onclick="proceedToCheckout()">
+                        Proceed to Checkout
+                    </button>
+                    
+                    <div class="security-badges">
+                        <div class="security-badge">
+                            <span>🔒</span>
+                            <span>Secure Checkout</span>
+                        </div>
+                        <div class="security-badge">
+                            <span style="font-size: 1.2rem;">💳</span>
+                            <span>Encrypted Payment</span>
+                        </div>
+                        <div class="security-badge">
+                            <span>✓</span>
+                            <span>30 Day Guarantee</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Partners Section -->
-    <section id="partners">
-        <div class="section-header">
-            <h2>Our Valued Partners</h2>
-            <p>Preferred by elite brands around the world</p>
-        </div>
-        <div class="partners-logos">
-            <div class="partner-logo">ROLLS-ROYCE</div>
-            <div class="partner-logo">OMEGA</div>
-            <div class="partner-logo">FERRARI</div>
-            <div class="partner-logo">GOLDMAN SACHS</div>
-            <div class="partner-logo">FOUR SEASONS</div>
-            <div class="partner-logo">CREDIT SUISSE</div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>CARDEL</h4>
-                <p>Crafting luxury business cards for those who understand the value of first impressions. Precision engineered, meticulously finished.</p>
-            </div>
-            <div class="footer-section">
-                <h4>Product</h4>
-                <a href="#hero">Design</a>
-                <a href="#materials">Materials</a>
-                <a href="#features">Features</a>
-                <a href="#order">Pricing</a>
-            </div>
-            <div class="footer-section">
-                <h4>Company</h4>
-                <a href="#">About</a>
-                <a href="#">Careers</a>
-                <a href="#">Press</a>
-                <a href="#">Contact</a>
-            </div>
-            <div class="footer-section">
-                <h4>Support</h4>
-                <a href="#">Help Center</a>
-                <a href="#">Shipping</a>
-                <a href="#">Returns</a>
-                <a href="#">Order Status</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 CARDEL. All rights reserved. Designed with precision.</p>
-        </div>
-    </footer>
 
     <!-- Toast -->
     <div class="toast" id="toast"></div>
@@ -1494,11 +1441,12 @@
         // Global State
         const state = {
             cardData: {
-                name: 'Malik Huzaifa',
-                number: '1234 5678 9000 0000',
-                email: 'malik@huzaifa.com',
+                name: '',
+                number: '',
+                email: '',
                 material: 'black-metal'
             },
+            activeHotspot: null,
             orderConfig: {
                 quantity: 10,
                 basePrice: 590,
@@ -1536,12 +1484,10 @@
         window.addEventListener('load', () => {
             simulateLoading();
             loadMaterials('metal');
-            setupInputListeners();
             setup3DTilt();
-            setupScrollAnimations();
             updateAllCards();
-            updateOrderSummary();
-            updateSpecs();
+            updateChecklist();
+            setupInputListeners();
         });
 
         function simulateLoading() {
@@ -1562,6 +1508,231 @@
             }, 120);
         }
 
+        // Hotspot and Input Logic
+        function handleHotspotClick(num, event) {
+            event.stopPropagation();
+            activateHotspot(num);
+        }
+
+        function activateHotspot(num) {
+            if (isFieldCompleted(num)) return;
+            
+            state.activeHotspot = num;
+            
+            document.querySelectorAll('.card-hotspot').forEach((h, i) => {
+                if (i + 1 === num) {
+                    h.classList.add('active');
+                } else {
+                    h.classList.remove('active');
+                }
+            });
+            
+            const input = document.getElementById('floatingInput');
+            const activeInput = document.getElementById('activeInput');
+            const label = document.getElementById('inputLabel');
+            
+            input.classList.add('show');
+            
+            const hotspot = document.getElementById(`hotspot-${num}`);
+            
+            input.style.left = (parseFloat(hotspot.style.left) + 5) + '%';
+            input.style.top = (parseFloat(hotspot.style.top) - 15) + '%';
+            
+            if (num === 1) {
+                label.textContent = 'Full Name';
+                activeInput.value = state.cardData.name;
+                activeInput.placeholder = 'Enter your name';
+            } else if (num === 2) {
+                label.textContent = 'Card Number';
+                activeInput.value = state.cardData.number;
+                activeInput.placeholder = '0000 0000 0000 0000';
+            } else if (num === 3) {
+                label.textContent = 'Email Address';
+                activeInput.value = state.cardData.email;
+                activeInput.placeholder = 'your@email.com';
+            }
+            
+            activeInput.focus();
+            updateChecklist();
+        }
+
+        function isFieldCompleted(num) {
+            if (num === 1) return state.cardData.name.length > 0;
+            if (num === 2) return state.cardData.number.length > 0;
+            if (num === 3) return state.cardData.email.length > 0;
+            return false;
+        }
+
+        function setupInputListeners() {
+            const activeInput = document.getElementById('activeInput');
+            
+            activeInput.addEventListener('input', (e) => {
+                const value = e.target.value;
+                
+                if (state.activeHotspot === 1) {
+                    state.cardData.name = value;
+                } else if (state.activeHotspot === 2) {
+                    state.cardData.number = value;
+                } else if (state.activeHotspot === 3) {
+                    state.cardData.email = value;
+                }
+                
+                updateAllCards();
+                updateChecklist();
+            });
+            
+            activeInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('floatingInput').classList.remove('show');
+                    document.querySelectorAll('.card-hotspot').forEach(h => h.classList.remove('active'));
+                    
+                    if (state.activeHotspot && isFieldCompleted(state.activeHotspot)) {
+                        const hotspot = document.getElementById(`hotspot-${state.activeHotspot}`);
+                        if (hotspot) {
+                            hotspot.classList.add('completed');
+                        }
+                    }
+                    
+                    state.activeHotspot = null;
+                    updateChecklist();
+                    
+                    if (!state.cardData.name) activateHotspot(1);
+                    else if (!state.cardData.number) activateHotspot(2);
+                    else if (!state.cardData.email) activateHotspot(3);
+                }
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.floating-input') && !e.target.closest('.card-hotspot') && !e.target.closest('.checklist-item')) {
+                    document.getElementById('floatingInput').classList.remove('show');
+                    document.querySelectorAll('.card-hotspot').forEach(h => h.classList.remove('active'));
+                    
+                    if (state.activeHotspot && isFieldCompleted(state.activeHotspot)) {
+                        const hotspot = document.getElementById(`hotspot-${state.activeHotspot}`);
+                        if (hotspot) {
+                            hotspot.classList.add('completed');
+                        }
+                    }
+                    
+                    state.activeHotspot = null;
+                }
+            });
+        }
+
+        function updateChecklist() {
+            const item1 = document.getElementById('check-item-1');
+            const nameSpan = document.getElementById('check-name');
+            const hotspot1 = document.getElementById('hotspot-1');
+            
+            if (state.cardData.name) {
+                item1.classList.add('completed');
+                item1.classList.remove('active');
+                nameSpan.textContent = state.cardData.name;
+                hotspot1.classList.add('completed');
+            } else {
+                item1.classList.remove('completed');
+                if (state.activeHotspot === 1) item1.classList.add('active');
+                else item1.classList.remove('active');
+                nameSpan.textContent = 'Click card to enter';
+                hotspot1.classList.remove('completed');
+            }
+            
+            const item2 = document.getElementById('check-item-2');
+            const numSpan = document.getElementById('check-number');
+            const hotspot2 = document.getElementById('hotspot-2');
+            
+            if (state.cardData.number) {
+                item2.classList.add('completed');
+                item2.classList.remove('active');
+                numSpan.textContent = state.cardData.number;
+                hotspot2.classList.add('completed');
+            } else {
+                item2.classList.remove('completed');
+                if (state.activeHotspot === 2) item2.classList.add('active');
+                else item2.classList.remove('active');
+                numSpan.textContent = 'Click card to enter';
+                hotspot2.classList.remove('completed');
+            }
+            
+            const item3 = document.getElementById('check-item-3');
+            const emailSpan = document.getElementById('check-email');
+            const hotspot3 = document.getElementById('hotspot-3');
+            
+            if (state.cardData.email) {
+                item3.classList.add('completed');
+                item3.classList.remove('active');
+                emailSpan.textContent = state.cardData.email;
+                hotspot3.classList.add('completed');
+            } else {
+                item3.classList.remove('completed');
+                if (state.activeHotspot === 3) item3.classList.add('active');
+                else item3.classList.remove('active');
+                emailSpan.textContent = 'Click card to enter';
+                hotspot3.classList.remove('completed');
+            }
+            
+            // Show/hide next button
+            const nextBtn = document.getElementById('nextBtn');
+            if (state.cardData.name && state.cardData.number && state.cardData.email) {
+                nextBtn.classList.add('visible');
+            } else {
+                nextBtn.classList.remove('visible');
+            }
+        }
+
+        // Transition to Order Section
+        function goToOrder() {
+            const orderSection = document.getElementById('order');
+            const cardContainer = document.getElementById('cardContainer3d');
+            
+            orderSection.classList.add('visible');
+            
+            const rect = cardContainer.getBoundingClientRect();
+            const finalRect = document.getElementById('finalCard').getBoundingClientRect();
+            
+            const clone = cardContainer.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.top = rect.top + 'px';
+            clone.style.left = rect.left + 'px';
+            clone.style.width = rect.width + 'px';
+            clone.style.height = rect.height + 'px';
+            clone.style.zIndex = '9999';
+            clone.style.margin = '0';
+            clone.style.animation = 'none';
+            document.body.appendChild(clone);
+            
+            cardContainer.style.opacity = '0';
+            
+            gsap.to(clone, {
+                top: finalRect.top,
+                left: finalRect.left,
+                width: finalRect.width,
+                height: finalRect.height,
+                duration: 0.8,
+                ease: 'power3.inOut',
+                onComplete: () => {
+                    clone.remove();
+                    cardContainer.style.opacity = '1';
+                    drawFinalCard();
+                }
+            });
+            
+            setTimeout(() => {
+                orderSection.scrollIntoView({ behavior: 'smooth' });
+                gsap.to(orderSection, { opacity: 1, duration: 0.5, delay: 0.3 });
+            }, 100);
+            
+            updateOrderSummary();
+        }
+
+        function drawFinalCard() {
+            const canvas = document.getElementById('finalCanvas');
+            if (canvas) {
+                drawCard('finalCanvas', 'front', 380, 240);
+            }
+        }
+
+        // Materials
         function loadMaterials(category) {
             const grid = document.getElementById('materialsGrid');
             grid.innerHTML = '';
@@ -1569,13 +1740,25 @@
             state.materials[category].forEach((mat, index) => {
                 const card = document.createElement('div');
                 card.className = `material-card ${mat.id === state.cardData.material ? 'selected' : ''}`;
-                card.onclick = () => selectMaterial(mat.id);
+                card.setAttribute('data-mat-id', mat.id);
+                card.onclick = (e) => selectMaterial(mat.id, e);
                 card.style.animationDelay = `${index * 0.08}s`;
+                
+                let bgStyle = `background: ${mat.color};`;
+                if (mat.id === 'carbon-fiber') {
+                    bgStyle = 'background: linear-gradient(45deg, #1a1a1a 25%, #2a2a2a 25%, #2a2a2a 50%, #1a1a1a 50%, #1a1a1a 75%, #2a2a2a 75%); background-size: 8px 8px;';
+                } else if (mat.id === 'forged-carbon') {
+                    bgStyle = 'background: #2a2a2a;';
+                } else if (mat.id === 'meteorite') {
+                    bgStyle = 'background: #4a4a4a;';
+                } else if (mat.id === 'mother-pearl') {
+                    bgStyle = 'background: linear-gradient(135deg, #fff, #f0f0f0, #fff);';
+                }
                 
                 card.innerHTML = `
                     <div class="material-preview">
                         ${mat.badge ? `<span class="material-badge">${mat.badge}</span>` : ''}
-                        <div class="mini-card" style="background: ${mat.color}; ${getMaterialStyle(mat)}">
+                        <div class="mini-card" style="${bgStyle}">
                             <div style="position: absolute; top: 8px; left: 10px; width: 18px; height: 14px; background: linear-gradient(135deg, #d4af37, #b8941f); border-radius: 3px;"></div>
                             <div style="position: absolute; bottom: 15px; left: 10px; font-family: var(--font-serif); font-size: 8px; color: ${isDarkMaterial(mat.id) ? '#c9a962' : '#1a1a1a'}; font-style: italic;">CARDEL</div>
                             <div style="position: absolute; bottom: 8px; left: 10px; font-size: 5px; color: ${isDarkMaterial(mat.id) ? '#aaa' : '#666'};">•••• 0000</div>
@@ -1586,27 +1769,17 @@
                         <p>${mat.thickness} • ${mat.weight}</p>
                         <div class="material-price">${mat.price === 0 ? 'Included' : '+$' + mat.price}</div>
                     </div>
+                    <div class="material-dots"><span></span><span></span><span></span></div>
                 `;
                 grid.appendChild(card);
             });
             
-            // Update tabs
             document.querySelectorAll('.category-tab').forEach(tab => {
                 tab.classList.remove('active');
                 if (tab.textContent.toLowerCase().includes(category)) {
                     tab.classList.add('active');
                 }
             });
-        }
-
-        function getMaterialStyle(mat) {
-            if (mat.id === 'carbon-fiber') {
-                return 'background: linear-gradient(45deg, #1a1a1a 25%, #2a2a2a 25%, #2a2a2a 50%, #1a1a1a 50%, #1a1a1a 75%, #2a2a2a 75%); background-size: 8px 8px;';
-            }
-            if (mat.id === 'walnut' || mat.id === 'bamboo') {
-                return `background: ${mat.color}; position: relative;`;
-            }
-            return '';
         }
 
         function filterMaterials(category) {
@@ -1621,32 +1794,171 @@
             });
         }
 
-        function selectMaterial(materialId) {
+        function selectMaterial(materialId, ev) {
             state.cardData.material = materialId;
             
             document.querySelectorAll('.material-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            event.currentTarget.classList.add('selected');
+            if (ev && ev.currentTarget) {
+                ev.currentTarget.classList.add('selected');
+            } else {
+                document.querySelector(`.material-card[data-mat-id="${materialId}"]`).classList.add('selected');
+            }
             
             updateAllCards();
             updateOrderSummary();
-            updateSpecs();
             
             const mat = getCurrentMaterial();
             showToast(`${mat.name} selected`);
         }
 
-        function setupInputListeners() {
-            ['cardName', 'cardNumber', 'cardEmail'].forEach(id => {
-                document.getElementById(id).addEventListener('input', (e) => {
-                    const field = id.replace('card', '').toLowerCase();
-                    state.cardData[field === 'name' ? 'name' : field === 'number' ? 'number' : 'email'] = e.target.value;
-                    updateAllCards();
+        // Order Functions
+        function selectQuantity(qty, price, element) {
+            state.orderConfig.quantity = qty;
+            state.orderConfig.basePrice = price;
+            
+            document.querySelectorAll('.quantity-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            updateOrderSummary();
+        }
+
+        function toggleAddon(addon) {
+            state.orderConfig.addons[addon] = !state.orderConfig.addons[addon];
+            
+            const toggle = document.getElementById(addon + 'Toggle');
+            const priceLine = document.getElementById(addon + 'SummaryLine');
+            
+            if (state.orderConfig.addons[addon]) {
+                toggle.classList.add('active');
+                if (priceLine) priceLine.style.display = 'flex';
+            } else {
+                toggle.classList.remove('active');
+                if (priceLine) priceLine.style.display = 'none';
+            }
+            
+            updateOrderSummary();
+        }
+
+        function updateOrderSummary() {
+            const mat = getCurrentMaterial();
+            const qty = state.orderConfig.quantity;
+            let total = state.orderConfig.basePrice;
+            
+            document.getElementById('summaryQty').textContent = `${qty}x ${mat.name} Cards`;
+            document.getElementById('summaryBasePrice').textContent = `$${state.orderConfig.basePrice}`;
+            
+            if (state.orderConfig.addons.qr) {
+                total += 45;
+            }
+            if (state.orderConfig.addons.laser) {
+                total += 80;
+            }
+            
+            document.getElementById('summaryTotal').textContent = `$${total.toLocaleString()}`;
+            
+            if (document.getElementById('order').classList.contains('visible')) {
+                drawFinalCard();
+            }
+        }
+
+        // Shopify Checkout Integration
+        function proceedToCheckout() {
+            const mat = getCurrentMaterial();
+            const qty = state.orderConfig.quantity;
+            
+            const shopDomain = 'cardel-atelier.myshopify.com';
+            
+            const variantMap = {
+                'black-metal': '1234567890',
+                'gold-metal': '1234567891',
+                'silver-metal': '1234567892',
+                'rose-gold': '1234567893',
+                'walnut': '1234567894',
+                'maple': '1234567895',
+                'ebony': '1234567896',
+                'bamboo': '1234567897',
+                'carbon-fiber': '1234567898',
+                'forged-carbon': '1234567899',
+                'meteorite': '1234567900',
+                'mother-pearl': '1234567901'
+            };
+            
+            const variantId = variantMap[state.cardData.material] || '1234567890';
+            
+            let cartUrl = `https://${shopDomain}/cart/${variantId}:${qty}`;
+            
+            const properties = [];
+            if (state.cardData.name) properties.push(`properties[Name]=${encodeURIComponent(state.cardData.name)}`);
+            if (state.cardData.number) properties.push(`properties[Card Number]=${encodeURIComponent(state.cardData.number)}`);
+            if (state.cardData.email) properties.push(`properties[Email]=${encodeURIComponent(state.cardData.email)}`);
+            if (state.orderConfig.addons.qr) properties.push(`properties[QR Code]=Yes (+$45)`);
+            if (state.orderConfig.addons.laser) properties.push(`properties[Laser Engraving]=Yes (+$80)`);
+            
+            if (properties.length > 0) {
+                cartUrl += '?' + properties.join('&');
+            }
+            
+            showToast('Redirecting to secure checkout...');
+            
+            console.log('Shopify Cart URL:', cartUrl);
+            
+            addToShopifyCart(variantId, qty);
+        }
+
+        function addToShopifyCart(variantId, quantity) {
+            const shopDomain = 'cardel-atelier.myshopify.com';
+            
+            const items = [{
+                id: variantId,
+                quantity: quantity,
+                properties: {
+                    'Name': state.cardData.name,
+                    'Card Number': state.cardData.number,
+                    'Email': state.cardData.email,
+                    'Material': getCurrentMaterial().name,
+                    'QR Code': state.orderConfig.addons.qr ? 'Yes (+$45)' : 'No',
+                    'Laser Engraving': state.orderConfig.addons.laser ? 'Yes (+$80)' : 'No'
+                }
+            }];
+            
+            if (state.orderConfig.addons.qr) {
+                items.push({
+                    id: 'QR_ADDON_VARIANT_ID',
+                    quantity: 1,
+                    properties: { 'For Card': state.cardData.name }
                 });
+            }
+            
+            if (state.orderConfig.addons.laser) {
+                items.push({
+                    id: 'LASER_ADDON_VARIANT_ID',
+                    quantity: 1,
+                    properties: { 'For Card': state.cardData.name }
+                });
+            }
+            
+            fetch(`https://${shopDomain}/cart/add.js`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ items: items })
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = `https://${shopDomain}/cart`;
+            })
+            .catch(error => {
+                console.error('Error adding to cart:', error);
+                showToast('Error adding to cart. Please try again.');
             });
         }
 
+        // Drawing Functions (Canvas)
         function setup3DTilt() {
             const container = document.getElementById('cardContainer3d');
             const wrapper = document.getElementById('card3dWrapper');
@@ -1673,8 +1985,6 @@
         function updateAllCards() {
             drawCard('heroFrontCanvas', 'front', 600, 378);
             drawCard('heroBackCanvas', 'back', 600, 378);
-            drawCard('finalFrontCanvas', 'front', 512, 322);
-            drawCard('finalBackCanvas', 'back', 512, 322);
         }
 
         function drawCard(canvasId, side, w, h) {
@@ -1694,7 +2004,6 @@
             const subTextColor = isDark ? '#ffffff' : '#1a1a1a';
             const accentColor = '#c9a962';
             
-            // Background
             drawBackground(ctx, w, h, mat);
             
             if (side === 'front') {
@@ -1703,7 +2012,6 @@
                 drawBackSide(ctx, w, h, mat, isDark, subTextColor, accentColor);
             }
             
-            // Border shine
             const borderGrad = ctx.createLinearGradient(0, 0, w, h);
             borderGrad.addColorStop(0, 'rgba(255,255,255,0.35)');
             borderGrad.addColorStop(0.5, 'rgba(255,255,255,0)');
@@ -1714,426 +2022,225 @@
         }
 
         function drawBackground(ctx, w, h, mat) {
-    // 1. Carbon Fiber
-    if (mat.id === 'carbon-fiber') {
-        ctx.fillStyle = '#111';
-        ctx.fillRect(0, 0, w, h);
-        
-        // Diagonal weave pattern
-        const size = w / 40;
-        ctx.globalAlpha = 0.15;
-        for (let i = -h; i < w; i += size) {
-            // First direction
-            const grad = ctx.createLinearGradient(i, 0, i + size, size);
-            grad.addColorStop(0, '#000');
-            grad.addColorStop(0.5, '#555');
-            grad.addColorStop(1, '#000');
+            if (mat.id === 'carbon-fiber') {
+                ctx.fillStyle = '#111';
+                ctx.fillRect(0, 0, w, h);
+                const size = w / 40;
+                ctx.globalAlpha = 0.15;
+                for (let i = -h; i < w; i += size) {
+                    const grad = ctx.createLinearGradient(i, 0, i + size, size);
+                    grad.addColorStop(0, '#000');
+                    grad.addColorStop(0.5, '#555');
+                    grad.addColorStop(1, '#000');
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i + size, 0);
+                    ctx.lineTo(i - h + size, h);
+                    ctx.lineTo(i - h, h);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+            } else if (mat.id === 'forged-carbon') {
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(0, 0, w, h);
+                for (let i = 0; i < 120; i++) {
+                    ctx.globalAlpha = Math.random() * 0.15;
+                    ctx.fillStyle = Math.random() > 0.5 ? '#fff' : '#000';
+                    const x = Math.random() * w;
+                    const y = Math.random() * h;
+                    const s = Math.random() * 40 + 10;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + s, y + Math.random() * 20 - 10);
+                    ctx.lineTo(x + s/2, y + s);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+            } else if (['walnut', 'bamboo', 'ebony', 'maple'].includes(mat.id)) {
+                ctx.fillStyle = mat.color;
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalCompositeOperation = 'multiply';
+                ctx.globalAlpha = 0.1;
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                for(let i=0; i < w; i+= 5 + Math.random()*15) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    let cx = i;
+                    for(let j=0; j<h; j+=30) {
+                        cx += (Math.random() - 0.5) * 10;
+                        ctx.lineTo(cx, j);
+                    }
+                    ctx.stroke();
+                }
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.globalAlpha = 1;
+            } else if (mat.id === 'meteorite') {
+                ctx.fillStyle = '#2c2c2c';
+                ctx.fillRect(0, 0, w, h);
+                ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+                ctx.lineWidth = 1;
+                const drawLines = (angle) => {
+                    ctx.save();
+                    ctx.translate(w/2, h/2);
+                    ctx.rotate(angle * Math.PI / 180);
+                    ctx.translate(-w, -h);
+                    for(let i=0; i<w*2; i+=8) {
+                        ctx.beginPath();
+                        ctx.moveTo(i, 0);
+                        ctx.lineTo(i, h*2);
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                };
+                drawLines(45);
+                drawLines(-45);
+                drawLines(0);
+            } else if (mat.id === 'mother-pearl') {
+                const grad = ctx.createLinearGradient(0, 0, w, h);
+                grad.addColorStop(0, '#fff');
+                grad.addColorStop(0.5, '#f0f0f0');
+                grad.addColorStop(1, '#fff');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalAlpha = 0.1;
+                const sheen = ctx.createLinearGradient(0, 0, w, h);
+                sheen.addColorStop(0, 'pink');
+                sheen.addColorStop(0.5, 'lightgreen');
+                sheen.addColorStop(1, 'lightblue');
+                ctx.fillStyle = sheen;
+                ctx.fillRect(0, 0, w, h);
+                ctx.globalAlpha = 1;
+            } else {
+                const isMirror = mat.finish.toLowerCase().includes('mirror') || mat.finish.toLowerCase().includes('polished');
+                drawMetalFinish(ctx, w, h, mat.color, isMirror, isDarkMaterial(mat.id));
+            }
+        }
+
+        function drawMetalFinish(ctx, w, h, color, isMirror, isDark) {
+            const grad = ctx.createLinearGradient(0, 0, w, h);
+            const shift = (c, p) => adjustBrightness(c, p * 0.4); 
+            if (isMirror) {
+                grad.addColorStop(0, shift(color, -20));
+                grad.addColorStop(0.4, color);
+                grad.addColorStop(0.5, shift(color, 25));
+                grad.addColorStop(0.6, color);
+                grad.addColorStop(1, shift(color, -20));
+            } else {
+                grad.addColorStop(0, shift(color, -15));
+                grad.addColorStop(0.3, color);
+                grad.addColorStop(0.5, shift(color, 10));
+                grad.addColorStop(0.7, color);
+                grad.addColorStop(1, shift(color, -15));
+            }
             ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i + size, 0);
-            ctx.lineTo(i - h + size, h);
-            ctx.lineTo(i - h, h);
-            ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-
-    // 2. Forged Carbon
-    } else if (mat.id === 'forged-carbon') {
-        ctx.fillStyle = '#1a1a1a';
-        ctx.fillRect(0, 0, w, h);
-        
-        // Random marble-like flakes
-        for (let i = 0; i < 120; i++) {
-            ctx.globalAlpha = Math.random() * 0.15;
-            ctx.fillStyle = Math.random() > 0.5 ? '#fff' : '#000';
-            
-            const x = Math.random() * w;
-            const y = Math.random() * h;
-            const s = Math.random() * 40 + 10;
-            
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + s, y + Math.random() * 20 - 10);
-            ctx.lineTo(x + s/2, y + s);
-            ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-
-    // 3. Wood Types
-    } else if (['walnut', 'bamboo', 'ebony', 'maple'].includes(mat.id)) {
-        ctx.fillStyle = mat.color;
-        ctx.fillRect(0, 0, w, h);
-        
-        // Wood grain texture
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.globalAlpha = 0.1;
-        
-        // Draw curvy bezier curves for grain
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
-        
-        for(let i=0; i < w; i+= 5 + Math.random()*15) {
-            ctx.beginPath();
-            ctx.moveTo(i, 0);
-            let cx = i;
-            for(let j=0; j<h; j+=30) {
-                cx += (Math.random() - 0.5) * 10;
-                ctx.lineTo(cx, j);
+            ctx.fillRect(0, 0, w, h);
+            const imageData = ctx.getImageData(0, 0, w, h);
+            const data = imageData.data;
+            const noiseFactor = isMirror ? 3 : 6; 
+            for (let i = 0; i < data.length; i += 4) {
+                const r1 = Math.random();
+                const r2 = Math.random();
+                const noise = ((r1 + r2) / 2 - 0.5) * noiseFactor;
+                data[i] = data[i] + noise;
+                data[i+1] = data[i+1] + noise;
+                data[i+2] = data[i+2] + noise;
             }
-            ctx.stroke();
-        }
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.globalAlpha = 1;
-
-    // 4. Special Materials (Meteorite/Pearl)
-    } else if (mat.id === 'meteorite') {
-        ctx.fillStyle = '#2c2c2c';
-        ctx.fillRect(0, 0, w, h);
-        
-        // Widmanstätten pattern (Triangular crystal structure)
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-        ctx.lineWidth = 1;
-        
-        const drawLines = (angle) => {
-            ctx.save();
-            ctx.translate(w/2, h/2);
-            ctx.rotate(angle * Math.PI / 180);
-            ctx.translate(-w, -h);
-            for(let i=0; i<w*2; i+=8) {
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, h*2);
-                ctx.stroke();
+            ctx.putImageData(imageData, 0, 0);
+            if (!isMirror) {
+                ctx.save();
+                ctx.globalCompositeOperation = 'overlay'; 
+                ctx.globalAlpha = 0.04;
+                ctx.fillStyle = '#fff';
+                for (let y = 0; y < h; y += 2) {
+                    if (Math.random() > 0.5) {
+                        ctx.fillRect(0, y, w, 1); 
+                    }
+                }
+                ctx.restore();
             }
-            ctx.restore();
-        };
-        
-        drawLines(45);
-        drawLines(-45);
-        drawLines(0);
-
-    } else if (mat.id === 'mother-pearl') {
-        // Iridescent pearl effect
-        const grad = ctx.createLinearGradient(0, 0, w, h);
-        grad.addColorStop(0, '#fff');
-        grad.addColorStop(0.5, '#f0f0f0');
-        grad.addColorStop(1, '#fff');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, w, h);
-        
-        // Pink/Green distinct sheen
-        ctx.globalAlpha = 0.1;
-        const sheen = ctx.createLinearGradient(0, 0, w, h);
-        sheen.addColorStop(0, 'pink');
-        sheen.addColorStop(0.5, 'lightgreen');
-        sheen.addColorStop(1, 'lightblue');
-        ctx.fillStyle = sheen;
-        ctx.fillRect(0, 0, w, h);
-        ctx.globalAlpha = 1;
-
-    // 5. METAL FINISH (The Fix)
-    } else {
-        const isMirror = mat.finish.toLowerCase().includes('mirror') || mat.finish.toLowerCase().includes('polished');
-        drawMetalFinish(ctx, w, h, mat.color, isMirror, isDarkMaterial(mat.id));
-    }
-}
-function drawMetalFinish(ctx, w, h, color, isMirror, isDark) {
-    // 1. Soft Luxury Gradient
-    // Instead of a sharp line, we create a very gentle curve.
-    // We rotate the gradient slightly (coordinate system) to make the sheen diagonal.
-    const grad = ctx.createLinearGradient(0, 0, w, h);
-    
-    // Helper: drastically reduced intensity for "minimal" look
-    // We multiply the percent by 0.4 to keep changes subtle.
-    const shift = (c, p) => adjustBrightness(c, p * 0.4); 
-    
-    if (isMirror) {
-        // Polished (Gold/Silver/Rose) - Still needs shine, but softer
-        grad.addColorStop(0, shift(color, -20));   // Darker Top Left
-        grad.addColorStop(0.4, color);             // Base Color
-        grad.addColorStop(0.5, shift(color, 25));  // Soft Highlight (No pure white)
-        grad.addColorStop(0.6, color);             // Base Color
-        grad.addColorStop(1, shift(color, -20));   // Darker Bottom Right
-    } else {
-        // Matte / Brushed (Black Metal) - The "Decent" Minimal Look
-        // This creates a flat, stealthy look with just a hint of light
-        grad.addColorStop(0, shift(color, -15));   // Subtle Shadow
-        grad.addColorStop(0.3, color);             // Base
-        grad.addColorStop(0.5, shift(color, 10));  // Very faint lightening in center
-        grad.addColorStop(0.7, color);             // Base
-        grad.addColorStop(1, shift(color, -15));   // Subtle Shadow
-    }
-    
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
-
-    // 2. Micro-Noise (Texture)
-    // We reduce the noise significantly so it looks like "fine grain" metal
-    const imageData = ctx.getImageData(0, 0, w, h);
-    const data = imageData.data;
-    
-    // Minimal noise factor (was 15, now 6 for matte, 3 for mirror)
-    const noiseFactor = isMirror ? 3 : 6; 
-    
-    for (let i = 0; i < data.length; i += 4) {
-        // Use a bell-curve random distribution for smoother noise
-        const r1 = Math.random();
-        const r2 = Math.random();
-        const noise = ((r1 + r2) / 2 - 0.5) * noiseFactor;
-        
-        data[i] = data[i] + noise;
-        data[i+1] = data[i+1] + noise;
-        data[i+2] = data[i+2] + noise;
-    }
-    ctx.putImageData(imageData, 0, 0);
-
-    // 3. Brushed Texture (Refined)
-    // Instead of random scratches, we use a very faint overlay
-    if (!isMirror) {
-        ctx.save();
-        ctx.globalCompositeOperation = 'overlay'; 
-        ctx.globalAlpha = 0.04; // Very faint (4% opacity)
-        
-        ctx.fillStyle = '#fff';
-        // Draw long, thin horizontal lines
-        for (let y = 0; y < h; y += 2) {
-            if (Math.random() > 0.5) {
-                // Random width lines
-                ctx.fillRect(0, y, w, 1); 
-            }
+            const vign = ctx.createRadialGradient(w/2, h/2, w/2.5, w/2, h/2, w);
+            vign.addColorStop(0, 'rgba(0,0,0,0)');
+            vign.addColorStop(1, 'rgba(0,0,0,0.15)');
+            ctx.fillStyle = vign;
+            ctx.fillRect(0, 0, w, h);
         }
-        ctx.restore();
-    }
 
-    // 4. Subtle Ambient Vignette
-    // Softens the corners just a tiny bit to focus the eye
-    const vign = ctx.createRadialGradient(w/2, h/2, w/2.5, w/2, h/2, w);
-    vign.addColorStop(0, 'rgba(0,0,0,0)');
-    vign.addColorStop(1, 'rgba(0,0,0,0.15)'); // Reduced opacity (was 0.3)
-    
-    ctx.fillStyle = vign;
-    ctx.fillRect(0, 0, w, h);
-}
         function drawFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor) {
             const scale = w / 600;
-            
-           // EMV Chip (Updated Realistic)
-            const chipW = 75 * scale; // Increased width (was 55)
-            const chipH = 54 * scale; // Increased height (was 42)
+            const chipW = 75 * scale;
+            const chipH = 54 * scale;
             const chipX = 50 * scale;
             const chipY = 65 * scale;
-            const r = 8 * scale; // Corner radius
-
-            // 1. Create Metallic Gradient
-            // This creates a diagonal shine from top-left to bottom-right
+            const r = 8 * scale;
             const chipGrad = ctx.createLinearGradient(chipX, chipY, chipX + chipW, chipY + chipH);
-            chipGrad.addColorStop(0, '#FFF6D5');   // Pale Gold (Highlight)
-            chipGrad.addColorStop(0.3, '#D4AF37'); // Classic Gold
-            chipGrad.addColorStop(0.6, '#C5A028'); // Mid Gold
-            chipGrad.addColorStop(1, '#997314');   // Dark Gold (Shadow)
-
-            // 2. Draw Main Chip Body
+            chipGrad.addColorStop(0, '#FFF6D5');
+            chipGrad.addColorStop(0.3, '#D4AF37');
+            chipGrad.addColorStop(0.6, '#C5A028');
+            chipGrad.addColorStop(1, '#997314');
             ctx.fillStyle = chipGrad;
-            
-            // Add a slight drop shadow for depth
             ctx.shadowColor = 'rgba(0,0,0,0.15)';
             ctx.shadowBlur = 2 * scale;
             ctx.shadowOffsetY = 1 * scale;
-            
             ctx.beginPath();
-            if (ctx.roundRect) {
-                ctx.roundRect(chipX, chipY, chipW, chipH, r);
-            } else {
-                ctx.rect(chipX, chipY, chipW, chipH); // Fallback
-            }
+            ctx.rect(chipX, chipY, chipW, chipH);
             ctx.fill();
-            
-            // Reset shadow
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
             ctx.shadowOffsetY = 0;
-
-            // 3. Draw the Contact Lines (The "Circuit" Pattern)
-            // We use a darker, semi-transparent blend to make them look like grooves
             ctx.strokeStyle = 'rgba(80, 60, 10, 0.45)'; 
             ctx.lineWidth = 1.2 * scale;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-
-            // Center dimensions
             const cx = chipX + chipW / 2;
             const cy = chipY + chipH / 2;
-            
-            // Horizontal Main Divider
-            ctx.beginPath();
-            ctx.moveTo(chipX, cy);
-            ctx.lineTo(chipX + chipW, cy);
-            ctx.stroke();
-
-            // Vertical Left Curve
-            ctx.beginPath();
-            ctx.moveTo(chipX + chipW * 0.33, chipY);
-            ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.35);
-            ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(chipX + chipW * 0.33, chipY + chipH);
-            ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.65);
-            ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy);
-            ctx.stroke();
-
-            // Vertical Right Curve
-            ctx.beginPath();
-            ctx.moveTo(chipX + chipW * 0.66, chipY);
-            ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.35);
-            ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(chipX + chipW * 0.66, chipY + chipH);
-            ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.65);
-            ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy);
-            ctx.stroke();
-
-            // Center Rounded Rectangle (The "Core")
-            ctx.beginPath();
-            // A small rounded rect in the dead center
-            const centerW = 22 * scale;
-            const centerH = 16 * scale;
-            if (ctx.roundRect) {
-                ctx.roundRect(cx - centerW/2, cy - centerH/2, centerW, centerH, 4 * scale);
-            } else {
-                 ctx.rect(cx - centerW/2, cy - centerH/2, centerW, centerH);
-            }
-            ctx.stroke();
-
-            // 4. Subtle Inner Highlight Border (to make edges pop)
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.beginPath(); ctx.moveTo(chipX, cy); ctx.lineTo(chipX + chipW, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.33, chipY); ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.35); ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.33, chipY + chipH); ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.65); ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.66, chipY); ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.35); ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.66, chipY + chipH); ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.65); ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy); ctx.stroke();
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
             ctx.lineWidth = 1 * scale;
-            ctx.beginPath();
-             if (ctx.roundRect) {
-                ctx.roundRect(chipX + 1, chipY + 1, chipW - 2, chipH - 2, r);
-            }
-            ctx.stroke();
-            
-            // NFC Logo
+            ctx.beginPath(); ctx.rect(chipX + 1, chipY + 1, chipW - 2, chipH - 2); ctx.stroke();
             ctx.font = `bold ${14 * scale}px Inter`;
             ctx.fillStyle = accentColor;
             ctx.textAlign = 'right';
             ctx.fillText('NFC', w - 50 * scale, 45 * scale);
-            
-            // Name
             ctx.font = `italic ${38 * scale}px "Cormorant Garamond"`;
             ctx.fillStyle = textColor;
             ctx.textAlign = 'left';
-            ctx.fillText(state.cardData.name, 50 * scale, 180 * scale);
-            
-            // Number
+            ctx.fillText(state.cardData.name || 'Your Name', 50 * scale, 180 * scale);
             ctx.font = `300 ${26 * scale}px Inter`;
             ctx.fillStyle = subTextColor;
             ctx.letterSpacing = '4px';
-            ctx.fillText(state.cardData.number, 50 * scale, 235 * scale);
-            
-            // Email
+            ctx.fillText(state.cardData.number || '•••• •••• •••• ••••', 50 * scale, 235 * scale);
             ctx.font = `300 ${16 * scale}px Inter`;
             ctx.fillStyle = isDark ? '#aaaaaa' : '#666666';
-            ctx.fillText(state.cardData.email, 50 * scale, 270 * scale);
-            
-            // Logo
-            const logoX = w - 80 * scale;
-            const logoY = 240 * scale;
-            const logoR = 28 * scale;
-            
-            ctx.beginPath();
-            ctx.arc(logoX, logoY, logoR, 0, Math.PI * 2);
-            ctx.strokeStyle = accentColor;
-            ctx.lineWidth = 3 * scale;
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.arc(logoX, logoY, logoR * 0.65, 0, Math.PI, false);
-            ctx.strokeStyle = accentColor;
-            ctx.lineWidth = 2 * scale;
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.arc(logoX, logoY, logoR * 0.25, 0, Math.PI * 2);
-            ctx.fillStyle = accentColor;
-            ctx.fill();
-            
-            // Laser indicator
-            if (state.orderConfig.addons.laser) {
-                ctx.strokeStyle = accentColor;
-                ctx.lineWidth = 1 * scale;
-                ctx.setLineDash([4 * scale, 4 * scale]);
-                ctx.strokeRect(40 * scale, 155 * scale, 320 * scale, 130 * scale);
-                ctx.setLineDash([]);
-                
-                ctx.font = `bold ${10 * scale}px Inter`;
-                ctx.fillStyle = accentColor;
-                ctx.fillText('LASER ENGRAVED', 45 * scale, 148 * scale);
-            }
+            ctx.fillText(state.cardData.email || 'email@example.com', 50 * scale, 270 * scale);
         }
 
         function drawBackSide(ctx, w, h, mat, isDark, subTextColor, accentColor) {
             const scale = w / 600;
-            
-            // Magnetic stripe
             ctx.fillStyle = '#1a1a1a';
             ctx.fillRect(0, 55 * scale, w, 50 * scale);
-            
-            // Signature panel
             ctx.fillStyle = '#f8f8f8';
             ctx.fillRect(45 * scale, 130 * scale, 220 * scale, 45 * scale);
-            
             ctx.font = `italic ${18 * scale}px "Cormorant Garamond"`;
             ctx.fillStyle = '#555';
             ctx.textAlign = 'left';
             ctx.fillText('Authorized Signature', 55 * scale, 158 * scale);
-            
-            // CVV
             ctx.font = `bold ${16 * scale}px Inter`;
             ctx.fillStyle = isDark ? '#fff' : '#1a1a1a';
             ctx.fillText('CVV: 123', 285 * scale, 158 * scale);
-            
-            // QR Code
             if (state.orderConfig.addons.qr) {
-                const qrX = w - 130 * scale;
-                const qrY = 200 * scale;
-                const qrS = 70 * scale;
-                
                 ctx.fillStyle = '#fff';
-                ctx.fillRect(qrX - 5 * scale, qrY - 5 * scale, qrS + 10 * scale, qrS + 10 * scale);
-                
+                ctx.fillRect(w - 130 * scale, 200 * scale, 70 * scale, 70 * scale);
                 ctx.fillStyle = '#1a1a1a';
-                const positions = [[0, 0], [qrS - 21 * scale, 0], [0, qrS - 21 * scale]];
-                positions.forEach(([px, py]) => {
-                    ctx.fillRect(qrX + px, qrY + py, 21 * scale, 21 * scale);
-                    ctx.clearRect(qrX + px + 4 * scale, qrY + py + 4 * scale, 13 * scale, 13 * scale);
-                    ctx.fillRect(qrX + px + 7 * scale, qrY + py + 7 * scale, 7 * scale, 7 * scale);
-                });
-                
-                // Random data
-                for (let i = 0; i < 50; i++) {
-                    const rx = Math.floor(Math.random() * (qrS - 30 * scale)) + 25 * scale;
-                    const ry = Math.floor(Math.random() * (qrS - 30 * scale)) + 5 * scale;
-                    if (rx > 25 * scale && ry > 25 * scale && rx < qrS - 25 * scale && ry < qrS - 25 * scale) {
-                        ctx.fillRect(qrX + rx, qrY + ry, Math.random() * 5 * scale + 2 * scale, Math.random() * 5 * scale + 2 * scale);
-                    }
-                }
+                ctx.fillRect(w - 125 * scale, 205 * scale, 15 * scale, 15 * scale);
+                ctx.fillRect(w - 95 * scale, 205 * scale, 15 * scale, 15 * scale);
+                ctx.fillRect(w - 65 * scale, 205 * scale, 15 * scale, 15 * scale);
             }
-            
-            // Contact text
-            ctx.font = `12px Inter`;
-            ctx.fillStyle = isDark ? '#aaa' : '#666';
-            ctx.textAlign = 'center';
-            if (state.orderConfig.addons.qr) {
-                ctx.fillText('Scan QR code to save contact', w / 2, h - 45 * scale);
-            }
-            
-            // NFC indicator
             ctx.font = `bold ${10 * scale}px Inter`;
             ctx.fillStyle = accentColor;
             ctx.fillText('NFC ENABLED', w / 2, h - 22 * scale);
@@ -2161,137 +2268,12 @@ function drawMetalFinish(ctx, w, h, color, isMirror, isDark) {
             return state.materials.metal[0];
         }
 
-        function flipCard() {
-            const inner = document.getElementById('card3dInner');
-            inner.classList.toggle('flipped');
-            
-            const isFlipped = inner.classList.contains('flipped');
-            document.getElementById('frontBtn').classList.toggle('active', !isFlipped);
-            document.getElementById('backBtn').classList.toggle('active', isFlipped);
-        }
-
-        function showCardFace(face) {
-            const inner = document.getElementById('card3dInner');
-            if (face === 'front') {
-                inner.classList.remove('flipped');
-            } else {
-                inner.classList.add('flipped');
-            }
-            
-            document.getElementById('frontBtn').classList.toggle('active', face === 'front');
-            document.getElementById('backBtn').classList.toggle('active', face === 'back');
-        }
-
-        function selectQuantity(qty, price) {
-            state.orderConfig.quantity = qty;
-            state.orderConfig.basePrice = price;
-            
-            document.querySelectorAll('.quantity-option').forEach(opt => opt.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
-            
-            updateOrderSummary();
-        }
-
-        function toggleAddon(element, addon) {
-            const toggle = element.querySelector('.toggle-switch');
-            toggle.classList.toggle('active');
-            element.classList.toggle('selected');
-            
-            state.orderConfig.addons[addon] = toggle.classList.contains('active');
-            
-            updateOrderSummary();
-            updateAllCards();
-            updateSpecs();
-        }
-
-        function updateOrderSummary() {
-            const mat = getCurrentMaterial();
-            const materialUpcharge = mat.price * (state.orderConfig.quantity / 10);
-            
-            document.getElementById('summaryQuantity').textContent = `${state.orderConfig.quantity}x ${mat.name} Cards`;
-            document.getElementById('summaryBasePrice').textContent = `$${state.orderConfig.basePrice}`;
-            
-            document.getElementById('summaryQRRow').style.display = state.orderConfig.addons.qr ? 'flex' : 'none';
-            document.getElementById('summaryLaserRow').style.display = state.orderConfig.addons.laser ? 'flex' : 'none';
-            
-            let total = state.orderConfig.basePrice + materialUpcharge;
-            if (state.orderConfig.addons.qr) total += 45;
-            if (state.orderConfig.addons.laser) total += 80;
-            
-            document.getElementById('summaryTotal').textContent = `$${total.toLocaleString()}`;
-        }
-
-        function updateSpecs() {
-            const mat = getCurrentMaterial();
-            
-            document.getElementById('specMaterial').textContent = mat.name;
-            document.getElementById('specThickness').textContent = mat.thickness;
-            document.getElementById('specWeight').textContent = mat.weight;
-            document.getElementById('specFinish').textContent = mat.finish;
-            document.getElementById('specNFC').textContent = state.orderConfig.addons.nfc ? 'Included' : 'Not Included';
-            document.getElementById('specNFC').style.color = state.orderConfig.addons.nfc ? 'var(--color-gold)' : 'inherit';
-            document.getElementById('specQR').textContent = state.orderConfig.addons.qr ? 'Included' : 'Not Included';
-            document.getElementById('specQR').style.color = state.orderConfig.addons.qr ? 'var(--color-gold)' : 'inherit';
-            document.getElementById('specLaser').textContent = state.orderConfig.addons.laser ? 'Included' : 'Not Included';
-            document.getElementById('specLaser').style.color = state.orderConfig.addons.laser ? 'var(--color-gold)' : 'inherit';
-        }
-
-        function proceedToCheckout() {
-            const orderData = {
-                ...state.cardData,
-                ...state.orderConfig,
-                total: document.getElementById('summaryTotal').textContent,
-                timestamp: new Date().toISOString()
-            };
-            
-            localStorage.setItem('cardel_order', JSON.stringify(orderData));
-            showToast('Redirecting to secure checkout...');
-            
-            setTimeout(() => {
-                alert(`Order Summary:\n\nMaterial: ${getCurrentMaterial().name}\nQuantity: ${state.orderConfig.quantity}\nTotal: ${orderData.total}\n\nIn production, this would redirect to secure payment gateway.`);
-            }, 1000);
-        }
-
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-
         function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            const t = document.getElementById('toast');
+            t.textContent = message;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
-
-        function setupScrollAnimations() {
-            gsap.registerPlugin(ScrollTrigger);
-            
-            ScrollTrigger.create({
-                start: 'top -80',
-                end: 99999,
-                toggleClass: { className: 'scrolled', targets: '#navbar' }
-            });
-            
-            gsap.utils.toArray('section').forEach(section => {
-                gsap.from(section.querySelectorAll('h2, p, .feature-item, .material-card, .preview-card-box, .config-section'), {
-                    scrollTrigger: {
-                        trigger: section,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse'
-                    },
-                    y: 25,
-                    opacity: 0,
-                    duration: 0.7,
-                    stagger: 0.08,
-                    ease: 'power2.out'
-                });
-            });
-        }
-
-        // Resize handler
-        window.addEventListener('resize', () => {
-            updateAllCards();
-        });
     </script>
 </body>
 </html>
