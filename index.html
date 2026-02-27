@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -225,13 +226,14 @@
         }
 
         /* Checklist Styles */
-        .checklist-container {
-            margin-top: 2rem;
-            padding: 2rem;
-            background: rgba(255,255,255,0.5);
-            border-radius: 12px;
-            border: 1px solid #e5e5e5;
-        }
+      .checklist-container {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    max-width: 320px; /* Tighter fit */
+}
 
         .checklist-title {
             font-family: 'Playfair Display', serif;
@@ -390,61 +392,71 @@
             transform: rotateY(180deg);
         }
 
-       .card-face-3d {
+      .card-face-3d {
     position: absolute;
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
     border-radius: 18px;
     overflow: hidden;
+    /* Premium shadow for depth */
     box-shadow: 
-        0 30px 80px rgba(0,0,0,0.2),
-        0 15px 40px rgba(0,0,0,0.15),
-        inset 0 1px 0 rgba(255,255,255,0.2);
-    background: #1a1a1a; /* Fallback background */
-    transform: translateZ(0); /* Force GPU acceleration */
+        0 30px 80px rgba(0,0,0,0.25),
+        0 15px 40px rgba(0,0,0,0.2),
+        0 5px 15px rgba(0,0,0,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.15),
+        inset 0 -1px 0 rgba(0,0,0,0.1);
+    background: #1a1a1a;
+    transform: translateZ(0);
+    /* Hardware acceleration */
+    transform: translate3d(0, 0, 0);
 }
 
         .card-face-3d.back {
             transform: rotateY(180deg);
         }
 
-       .card-canvas-3d {
+   .card-canvas-3d {
     width: 100%;
     height: 100%;
     display: block;
     position: absolute;
     top: 0;
     left: 0;
-    transform: translateZ(0); /* Force GPU acceleration */
+    transform: translateZ(0);
     backface-visibility: hidden;
+    /* Sharp rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
         /* Card shine effect */
         .card-shine {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                135deg,
-                rgba(255,255,255,0.4) 0%,
-                rgba(255,255,255,0.1) 40%,
-                transparent 50%,
-                rgba(255,255,255,0.05) 100%
-            );
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.25) 0%,
+        rgba(255,255,255,0.1) 25%,
+        transparent 50%,
+        rgba(255,255,255,0.05) 75%,
+        rgba(255,255,255,0.1) 100%
+    );
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateX(-100%);
+}
 
-        .card-3d-wrapper:hover .card-shine {
-            opacity: 1;
-        }
-
-        /* Direct Input Overlay on Card */
-      .card-input-overlay {
+.card-3d-wrapper:hover .card-shine {
+    opacity: 1;
+    transform: translateX(0);
+}
+/* Input overlay - controlled by zoom state only */
+.card-input-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -454,256 +466,344 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    transform: translateZ(0); /* Force GPU acceleration */
+    transform: translateZ(0);
 }
-        .card-container-3d.zoomed .card-input-overlay {
-            opacity: 1;
-            pointer-events: all;
-        }
 
+/* Show overlay when zoomed */
+.card-container-3d.zoomed .card-input-overlay {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Input fields - ALWAYS visible text when zoomed */
 .card-input-field {
     position: absolute;
     background: transparent;
     border: none;
-    color: inherit;
-    font-family: inherit;
     text-align: left;
     outline: none;
     cursor: text;
-    caret-color: #c9a962; /* Gold cursor */
+    caret-color: #c9a962;
     padding: 0;
     margin: 0;
-    /* No background, no border - completely invisible */
+    opacity: 0; /* Hidden when not zoomed */
+    transition: opacity 0.2s ease;
 }
 
-.card-input-field::placeholder {
-    color: transparent; /* Hide placeholder */
-    opacity: 0;
+/* VISIBLE when zoomed - with placeholder text showing */
+.card-container-3d.zoomed .card-input-field {
+    opacity: 1 !important;
 }
 
-/* Only show placeholder on hover/focus hint */
-.card-input-field:hover::placeholder,
-.card-input-field:focus::placeholder {
-    color: rgba(201, 169, 98, 0.4);
-    opacity: 1;
+/* Specific colors for each field - ALWAYS visible */
+.card-container-3d.zoomed .input-name {
+    color: #c9a962 !important;
 }
 
-       .input-name {
-    left: 8%;
-    top: 42%;
-    width: 84%;
+.card-container-3d.zoomed .input-title {
+    color: #aaaaaa !important;
+}
+
+.card-container-3d.zoomed .input-number {
+    color: #ffffff !important;
+}
+
+.card-container-3d.zoomed .input-email {
+    color: #888888 !important;
+}
+
+/* Placeholder ALWAYS visible when zoomed */
+.card-container-3d.zoomed .card-input-field::placeholder {
+    color: inherit !important;
+    opacity: 1 !important;
+}
+
+/* Focus states - slightly brighter */
+.card-input-field:focus {
+    outline: none;
+}
+
+.card-container-3d.zoomed .card-input-field:focus::placeholder {
+    opacity: 0.3 !important;
+}
+
+/* Input field positions for BUSINESS CARD layout */
+.input-name {
+    left: 10%;
+    top: 38%;
+    width: 80%;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-style: italic;
-    color: #c9a962;
     font-weight: 400;
-    height: 2.2rem;
-    line-height: 2.2rem;
+    height: 2.4rem;
+    line-height: 2.4rem;
+}
+
+.input-title {
+    left: 10%;
+    top: 52%;
+    width: 80%;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    height: 1.4rem;
+    line-height: 1.4rem;
 }
 
 .input-number {
-    left: 8%;
-    top: 56%;
-    width: 84%;
+    left: 10%;
+    top: 72%;
+    width: 40%;
     font-family: 'Inter', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 300;
-    letter-spacing: 0.12em;
-    color: #ffffff;
-    height: 1.8rem;
-    line-height: 1.8rem;
-}
-
-.input-email {
-    left: 8%;
-    top: 66%;
-    width: 84%;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 300;
-    color: #cccccc;
+    font-size: 0.9rem;
+    font-weight: 400;
     height: 1.6rem;
     line-height: 1.6rem;
 }
+
+.input-email {
+    left: 10%;
+    top: 80%;
+    width: 40%;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    height: 1.4rem;
+    line-height: 1.4rem;
+}
        
 
-        /* Close hint */
-        .close-hint {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-            color: #666;
-            letter-spacing: 0.1em;
-            opacity: 0;
-            transition: all 0.4s ease;
-            z-index: 10000;
-            pointer-events: none;
-        }
+ .close-hint {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: #666;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 10000;
+    pointer-events: none;
+    background: rgba(245, 243, 240, 0.95);
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
 
-        .zoom-overlay.active + .close-hint,
-        .close-hint.visible {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+/* Remove the translateY from the base state, only use opacity */
+.close-hint.visible {
+    opacity: 1;
+    transform: translateX(-50%);
+}
 
         /* ===============================
            MATERIAL SECTION - BELOW CARD
         ================================== */
-        #materials {
-            padding: 2rem 0;
-            background: transparent;
-            text-align: center;
-            margin-top: 3rem;
-            width: 100%;
-            max-width: 600px;
-            transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
-        }
+#materials {
+    padding: 0 0 2rem 0;
+    background: transparent;
+    text-align: center;
+    margin-top: 3rem;
+    width: 100%;
+    max-width: 600px;
+    transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
+}
 
-        .material-steps {
-            font-size: 0.75rem;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: #8a8a8a;
-            margin-bottom: 1.5rem;
-        }
+.material-steps {
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #8a8a8a;
+    margin-bottom: 1.5rem;
+}
 
-        .category-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
 
-        .category-tab {
-            background: none;
-            border: none;
-            padding: 0;
-            font-size: 0.85rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #7d7d7d;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
+.category-tab {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #7d7d7d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
 
-        .category-tab:hover {
-            color: #000;
-        }
+.category-tab:hover {
+    color: #000;
+}
 
-        .category-tab.active {
-            color: #000;
-        }
+.category-tab.active {
+    color: #000;
+}
 
-        .category-tab.active::after {
-            content: "";
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 22px;
-            height: 2px;
-            background: #000;
-        }
+.category-tab.active::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 2px;
+    background: #000;
+}
 
-        .materials-grid {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
+.materials-grid {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    min-height: 120px; /* Prevent collapse during animation */
+    position: relative; /* Contain absolute animations */
+}
 
-        .material-card {
-            background: none;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            transition: transform 0.3s ease;
-            width: 130px;
-            flex: 0 0 auto;
-        }
+.material-card {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    width: 130px;
+    flex: 0 0 auto;
+    position: relative;
+    opacity: 1; /* Start visible */
+    transform: translateY(0); /* Start in place */
+}
 
-        .material-card:hover {
-            transform: translateY(-3px);
-        }
+.material-card:hover {
+    transform: translateY(-3px);
+}
 
-        .material-preview {
-            width: 130px;
-            height: 60px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 0.75rem;
-            position: relative;
-        }
+.material-card.selected {
+    transform: translateY(-3px); /* Keep same hover effect when selected */
+}
 
-        .mini-card {
-            width: 100%;
-            height: 100%;
-            background: inherit;
-            border-radius: 6px;
-            position: relative;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
+.material-preview {
+    width: 110px; /* Reduced from 130px */
+    height: 65px; /* Slightly taller for proportion */
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+.material-card.entering {
+    opacity: 0;
+    transform: translateY(20px);
+}
 
-        .material-info {
-            padding: 0;
-        }
+.material-card.entered {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+/* Selected state for mini card - no layout shift */
+.material-card.selected .material-preview {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Subtle lift effect */
+}
 
-        .material-info h3 {
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            font-weight: 500;
-            color: #6e6e6e;
-            margin-bottom: 2px;
-        }
+.mini-card {
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 6px;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
 
-        .material-info p {
-            font-size: 0.6rem;
-            color: #999;
-            margin-bottom: 2px;
-        }
+/* Selected state - border highlight instead of layout change */
+.material-card.selected .mini-card {
+    border: 2px solid #c9a962; /* Gold border instead of jumping */
+    box-sizing: border-box; /* Prevent size change */
+}
 
-        .material-price {
-            font-size: 0.7rem;
-            color: #c9a962;
-            font-weight: 500;
-        }
+.material-info {
+    padding: 0;
+    transition: opacity 0.3s ease;
+}
 
-        .material-dots {
-            margin-top: 6px;
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-        }
+.material-info h3 {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: #6e6e6e;
+    margin-bottom: 2px;
+    transition: color 0.3s ease;
+}
 
-        .material-dots span {
-            width: 5px;
-            height: 5px;
-            background: #bdbdbd;
-            border-radius: 50%;
-            display: inline-block;
-        }
+/* Selected text color */
+.material-card.selected .material-info h3 {
+    color: #1a1a1a;
+    font-weight: 600;
+}
 
-        .material-card.selected .material-dots span:first-child {
-            background: #000;
-        }
+.material-info p {
+    font-size: 0.6rem;
+    color: #999;
+    margin-bottom: 2px;
+}
 
-        .material-badge {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: #c9a962;
-            color: #1a1a1a;
-            font-size: 0.5rem;
-            padding: 2px 6px;
-            border-radius: 20px;
-            z-index: 2;
-        }
+.material-price {
+    font-size: 0.7rem;
+    color: #c9a962;
+    font-weight: 500;
+}
+
+.material-dots {
+    margin-top: 6px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    height: 5px; /* Fixed height to prevent jump */
+    align-items: center;
+}
+
+.material-dots span {
+    width: 5px;
+    height: 5px;
+    background: #bdbdbd;
+    border-radius: 50%;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+/* Smooth dot transition */
+.material-card.selected .material-dots span:first-child {
+    background: #000;
+    transform: scale(1.2); /* Slight grow instead of jump */
+}
+
+.material-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #c9a962;
+    color: #1a1a1a;
+    font-size: 0.5rem;
+    padding: 2px 6px;
+    border-radius: 20px;
+    z-index: 2;
+    pointer-events: none; /* Prevent interference with clicks */
+}
 
         /* ===============================
            ORDER SECTION
@@ -1153,8 +1253,17 @@
             }
 
             .card-container-3d {
-                max-width: 340px;
-            }
+    width: 100%;
+    max-width: 420px;
+    perspective: 1500px;
+    position: relative;
+    animation: float 6s ease-in-out infinite;
+    cursor: pointer;
+    z-index: 100;
+    will-change: transform;
+    /* High quality scaling */
+    transform-style: preserve-3d;
+}
 
             .card-container-3d.zoomed {
                 max-width: 90vw;
@@ -1219,9 +1328,100 @@
             50% { transform: translateY(-20px); }
             100% { transform: translateY(0px); }
         }
+       .card-entrance-wrapper {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    justify-content: center;
+    /* Start from "far away" */
+    transform: perspective(1000px) translateZ(-500px) scale(0.5);
+    opacity: 0;
+    transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-entrance-wrapper.loaded {
+    /* Arrive at normal position */
+    transform: perspective(1000px) translateZ(0) scale(1);
+    opacity: 1;
+}
+
+
+
+/*---> Button hover effects */
+.luxury-btn:hover {
+    transform: translateY(-3px) translateZ(10px) !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.5) !important;
+}
+
+.luxury-btn:hover div {
+    opacity: 1 !important;
+}
+
+.luxury-btn:hover span {
+    color: #fff !important;
+}
+
+.luxury-btn:hover span:last-of-type {
+    transform: translateX(5px) !important;
+}
+
+/* Step item hover enhancements */
+.step-item:hover span:first-child {
+    transform: scale(1.3) rotate(10deg) !important;
+    color: #b8941f !important;
+}
+
+.step-item:hover h3 {
+    color: #c9a962 !important;
+}
+
+/* Partner logo hover enhancements */
+.partner-logo:hover {
+    filter: drop-shadow(0 10px 20px rgba(201,169,98,0.2));
+}
+
+/* Preview card shine effect */
+.preview-card-wrapper {
+    position: relative;
+    overflow: visible;
+}
+
+.preview-card-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 16px;
+}
+
+.preview-card-wrapper:hover::before {
+    left: 100%;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+    #steps-section, #partners-section {
+        padding: 4rem 2rem !important;
+    }
+    
+    #steps-section > div > div {
+        grid-template-columns: 1fr !important;
+    }
+    
+    #partners-section > div > div:last-child {
+        grid-template-columns: 1fr !important;
+    }
+}
     </style>
     <base target="_blank">
 </head>
+
 <body>
     <!-- Loading Screen -->
     <div id="loader">
@@ -1265,11 +1465,11 @@
             <p class="subtitle">
                 Tailored cards for those who understand detail.
             </p>
-            
+
             <!-- Checklist -->
             <div class="checklist-container">
                 <div class="checklist-title">Complete Your Identity</div>
-                
+
                 <div class="checklist-item" id="check-item-1">
                     <div class="check-circle">
                         <span class="check-icon">✓</span>
@@ -1279,17 +1479,17 @@
                         <span id="check-name">Click card to enter</span>
                     </div>
                 </div>
-                
+
                 <div class="checklist-item" id="check-item-2">
                     <div class="check-circle">
                         <span class="check-icon">✓</span>
                     </div>
                     <div class="check-text">
-                        Card Number
+                        Phone Number
                         <span id="check-number">Click card to enter</span>
                     </div>
                 </div>
-                
+
                 <div class="checklist-item" id="check-item-3">
                     <div class="check-circle">
                         <span class="check-icon">✓</span>
@@ -1307,30 +1507,31 @@
 
             <p class="hero-help" style="margin-top: 1.5rem; font-family: 'Playfair Display', serif; font-size: 0.9rem; color: #6b6b6b;">Click the card to edit details</p>
         </div>
-        
+
+        <!-- RIGHT SIDE: Card + Materials -->
         <!-- RIGHT SIDE: Card + Materials -->
         <div class="card-preview-section" id="cardPreviewSection">
-            <!-- 3D Card -->
-            <div class="card-container-3d" id="cardContainer3d" onclick="toggleCardZoom(event)">
-                <div class="card-3d-wrapper" id="card3dWrapper">
-                    <div class="card-3d-inner" id="card3dInner">
-                        <div class="card-face-3d front" id="cardFrontFace">
-                            <canvas id="heroFrontCanvas" class="card-canvas-3d"></canvas>
-                            <div class="card-shine"></div>
-                            
-                            <!-- Direct Input Overlay -->
-                            <div class="card-input-overlay" id="cardInputOverlay" onclick="event.stopPropagation()">
-                                <input type="text" class="card-input-field input-name" id="inputName" 
-                                    placeholder="Your Name" value="" autocomplete="off">
-                                <input type="text" class="card-input-field input-number" id="inputNumber" 
-                                    placeholder="•••• •••• •••• ••••" value="" autocomplete="off">
-                                <input type="email" class="card-input-field input-email" id="inputEmail" 
-                                    placeholder="email@example.com" value="" autocomplete="off">
+            <!-- 3D Card with Entrance Wrapper -->
+            <div class="card-entrance-wrapper" id="cardEntranceWrapper">
+                <div class="card-container-3d" id="cardContainer3d" onclick="toggleCardZoom(event)">
+                    <div class="card-3d-wrapper" id="card3dWrapper">
+                        <div class="card-3d-inner" id="card3dInner">
+                            <div class="card-face-3d front" id="cardFrontFace">
+                                <canvas id="heroFrontCanvas" class="card-canvas-3d"></canvas>
+                                <div class="card-shine"></div>
+
+                                <!-- Direct Input Overlay -->
+                                <div class="card-input-overlay" id="cardInputOverlay" onclick="event.stopPropagation()">
+                                    <input type="text" class="card-input-field input-name" id="inputName" placeholder="Your Name" value="" autocomplete="off">
+                                    <input type="text" class="card-input-field input-title" id="inputTitle" placeholder="Creative Director" value="" autocomplete="off">
+                                    <input type="text" class="card-input-field input-number" id="inputNumber" placeholder="+1 (555) 000-0000" value="" autocomplete="off">
+                                    <input type="email" class="card-input-field input-email" id="inputEmail" placeholder="hello@cardel.com" value="" autocomplete="off">
+                                </div>
                             </div>
-                        </div>
-                        <div class="card-face-3d back">
-                            <canvas id="heroBackCanvas" class="card-canvas-3d"></canvas>
-                            <div class="card-shine"></div>
+                            <div class="card-face-3d back">
+                                <canvas id="heroBackCanvas" class="card-canvas-3d"></canvas>
+                                <div class="card-shine"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1354,6 +1555,229 @@
         </div>
     </section>
 
+
+    <!-- 4 Steps Section -->
+    <section id="steps-section" class="reveal-section" style="background: #f5f3f0; padding: 8rem 4rem; position: relative; overflow: hidden; opacity: 0; transform: translateY(60px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="max-width: 1400px; margin: 0 auto; position: relative;">
+
+            <!-- Header -->
+            <div class="reveal-item" style="text-align: center; margin-bottom: 5rem; opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 300; color: #1a1a1a; margin-bottom: 1rem; letter-spacing: -0.02em;">
+                <span style="font-size: 5rem; font-weight: 300; color: #c9a962; margin-right: 0.5rem; line-height: 1; display: inline-block; transition: transform 0.6s ease;">4</span>Steps to Memorable Business
+            </h2>
+                <p style="font-family: 'Inter', sans-serif; font-size: 1rem; color: #6b6b6b; font-weight: 300;">
+                    Craft a luxury business card that makes a statement in four simple steps.
+                </p>
+            </div>
+
+            <!-- Content Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+
+                <!-- Left: Steps List -->
+                <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+
+                    <!-- Step 1 -->
+                    <div class="reveal-item step-item" style="display: flex; gap: 2rem; align-items: flex-start; padding-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.08); opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; cursor: pointer; perspective: 1000px;"
+                    onmouseenter="this.style.transform='translateX(10px) rotateY(-5deg)'" onmouseleave="this.style.transform='translateX(0) rotateY(0)'">
+                        <span style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 300; color: #c9a962; line-height: 1; transition: all 0.4s ease; display: inline-block;">1.</span>
+                        <div style="transition: transform 0.4s ease; transform-style: preserve-3d;">
+                            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 400; color: #1a1a1a; margin-bottom: 0.5rem; transition: color 0.3s ease;">Define Identity</h3>
+                            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #6b6b6b; line-height: 1.6;">Enter your name, card number,
+                                <br>and details.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="reveal-item step-item" style="display: flex; gap: 2rem; align-items: flex-start; padding-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.08); opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s; cursor: pointer; perspective: 1000px;"
+                    onmouseenter="this.style.transform='translateX(10px) rotateY(-5deg)'" onmouseleave="this.style.transform='translateX(0) rotateY(0)'">
+                        <span style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 300; color: #c9a962; line-height: 1; transition: all 0.4s ease; display: inline-block;">2.</span>
+                        <div style="transition: transform 0.4s ease; transform-style: preserve-3d;">
+                            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 400; color: #1a1a1a; margin-bottom: 0.5rem; transition: color 0.3s ease;">Choose Material</h3>
+                            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #6b6b6b; line-height: 1.6;">Metal, wood, limited editions & more.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="reveal-item step-item" style="display: flex; gap: 2rem; align-items: flex-start; padding-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.08); opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s; cursor: pointer; perspective: 1000px;"
+                    onmouseenter="this.style.transform='translateX(10px) rotateY(-5deg)'" onmouseleave="this.style.transform='translateX(0) rotateY(0)'">
+                        <span style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 300; color: #c9a962; line-height: 1; transition: all 0.4s ease; display: inline-block;">3.</span>
+                        <div style="transition: transform 0.4s ease; transform-style: preserve-3d;">
+                            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 400; color: #1a1a1a; margin-bottom: 0.5rem; transition: color 0.3s ease;">Refine Finish</h3>
+                            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #6b6b6b; line-height: 1.6;">Select card finish and personalize details.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="reveal-item step-item" style="display: flex; gap: 2rem; align-items: flex-start; opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s; cursor: pointer; perspective: 1000px;" onmouseenter="this.style.transform='translateX(10px) rotateY(-5deg)'"
+                    onmouseleave="this.style.transform='translateX(0) rotateY(0)'">
+                        <span style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 300; color: #c9a962; line-height: 1; transition: all 0.4s ease; display: inline-block;">4.</span>
+                        <div style="transition: transform 0.4s ease; transform-style: preserve-3d;">
+                            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 400; color: #1a1a1a; margin-bottom: 0.5rem; transition: color 0.3s ease;">Place Order</h3>
+                            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #6b6b6b; line-height: 1.6;">Review, finalize, and securely checkout.</p>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="reveal-item" style="margin-top: 1rem; opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s;">
+                        <button onclick="document.getElementById('hero').scrollIntoView({behavior: 'smooth'})" class="luxury-btn" style="background: linear-gradient(135deg, #e8e4df 0%, #d4d0cb 100%); 
+                                   border: 1px solid #c9c5c0; 
+                                   padding: 1.2rem 3rem; 
+                                   font-family: 'Playfair Display', serif; 
+                                   font-size: 0.85rem; 
+                                   letter-spacing: 0.15em; 
+                                   text-transform: uppercase; 
+                                   color: #1a1a1a; 
+                                   cursor: pointer; 
+                                   border-radius: 6px;
+                                   box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
+                                   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                                   display: inline-flex;
+                                   align-items: center;
+                                   gap: 0.5rem;
+                                   position: relative;
+                                   overflow: hidden;
+                                   transform-style: preserve-3d;">
+                            <span style="position: relative; z-index: 2; transition: transform 0.4s ease;">Design Your Card</span>
+                            <span style="position: relative; z-index: 2; transition: transform 0.4s ease;">→</span>
+                            <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #c9a962 0%, #b8941f 100%); opacity: 0; transition: opacity 0.4s ease; z-index: 1;"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Card Preview - Will render card using existing drawCard function -->
+                <div class="reveal-item steps-card-container" style="position: relative; display: flex; justify-content: center; align-items: center; min-height: 500px; opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s; perspective: 1500px;">
+                    <!-- Card will be rendered here -->
+                    <div class="preview-card-wrapper" style="transform: rotate(5deg); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;" onmouseenter="this.style.transform='rotate(5deg) translateZ(50px) scale(1.03)'" onmouseleave="this.style.transform='rotate(5deg) translateZ(0) scale(1)'"
+                    onclick="document.getElementById('hero').scrollIntoView({behavior: 'smooth'})">
+                        <canvas id="stepsCardCanvas" width="380" height="240" style="border-radius: 16px; box-shadow: 0 30px 60px rgba(0,0,0,0.3);"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners Section -->
+    <section id="partners-section" class="reveal-section" style="background: #f5f3f0; padding: 6rem 4rem; position: relative; border-top: 1px solid rgba(0,0,0,0.05); opacity: 0; transform: translateY(60px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="max-width: 1400px; margin: 0 auto;">
+
+            <!-- Header -->
+            <div class="reveal-item" style="text-align: center; margin-bottom: 4rem; opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 400; color: #1a1a1a; margin-bottom: 1rem;">Our Valued Partners</h2>
+                <p style="font-family: 'Inter', sans-serif; font-size: 1rem; color: #6b6b6b; font-weight: 300;">
+                    Preferred by elite brands around the world.
+                </p>
+            </div>
+
+            <!-- Divider Line -->
+            <div class="reveal-item" style="width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent); margin-bottom: 4rem; opacity: 0; transform: scaleX(0); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;"></div>
+
+            <!-- Partner Logos with 3D hover -->
+            <div class="reveal-item" style="display: flex; justify-content: center; align-items: center; gap: 4rem; flex-wrap: wrap; margin-bottom: 5rem; opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;">
+
+                <!-- Rolls Royce -->
+                <div class="partner-logo" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); transform-style: preserve-3d;" onmouseenter="this.style.transform='translateZ(30px) scale(1.1)'"
+                onmouseleave="this.style.transform='translateZ(0) scale(1)'">
+                    <div style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; color: #1a1a1a; letter-spacing: 0.05em; border: 2px solid #1a1a1a; padding: 0.3rem 0.6rem; line-height: 1; transition: all 0.3s ease;" onmouseenter="this.style.borderColor='#c9a962'; this.style.color='#c9a962'"
+                    onmouseleave="this.style.borderColor='#1a1a1a'; this.style.color='#1a1a1a'">RR</div>
+                    <div style="font-family: 'Inter', sans-serif; font-size: 0.5rem; letter-spacing: 0.2em; color: #666; text-transform: uppercase; text-align: center; line-height: 1.2; transition: color 0.3s ease;" onmouseenter="this.style.color='#c9a962'" onmouseleave="this.style.color='#666'">
+                        ROLLS
+                        <br>ROYCE
+                    </div>
+                </div>
+
+                <!-- Omega -->
+                <div class="partner-logo" style="font-family: 'Times New Roman', serif; font-size: 1.6rem; color: #1a1a1a; letter-spacing: 0.15em; font-weight: 400; text-transform: uppercase; cursor: pointer; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); transform-style: preserve-3d;"
+                onmouseenter="this.style.transform='translateZ(30px) scale(1.1)'; this.style.color='#c9a962'" onmouseleave="this.style.transform='translateZ(0) scale(1)'; this.style.color='#1a1a1a'">OMEGA</div>
+
+                <!-- Ferrari -->
+                <div class="partner-logo" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); transform-style: preserve-3d;" onmouseenter="this.style.transform='translateZ(30px) scale(1.1)'" onmouseleave="this.style.transform='translateZ(0) scale(1)'">
+                    <div style="width: 32px; height: 40px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; position: relative; transition: all 0.3s ease;" onmouseenter="this.style.background='#c9a962'" onmouseleave="this.style.background='#1a1a1a'">
+                        <div style="width: 24px; height: 32px; background: #f5f3f0; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-family: serif; font-size: 1.2rem; color: #1a1a1a; font-weight: bold;">🐎</span>
+                        </div>
+                    </div>
+                    <span style="font-family: 'Times New Roman', serif; font-size: 1.1rem; color: #1a1a1a; letter-spacing: 0.05em; font-weight: 600; transition: color 0.3s ease;" onmouseenter="this.style.color='#c9a962'" onmouseleave="this.style.color='#1a1a1a'">Ferrari</span>
+                </div>
+
+                <!-- Lamborghini -->
+                <div class="partner-logo" style="width: 45px; height: 50px; border: 2px solid #1a1a1a; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); transform-style: preserve-3d;"
+                onmouseenter="this.style.transform='translateZ(30px) scale(1.1)'; this.style.borderColor='#c9a962'" onmouseleave="this.style.transform='translateZ(0) scale(1)'; this.style.borderColor='#1a1a1a'">
+                    <div style="width: 35px; height: 40px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; transition: background 0.3s ease;" onmouseenter="this.style.background='#c9a962'" onmouseleave="this.style.background='#1a1a1a'">
+                        <span style="color: #f5f3f0; font-size: 1.2rem;">🐂</span>
+                    </div>
+                </div>
+
+                <!-- Goldman Sachs -->
+                <div class="partner-logo" style="font-family: 'Times New Roman', serif; font-size: 1.3rem; color: #1a1a1a; line-height: 1.1; cursor: pointer; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); transform-style: preserve-3d;" onmouseenter="this.style.transform='translateZ(30px) scale(1.1)'; this.style.color='#c9a962'"
+                onmouseleave="this.style.transform='translateZ(0) scale(1)'; this.style.color='#1a1a1a'">
+                    <div style="font-weight: 600;">Goldman</div>
+                    <div style="font-weight: 400; margin-top: -2px;">Sachs</div>
+                </div>
+
+                <!-- Four Seasons -->
+                <div class="partner-logo" style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem; cursor: pointer; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); transform-style: preserve-3d;" onmouseenter="this.style.transform='translateZ(30px) scale(1.1)'"
+                onmouseleave="this.style.transform='translateZ(0) scale(1)'">
+                    <div style="width: 30px; height: 40px; position: relative; transition: transform 0.3s ease;" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">
+                        <svg viewBox="0 0 30 40" fill="none" style="width: 100%; height: 100%;">
+                            <path d="M15 0L30 40H0L15 0Z" fill="#1a1a1a" />
+                            <path d="M15 5L25 35H5L15 5Z" fill="#f5f3f0" />
+                            <path d="M15 10L20 30H10L15 10Z" fill="#1a1a1a" />
+                        </svg>
+                    </div>
+                    <div style="font-family: 'Times New Roman', serif; font-size: 0.6rem; color: #1a1a1a; letter-spacing: 0.1em; text-transform: uppercase; text-align: center; transition: color 0.3s ease;" onmouseenter="this.style.color='#c9a962'" onmouseleave="this.style.color='#1a1a1a'">
+                        FOUR
+                        <br>SEASONS
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem;">
+
+                <!-- Left: Text Content -->
+                <div class="reveal-item" style="opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;">
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 400; color: #1a1a1a; margin-bottom: 1.5rem; line-height: 1.3; transition: transform 0.4s ease;" onmouseenter="this.style.transform='translateX(10px)'" onmouseleave="this.style.transform='translateX(0)'">
+                    Elevate Your Brand with Custom Designs
+                </h3>
+                    <p style="font-family: 'Inter', sans-serif; font-size: 0.95rem; color: #555; line-height: 1.8; margin-bottom: 2rem;">
+                        Unleash your brand's potential with our Designer Service. From logos to complete designs, our experts bring your business cards to life. Discover unique, standout cards that make a lasting impression.
+                    </p>
+                    <button class="luxury-btn" style="background: linear-gradient(135deg, #e8e4df 0%, #d4d0cb 100%); 
+                               border: 1px solid #c9c5c0; 
+                               padding: 1rem 2.5rem; 
+                               font-family: 'Playfair Display', serif; 
+                               font-size: 0.8rem; 
+                               letter-spacing: 0.12em; 
+                               text-transform: uppercase; 
+                               color: #1a1a1a; 
+                               cursor: pointer; 
+                               border-radius: 6px;
+                               box-shadow: 0 4px 15px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
+                               transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                               display: inline-flex;
+                               align-items: center;
+                               gap: 0.5rem;
+                               position: relative;
+                               overflow: hidden;
+                               transform-style: preserve-3d;">
+                        <span style="position: relative; z-index: 2; transition: transform 0.4s ease;">Discover Our Designer Service</span>
+                        <span style="position: relative; z-index: 2; transition: transform 0.4s ease;">→</span>
+                        <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #c9a962 0%, #b8941f 100%); opacity: 0; transition: opacity 0.4s ease; z-index: 1;"></div>
+                    </button>
+                </div>
+
+                <!-- Right: Card Preview - Will render card using existing drawCard function -->
+                <div class="reveal-item partners-card-container" style="display: flex; justify-content: center; align-items: center; opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s; perspective: 1500px;">
+                    <!-- Card will be rendered here -->
+                    <div class="preview-card-wrapper" style="transform: rotate(3deg); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;" onmouseenter="this.style.transform='rotate(3deg) translateZ(40px) scale(1.03)'" onmouseleave="this.style.transform='rotate(3deg) translateZ(0) scale(1)'"
+                    onclick="document.getElementById('hero').scrollIntoView({behavior: 'smooth'})">
+                        <canvas id="partnersCardCanvas" width="360" height="225" style="border-radius: 14px; box-shadow: 0 25px 50px rgba(0,0,0,0.25);"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Order Section -->
     <section id="order">
         <div class="order-container">
@@ -1369,21 +1793,21 @@
                 <div class="section-box">
                     <div class="section-label">Card Type</div>
                     <div class="section-sublabel">Select quantity:</div>
-                    
+
                     <div class="quantity-options">
                         <div class="quantity-option selected" onclick="selectQuantity(10, 590, this)">
                             <div class="quantity-radio"></div>
                             <div class="quantity-label">10 Cards</div>
                             <div class="quantity-price">$590</div>
                         </div>
-                        
+
                         <div class="quantity-option" onclick="selectQuantity(25, 1225, this)">
                             <div class="popular-badge">Popular</div>
                             <div class="quantity-radio"></div>
                             <div class="quantity-label">25 Cards</div>
                             <div class="quantity-price">$1,225</div>
                         </div>
-                        
+
                         <div class="quantity-option" onclick="selectQuantity(50, 2250, this)">
                             <div class="quantity-radio"></div>
                             <div class="quantity-label">50 Cards</div>
@@ -1396,7 +1820,7 @@
                 <div class="section-box">
                     <div class="section-label">Add-Ons</div>
                     <div class="section-sublabel">Enhance your card:</div>
-                    
+
                     <div class="addon-item">
                         <div class="addon-info">
                             <div class="addon-radio included"></div>
@@ -1407,7 +1831,7 @@
                         </div>
                         <div class="addon-price included">Included</div>
                     </div>
-                    
+
                     <div class="addon-item">
                         <div class="addon-info">
                             <div class="toggle-switch" id="qrToggle" onclick="toggleAddon('qr')"></div>
@@ -1418,7 +1842,7 @@
                         </div>
                         <div class="addon-price" id="qrPrice">+$45</div>
                     </div>
-                    
+
                     <div class="addon-item">
                         <div class="addon-info">
                             <div class="toggle-switch" id="laserToggle" onclick="toggleAddon('laser')"></div>
@@ -1442,33 +1866,33 @@
 
                 <div class="order-summary-box">
                     <div class="summary-title">Order Summary</div>
-                    
+
                     <div class="summary-line">
                         <span class="summary-label" id="summaryQty">10x Black Metal Cards</span>
                         <span class="summary-value" id="summaryBasePrice">$590</span>
                     </div>
-                    
+
                     <div class="summary-line" id="qrSummaryLine" style="display: none;">
                         <span class="summary-label">QR Code</span>
                         <span class="summary-value">+$45</span>
                     </div>
-                    
+
                     <div class="summary-line" id="laserSummaryLine" style="display: none;">
                         <span class="summary-label">Laser Engraving</span>
                         <span class="summary-value">+$80</span>
                     </div>
-                    
+
                     <div class="summary-line total">
                         <span class="summary-label">Total</span>
                         <span class="summary-value" id="summaryTotal">$590</span>
                     </div>
-                    
+
                     <div class="tax-note">All taxes included</div>
-                    
+
                     <button class="checkout-btn" onclick="proceedToCheckout()">
                         Proceed to Checkout
                     </button>
-                    
+
                     <div class="security-badges">
                         <div class="security-badge">
                             <span>🔒</span>
@@ -1494,24 +1918,25 @@
     <script>
         // Global State
         const state = {
-            cardData: {
-                name: '',
-                number: '',
-                email: '',
-                material: 'black-metal'
-            },
-            activeHotspot: null,
-            isZoomed: false,
-            orderConfig: {
-                quantity: 10,
-                basePrice: 590,
-                addons: {
-                    nfc: true,
-                    qr: false,
-                    laser: false
-                }
-            },
-            materials: {
+     cardData: {
+        name: '',
+        title: '',
+        number: '',
+        email: '',
+        material: 'black-metal'
+    },
+    activeHotspot: null,
+    isZoomed: false,
+    orderConfig: {
+        quantity: 10,
+        basePrice: 590,
+        addons: {
+            nfc: true,
+            qr: false,
+            laser: false
+        }
+    },
+    materials: {
                 metal: [
                     { id: 'black-metal', name: 'Black Metal Matte', color: '#0a0a0a', thickness: '0.8mm', weight: '28g', finish: 'Brushed Matte', price: 0, desc: 'Premium black stainless steel with sophisticated brushed finish' },
                     { id: 'gold-metal', name: 'Gold Mirror', color: '#d4af37', thickness: '0.8mm', weight: '28g', finish: 'Polished Mirror', price: 150, desc: '24k gold-plated with mirror-like reflectivity' },
@@ -1536,14 +1961,18 @@
         };
 
         // Initialize
-        window.addEventListener('load', () => {
-            simulateLoading();
-            loadMaterials('metal');
-            setup3DTilt();
-            updateAllCards();
-            updateChecklist();
-            setupCardInputs();
-        });
+       window.addEventListener('load', () => {
+    simulateLoading();
+    loadMaterials('metal');
+    setup3DTilt();
+    updateAllCards();
+    setupCardInputs();
+    
+    // Animate card entrance after loader finishes
+    setTimeout(() => {
+        document.getElementById('cardEntranceWrapper').classList.add('loaded');
+    }, 1000);
+});
 
         function simulateLoading() {
             let progress = 0;
@@ -1585,18 +2014,16 @@ function zoomIn() {
     const heroContent = document.getElementById('heroContent');
     const materialsSection = document.getElementById('materials');
     const navbar = document.getElementById('navbar');
-    const inputs = document.querySelectorAll('.card-input-field');
     
     // Get card position for FLIP animation
     const rect = cardContainer.getBoundingClientRect();
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
     
-    // Calculate translation to center
     const translateX = centerX - (rect.left + rect.width / 2);
     const translateY = centerY - (rect.top + rect.height / 2);
     
-    // Add zoomed class immediately
+    // Add zoomed class - CSS handles input visibility
     cardContainer.classList.add('zoomed');
     overlay.classList.add('active');
     closeHint.classList.add('visible');
@@ -1604,17 +2031,13 @@ function zoomIn() {
     // Pause floating animation
     cardContainer.style.animation = 'none';
     
-    // Kill any existing tweens on card
+    // Kill existing tweens
     gsap.killTweensOf(cardContainer);
     
     // Animate overlay
-    gsap.to(overlay, {
-        opacity: 1,
-        duration: 0.4,
-        ease: 'power2.out'
-    });
+    gsap.to(overlay, { opacity: 1, duration: 0.4, ease: 'power2.out' });
     
-    // Animate card to center with scale - EXPLICITLY NO BLUR
+    // Animate card to center
     gsap.fromTo(cardContainer, 
         { x: 0, y: 0, scale: 1 },
         {
@@ -1623,61 +2046,23 @@ function zoomIn() {
             scale: 1.4,
             duration: 0.6,
             ease: 'power3.out',
-           onComplete: () => {
-    // Force redraw to clear canvas text before showing inputs
-    updateAllCards();
-    
-    // Inputs start invisible (no boxes), only show text when typing
-    inputs.forEach(input => {
-        input.style.opacity = '0'; // Start completely invisible
-        input.style.color = 'transparent'; // Hide text initially
-    });
-    
-    // Show inputs container but keep them invisible until clicked
-    document.getElementById('cardInputOverlay').style.opacity = '1';
-    
-    // Auto-focus first empty field to show cursor immediately
-    setTimeout(() => {
-        const nameInput = document.getElementById('inputName');
-        const numInput = document.getElementById('inputNumber');
-        const emailInput = document.getElementById('inputEmail');
-        
-        if (!state.cardData.name) {
-            nameInput.focus();
-            nameInput.style.opacity = '1';
-            nameInput.style.color = '#c9a962';
-        } else if (!state.cardData.number) {
-            numInput.focus();
-            numInput.style.opacity = '1';
-            numInput.style.color = '#ffffff';
-        } else if (!state.cardData.email) {
-            emailInput.focus();
-            emailInput.style.opacity = '1';
-            emailInput.style.color = '#cccccc';
-        } else {
-            nameInput.focus();
-            nameInput.style.opacity = '1';
-            nameInput.style.color = '#c9a962';
-        }
-    }, 100);
-}
+            onComplete: () => {
+                updateAllCards();
+                // Focus first empty field
+                setTimeout(() => {
+                    const nameInput = document.getElementById('inputName');
+                    if (!state.cardData.name) nameInput.focus();
+                    else document.getElementById('inputTitle').focus();
+                }, 100);
+            }
         }
     );
     
-    // Fade out and blur ONLY background elements
+    // Fade background
     gsap.to([heroContent, materialsSection, navbar], {
         opacity: 0.2,
         filter: 'blur(5px)',
         duration: 0.4,
-        ease: 'power2.out'
-    });
-    
-    // Show close hint
-    gsap.to(closeHint, {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        delay: 0.3,
         ease: 'power2.out'
     });
 }
@@ -1691,19 +2076,17 @@ function closeCardZoom() {
     const heroContent = document.getElementById('heroContent');
     const materialsSection = document.getElementById('materials');
     const navbar = document.getElementById('navbar');
-    const inputs = document.querySelectorAll('.card-input-field');
     
-    // Hide inputs first - make them transparent again
-inputs.forEach(input => {
-    input.blur();
-    input.style.opacity = '0';
-    input.style.color = 'transparent';
-});
+    // Blur all inputs
+    document.querySelectorAll('.card-input-field').forEach(input => input.blur());
     
-    // Kill any existing tweens on card
+    // Hide hint
+    closeHint.classList.remove('visible');
+    
+    // Kill tweens
     gsap.killTweensOf(cardContainer);
     
-    // Animate card back to original position - EXPLICITLY NO BLUR
+    // Animate card back
     gsap.to(cardContainer, {
         x: 0,
         y: 0,
@@ -1711,17 +2094,14 @@ inputs.forEach(input => {
         duration: 0.5,
         ease: 'power3.inOut',
         onComplete: () => {
-    cardContainer.classList.remove('zoomed');
-    // Clear inline styles that might cause issues
-    cardContainer.style.transform = '';
-    // Resume floating animation
-    cardContainer.style.animation = '';
-    // Force redraw to restore canvas text
-    updateAllCards();
-}
+            cardContainer.classList.remove('zoomed');
+            cardContainer.style.transform = '';
+            cardContainer.style.animation = '';
+            updateAllCards();
+        }
     });
     
-    // Animate overlay out
+    // Hide overlay
     gsap.to(overlay, {
         opacity: 0,
         duration: 0.3,
@@ -1729,25 +2109,14 @@ inputs.forEach(input => {
         onComplete: () => overlay.classList.remove('active')
     });
     
-    // Fade in background elements and remove their blur
+    // Restore background
     gsap.to([heroContent, materialsSection, navbar], {
         opacity: 1,
         filter: 'blur(0px)',
         duration: 0.4,
         ease: 'power2.out'
     });
-    
-    // Hide close hint
-    gsap.to(closeHint, {
-        opacity: 0,
-        y: 20,
-        duration: 0.3,
-        ease: 'power2.in',
-        onComplete: () => closeHint.classList.remove('visible')
-    });
-}
-
-// Close zoom when clicking outside card
+}// Close zoom when clicking outside card
 document.addEventListener('click', (e) => {
     if (state.isZoomed) {
         const cardContainer = document.getElementById('cardContainer3d');
@@ -1776,9 +2145,10 @@ document.addEventListener('keydown', (e) => {
 });
     function setupCardInputs() {
     const nameInput = document.getElementById('inputName');
+    const titleInput = document.getElementById('inputTitle');
     const numberInput = document.getElementById('inputNumber');
     const emailInput = document.getElementById('inputEmail');
-    const inputs = [nameInput, numberInput, emailInput];
+    const inputs = [nameInput, titleInput, numberInput, emailInput];
 
     // Helper to show input with proper color
     function showInput(input, color) {
@@ -1788,38 +2158,37 @@ document.addEventListener('keydown', (e) => {
 
     // Click on card area to activate fields
     document.getElementById('cardInputOverlay').addEventListener('click', (e) => {
-        // If clicking on empty space (not on an input), focus the first empty one
         if (e.target.id === 'cardInputOverlay') {
             if (!state.cardData.name) {
                 showInput(nameInput, '#c9a962');
                 nameInput.focus();
+            } else if (!state.cardData.title) {
+                showInput(titleInput, '#aaaaaa');
+                titleInput.focus();
             } else if (!state.cardData.number) {
                 showInput(numberInput, '#ffffff');
                 numberInput.focus();
             } else if (!state.cardData.email) {
-                showInput(emailInput, '#cccccc');
+                showInput(emailInput, '#888888');
                 emailInput.focus();
             }
         }
     });
 
     // Input field interactions
-    nameInput.addEventListener('focus', () => {
-        showInput(nameInput, '#c9a962');
-    });
-    
-    numberInput.addEventListener('focus', () => {
-        showInput(numberInput, '#ffffff');
-    });
-    
-    emailInput.addEventListener('focus', () => {
-        showInput(emailInput, '#cccccc');
-    });
+    nameInput.addEventListener('focus', () => showInput(nameInput, '#c9a962'));
+    titleInput.addEventListener('focus', () => showInput(titleInput, '#aaaaaa'));
+    numberInput.addEventListener('focus', () => showInput(numberInput, '#ffffff'));
+    emailInput.addEventListener('focus', () => showInput(emailInput, '#888888'));
 
     // Sync with state on input
     nameInput.addEventListener('input', (e) => {
         state.cardData.name = e.target.value;
         updateChecklist();
+    });
+
+    titleInput.addEventListener('input', (e) => {
+        state.cardData.title = e.target.value;
     });
 
     numberInput.addEventListener('input', (e) => {
@@ -1832,8 +2201,16 @@ document.addEventListener('keydown', (e) => {
         updateChecklist();
     });
 
-    // Tab navigation - show next field
+    // Tab navigation
     nameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab' || e.key === 'Enter') {
+            e.preventDefault();
+            showInput(titleInput, '#aaaaaa');
+            titleInput.focus();
+        }
+    });
+
+    titleInput.addEventListener('keydown', (e) => {
         if (e.key === 'Tab' || e.key === 'Enter') {
             e.preventDefault();
             showInput(numberInput, '#ffffff');
@@ -1844,29 +2221,26 @@ document.addEventListener('keydown', (e) => {
     numberInput.addEventListener('keydown', (e) => {
         if (e.key === 'Tab' || e.key === 'Enter') {
             e.preventDefault();
-            showInput(emailInput, '#cccccc');
+            showInput(emailInput, '#888888');
             emailInput.focus();
         }
     });
 
     emailInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && state.cardData.name && state.cardData.number && state.cardData.email) {
-            closeCardZoom();
-        }
+        if (e.key === 'Enter') closeCardZoom();
     });
 }
 
-       function updateChecklist() {
-    // Just update the text and completion status, no active highlighting
+      function updateChecklist() {
     const nameSpan = document.getElementById('check-name');
     const numSpan = document.getElementById('check-number');
     const emailSpan = document.getElementById('check-email');
     
-    nameSpan.textContent = state.cardData.name || 'Click card to enter';
-    numSpan.textContent = state.cardData.number || 'Click card to enter';
-    emailSpan.textContent = state.cardData.email || 'Click card to enter';
+    nameSpan.textContent = state.cardData.name || 'Click card to enter full name';
+    numSpan.textContent = state.cardData.number || 'Click card to enter phone';
+    emailSpan.textContent = state.cardData.email || 'Click card to enter email';
     
-    // Update completed states (just checkmarks, no active highlighting)
+    // Update completed states
     const item1 = document.getElementById('check-item-1');
     const item2 = document.getElementById('check-item-2');
     const item3 = document.getElementById('check-item-3');
@@ -1976,7 +2350,7 @@ document.addEventListener('keydown', (e) => {
                     <div class="material-info">
                         <h3>${mat.name}</h3>
                         <p>${mat.thickness} • ${mat.weight}</p>
-                        <div class="material-price">${mat.price === 0 ? 'Included' : '+$' + mat.price}</div>
+                      <div class="material-price">${mat.price === 0 ? '' : '+$' + mat.price}</div>
                     </div>
                     <div class="material-dots"><span></span><span></span><span></span></div>
                 `;
@@ -1991,17 +2365,50 @@ document.addEventListener('keydown', (e) => {
             });
         }
 
-        function filterMaterials(category) {
+       function filterMaterials(category) {
+    const grid = document.getElementById('materialsGrid');
+    
+    // Fade out current cards
+    const currentCards = grid.querySelectorAll('.material-card');
+    
+    gsap.to(currentCards, {
+        opacity: 0,
+        y: -10,
+        duration: 0.2,
+        stagger: 0.03,
+        ease: 'power2.in',
+        onComplete: () => {
+            // Load new materials after fade out
             loadMaterials(category);
             
-            gsap.from('.material-card', {
-                y: 30,
+            // Animate new cards in with proper sequencing
+            const newCards = grid.querySelectorAll('.material-card');
+            
+            // Set initial state
+            gsap.set(newCards, {
                 opacity: 0,
-                duration: 0.5,
-                stagger: 0.08,
+                y: 20
+            });
+            
+            // Animate to final state
+            gsap.to(newCards, {
+                opacity: 1,
+                y: 0,
+                duration: 0.4,
+                stagger: 0.06,
                 ease: 'power2.out'
             });
         }
+    });
+    
+    // Update tab styling
+    document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.textContent.toLowerCase().includes(category)) {
+            tab.classList.add('active');
+        }
+    });
+}
 
         function selectMaterial(materialId, ev) {
             state.cardData.material = materialId;
@@ -2168,32 +2575,62 @@ document.addEventListener('keydown', (e) => {
         }
 
         // Drawing Functions (Canvas)
-        function setup3DTilt() {
-            const container = document.getElementById('cardContainer3d');
-            const wrapper = document.getElementById('card3dWrapper');
-            
-            container.addEventListener('mousemove', (e) => {
-                if (state.isZoomed) return; // Disable tilt when zoomed
-                
-                const rect = container.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = (y - centerY) / centerY * -15;
-                const rotateY = (x - centerX) / centerX * 15;
-                
-                wrapper.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            });
-            
-            container.addEventListener('mouseleave', () => {
-                if (!state.isZoomed) {
-                    wrapper.style.transform = 'perspective(1500px) rotateX(0deg) rotateY(0deg)';
-                }
-            });
+       function setup3DTilt() {
+    const container = document.getElementById('cardContainer3d');
+    const wrapper = document.getElementById('card3dWrapper');
+    
+    let currentRotateX = 0;
+    let currentRotateY = 0;
+    let targetRotateX = 0;
+    let targetRotateY = 0;
+    let rafId = null;
+    let isHovering = false;
+    
+    // Smooth animation loop
+    function animate() {
+        // Smooth interpolation (0.08 = slow, smooth follow)
+        currentRotateX += (targetRotateX - currentRotateX) * 0.08;
+        currentRotateY += (targetRotateY - currentRotateY) * 0.08;
+        
+        // Apply transform
+        wrapper.style.transform = `perspective(1500px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
+        
+        // Continue animation if still hovering or not settled
+        if (isHovering || Math.abs(targetRotateX - currentRotateX) > 0.01 || Math.abs(targetRotateY - currentRotateY) > 0.01) {
+            rafId = requestAnimationFrame(animate);
+        } else {
+            rafId = null;
         }
+    }
+    
+    container.addEventListener('mousemove', (e) => {
+        if (state.isZoomed) return;
+        
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // Much subtler tilt (5 degrees max instead of 15)
+        targetRotateX = (y - centerY) / centerY * -5;
+        targetRotateY = (x - centerX) / centerX * 5;
+        
+        if (!isHovering) {
+            isHovering = true;
+            if (!rafId) animate();
+        }
+    });
+    
+    container.addEventListener('mouseleave', () => {
+        isHovering = false;
+        targetRotateX = 0;
+        targetRotateY = 0;
+        // Animation continues until it settles back to 0
+        if (!rafId) animate();
+    });
+}
 
         function updateAllCards() {
             drawCard('heroFrontCanvas', 'front', 600, 378);
@@ -2385,97 +2822,752 @@ document.addEventListener('keydown', (e) => {
             ctx.fillRect(0, 0, w, h);
         }
 
-     function drawFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor) {
-    const scale = w / 600;
+// HDR-Quality Card Rendering
+function drawCard(canvasId, side, w, h) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
     
-    // Draw Chip
-    const chipW = 75 * scale;
-    const chipH = 54 * scale;
-    const chipX = 50 * scale;
-    const chipY = 65 * scale;
-    const chipGrad = ctx.createLinearGradient(chipX, chipY, chipX + chipW, chipY + chipH);
-    chipGrad.addColorStop(0, '#FFF6D5');
-    chipGrad.addColorStop(0.3, '#D4AF37');
-    chipGrad.addColorStop(0.6, '#C5A028');
-    chipGrad.addColorStop(1, '#997314');
-    ctx.fillStyle = chipGrad;
-    ctx.shadowColor = 'rgba(0,0,0,0.15)';
-    ctx.shadowBlur = 2 * scale;
-    ctx.shadowOffsetY = 1 * scale;
-    ctx.beginPath();
-    ctx.rect(chipX, chipY, chipW, chipH);
-    ctx.fill();
+    const ctx = canvas.getContext('2d', { 
+        alpha: false,
+        desynchronized: true 
+    });
+    
+    // High DPI for crisp rendering
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+    
+    const mat = getCurrentMaterial();
+    const isDark = isDarkMaterial(mat.id);
+    
+    // Enable high-quality image smoothing
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    // Draw with HDR-style lighting
+    drawHDRBackground(ctx, w, h, mat, isDark);
+    
+    if (side === 'front') {
+        drawHDRFrontSide(ctx, w, h, mat, isDark);
+    } else {
+        drawHDRBackSide(ctx, w, h, mat, isDark);
+    }
+    
+    // Premium border with gradient
+    drawPremiumBorder(ctx, w, h);
+}
+
+function drawHDRBackground(ctx, w, h, mat, isDark) {
+    // Base material with depth
+    if (mat.id === 'carbon-fiber') {
+        drawCarbonFiberHDR(ctx, w, h);
+    } else if (mat.id === 'forged-carbon') {
+        drawForgedCarbonHDR(ctx, w, h);
+    } else if (['walnut', 'bamboo', 'ebony', 'maple'].includes(mat.id)) {
+        drawWoodHDR(ctx, w, h, mat);
+    } else if (mat.id === 'meteorite') {
+        drawMeteoriteHDR(ctx, w, h);
+    } else if (mat.id === 'mother-pearl') {
+        drawMotherOfPearlHDR(ctx, w, h);
+    } else {
+        drawMetalHDR(ctx, w, h, mat);
+    }
+    
+    // Add subtle vignette for depth
+    drawVignette(ctx, w, h, isDark);
+}
+
+function drawMetalHDR(ctx, w, h, mat) {
+    const isMirror = mat.finish.toLowerCase().includes('mirror') || 
+                     mat.finish.toLowerCase().includes('polished');
+    
+    // Multi-layer gradient for depth
+    const baseGrad = ctx.createLinearGradient(0, 0, w, h);
+    const color = mat.color;
+    
+    if (isMirror) {
+        // Mirror-like reflective surface
+        baseGrad.addColorStop(0, adjustBrightness(color, -30));
+        baseGrad.addColorStop(0.25, adjustBrightness(color, -10));
+        baseGrad.addColorStop(0.45, adjustBrightness(color, 20));
+        baseGrad.addColorStop(0.5, adjustBrightness(color, 40));
+        baseGrad.addColorStop(0.55, adjustBrightness(color, 20));
+        baseGrad.addColorStop(0.75, adjustBrightness(color, -10));
+        baseGrad.addColorStop(1, adjustBrightness(color, -30));
+    } else {
+        // Brushed metal with subtle variation
+        baseGrad.addColorStop(0, adjustBrightness(color, -20));
+        baseGrad.addColorStop(0.3, color);
+        baseGrad.addColorStop(0.5, adjustBrightness(color, 15));
+        baseGrad.addColorStop(0.7, color);
+        baseGrad.addColorStop(1, adjustBrightness(color, -20));
+    }
+    
+    ctx.fillStyle = baseGrad;
+    ctx.fillRect(0, 0, w, h);
+    
+    // Add anisotropic reflection lines (brushed effect)
+    if (!isMirror) {
+        ctx.save();
+        ctx.globalAlpha = 0.03;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1;
+        
+        for (let y = 0; y < h; y += 3) {
+            const opacity = Math.sin(y / h * Math.PI) * 0.5 + 0.5;
+            ctx.globalAlpha = opacity * 0.04;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            
+            // Slight wave for realistic brushed look
+            for (let x = 0; x <= w; x += 20) {
+                const wave = Math.sin(x / w * Math.PI * 2) * 2;
+                ctx.lineTo(x, y + wave);
+            }
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+    
+    // Add subtle noise for material realism
+    addFilmGrain(ctx, w, h, 0.015);
+}
+
+function drawCarbonFiberHDR(ctx, w, h) {
+    // Deep black base
+    const baseGrad = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+    baseGrad.addColorStop(0, '#1a1a1a');
+    baseGrad.addColorStop(1, '#0d0d0d');
+    ctx.fillStyle = baseGrad;
+    ctx.fillRect(0, 0, w, h);
+    
+    // Twill weave pattern with depth
+    ctx.save();
+    const size = 12;
+    const cols = Math.ceil(w / size) + 2;
+    const rows = Math.ceil(h / size) + 2;
+    
+    for (let row = -1; row < rows; row++) {
+        for (let col = -1; col < cols; col++) {
+            const x = col * size;
+            const y = row * size;
+            const isEven = (row + col) % 2 === 0;
+            
+            // Create 3D effect for weave
+            const grad = ctx.createLinearGradient(x, y, x + size, y + size);
+            if (isEven) {
+                grad.addColorStop(0, '#2a2a2a');
+                grad.addColorStop(0.5, '#1a1a1a');
+                grad.addColorStop(1, '#0a0a0a');
+            } else {
+                grad.addColorStop(0, '#0a0a0a');
+                grad.addColorStop(0.5, '#1a1a1a');
+                grad.addColorStop(1, '#2a2a2a');
+            }
+            
+            ctx.fillStyle = grad;
+            ctx.fillRect(x, y, size - 1, size - 1);
+        }
+    }
+    ctx.restore();
+    
+    // Glossy overlay
+    const gloss = ctx.createLinearGradient(0, 0, w, h);
+    gloss.addColorStop(0, 'rgba(255,255,255,0.08)');
+    gloss.addColorStop(0.5, 'rgba(255,255,255,0)');
+    gloss.addColorStop(1, 'rgba(255,255,255,0.05)');
+    ctx.fillStyle = gloss;
+    ctx.fillRect(0, 0, w, h);
+}
+
+function drawForgedCarbonHDR(ctx, w, h) {
+    ctx.fillStyle = '#151515';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Random marble-like chunks with depth
+    ctx.save();
+    for (let i = 0; i < 200; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const size = Math.random() * 30 + 5;
+        const rotation = Math.random() * Math.PI * 2;
+        
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+        
+        // Chunk with shadow and highlight
+        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
+        const brightness = Math.random();
+        if (brightness > 0.6) {
+            grad.addColorStop(0, '#3a3a3a');
+            grad.addColorStop(1, '#1a1a1a');
+        } else {
+            grad.addColorStop(0, '#0a0a0a');
+            grad.addColorStop(1, '#000000');
+        }
+        
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(0, -size/2);
+        ctx.lineTo(size/2, 0);
+        ctx.lineTo(0, size/2);
+        ctx.lineTo(-size/2, 0);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.rotate(-rotation);
+        ctx.translate(-x, -y);
+    }
+    ctx.restore();
+    
+    // Clear coat reflection
+    const clearCoat = ctx.createLinearGradient(0, 0, w, h/2);
+    clearCoat.addColorStop(0, 'rgba(255,255,255,0.1)');
+    clearCoat.addColorStop(0.5, 'rgba(255,255,255,0)');
+    ctx.fillStyle = clearCoat;
+    ctx.fillRect(0, 0, w, h);
+}
+
+function drawWoodHDR(ctx, w, h, mat) {
+    // Base wood color with depth
+    const baseGrad = ctx.createLinearGradient(0, 0, 0, h);
+    baseGrad.addColorStop(0, adjustBrightness(mat.color, 10));
+    baseGrad.addColorStop(0.5, mat.color);
+    baseGrad.addColorStop(1, adjustBrightness(mat.color, -15));
+    ctx.fillStyle = baseGrad;
+    ctx.fillRect(0, 0, w, h);
+    
+    // Wood grain with organic variation
+    ctx.save();
+    ctx.globalAlpha = 0.15;
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    
+    const grainCount = 40;
+    for (let i = 0; i < grainCount; i++) {
+        const x = (i / grainCount) * w + (Math.random() - 0.5) * 20;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        
+        let currentX = x;
+        for (let y = 0; y < h; y += 10) {
+            const wave = Math.sin(y / h * Math.PI * 3 + i) * 5 + 
+                        (Math.random() - 0.5) * 3;
+            currentX += wave * 0.3;
+            ctx.lineTo(currentX, y);
+        }
+        
+        const grainWidth = Math.random() * 2 + 0.5;
+        ctx.lineWidth = grainWidth;
+        ctx.globalAlpha = 0.1 + Math.random() * 0.1;
+        ctx.stroke();
+    }
+    ctx.restore();
+    
+    // Wood pores texture
+    addFilmGrain(ctx, w, h, 0.02);
+}
+
+function drawMeteoriteHDR(ctx, w, h) {
+    // Metallic gray base
+    const baseGrad = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+    baseGrad.addColorStop(0, '#4a4a4a');
+    baseGrad.addColorStop(0.7, '#3a3a3a');
+    baseGrad.addColorStop(1, '#2a2a2a');
+    ctx.fillStyle = baseGrad;
+    ctx.fillRect(0, 0, w, h);
+    
+    // Widmanstätten pattern (etched lines)
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    
+    const drawPattern = (angle, spacing) => {
+        ctx.save();
+        ctx.translate(w/2, h/2);
+        ctx.rotate(angle);
+        ctx.translate(-w, -h);
+        
+        for (let i = 0; i < w * 2; i += spacing) {
+            const grad = ctx.createLinearGradient(i, 0, i + 2, 0);
+            grad.addColorStop(0, 'rgba(255,255,255,0)');
+            grad.addColorStop(0.5, 'rgba(255,255,255,0.15)');
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.strokeStyle = grad;
+            
+            ctx.beginPath();
+            ctx.moveTo(i, 0);
+            // Slight curve for realism
+            for (let y = 0; y < h * 2; y += 20) {
+                const curve = Math.sin(y / 100) * 3;
+                ctx.lineTo(i + curve, y);
+            }
+            ctx.stroke();
+        }
+        ctx.restore();
+    };
+    
+    drawPattern(Math.PI / 4, 15);
+    drawPattern(-Math.PI / 4, 20);
+    drawPattern(0, 25);
+    ctx.restore();
+    
+    // Metallic sheen
+    const sheen = ctx.createLinearGradient(0, 0, w, h);
+    sheen.addColorStop(0, 'rgba(255,255,255,0.1)');
+    sheen.addColorStop(0.5, 'rgba(255,255,255,0)');
+    sheen.addColorStop(1, 'rgba(255,255,255,0.08)');
+    ctx.fillStyle = sheen;
+    ctx.fillRect(0, 0, w, h);
+}
+
+function drawMotherOfPearlHDR(ctx, w, h) {
+    // Iridescent base
+    const baseGrad = ctx.createLinearGradient(0, 0, w, h);
+    baseGrad.addColorStop(0, '#ffffff');
+    baseGrad.addColorStop(0.3, '#f8f8f8');
+    baseGrad.addColorStop(0.5, '#f0f0f0');
+    baseGrad.addColorStop(0.7, '#f8f8f8');
+    baseGrad.addColorStop(1, '#ffffff');
+    ctx.fillStyle = baseGrad;
+    ctx.fillRect(0, 0, w, h);
+    
+    // Iridescent shimmer
+    ctx.save();
+    const shimmerColors = [
+        'rgba(255,200,200,0.1)',
+        'rgba(200,255,200,0.1)',
+        'rgba(200,200,255,0.1)',
+        'rgba(255,255,200,0.1)'
+    ];
+    
+    for (let i = 0; i < 50; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const size = Math.random() * 100 + 50;
+        const color = shimmerColors[Math.floor(Math.random() * shimmerColors.length)];
+        
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, size);
+        grad.addColorStop(0, color);
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
+        
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.restore();
+    
+    // Pearl texture
+    addFilmGrain(ctx, w, h, 0.01);
+}
+
+function drawVignette(ctx, w, h, isDark) {
+    const vignette = ctx.createRadialGradient(w/2, h/2, w/3, w/2, h/2, w);
+    if (isDark) {
+        vignette.addColorStop(0, 'rgba(0,0,0,0)');
+        vignette.addColorStop(0.7, 'rgba(0,0,0,0.2)');
+        vignette.addColorStop(1, 'rgba(0,0,0,0.5)');
+    } else {
+        vignette.addColorStop(0, 'rgba(0,0,0,0)');
+        vignette.addColorStop(0.7, 'rgba(0,0,0,0.05)');
+        vignette.addColorStop(1, 'rgba(0,0,0,0.15)');
+    }
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, w, h);
+}
+
+function drawPremiumBorder(ctx, w, h) {
+    // Multi-layer border for depth
+    const borderGrad = ctx.createLinearGradient(0, 0, w, h);
+    borderGrad.addColorStop(0, 'rgba(255,255,255,0.4)');
+    borderGrad.addColorStop(0.2, 'rgba(255,255,255,0.1)');
+    borderGrad.addColorStop(0.5, 'rgba(255,255,255,0)');
+    borderGrad.addColorStop(0.8, 'rgba(255,255,255,0.1)');
+    borderGrad.addColorStop(1, 'rgba(255,255,255,0.3)');
+    
+    // Outer glow
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 20;
+    ctx.shadowOffsetY = 10;
+    
+    ctx.strokeStyle = borderGrad;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 1, w - 2, h - 2);
+    
+    // Reset shadow
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetY = 0;
     
-    // Chip details
-    ctx.strokeStyle = 'rgba(80, 60, 10, 0.45)'; 
-    ctx.lineWidth = 1.2 * scale;
-    const cx = chipX + chipW / 2;
-    const cy = chipY + chipH / 2;
-    ctx.beginPath(); ctx.moveTo(chipX, cy); ctx.lineTo(chipX + chipW, cy); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.33, chipY); ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.35); ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.33, chipY + chipH); ctx.lineTo(chipX + chipW * 0.33, chipY + chipH * 0.65); ctx.quadraticCurveTo(chipX + chipW * 0.33, cy, cx - 8 * scale, cy); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.66, chipY); ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.35); ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(chipX + chipW * 0.66, chipY + chipH); ctx.lineTo(chipX + chipW * 0.66, chipY + chipH * 0.65); ctx.quadraticCurveTo(chipX + chipW * 0.66, cy, cx + 8 * scale, cy); ctx.stroke();
+    // Inner highlight
+    const innerGrad = ctx.createLinearGradient(0, 0, 0, h);
+    innerGrad.addColorStop(0, 'rgba(255,255,255,0.2)');
+    innerGrad.addColorStop(0.1, 'rgba(255,255,255,0)');
+    innerGrad.addColorStop(0.9, 'rgba(255,255,255,0)');
+    innerGrad.addColorStop(1, 'rgba(255,255,255,0.1)');
     
-    // NFC Label
-    ctx.font = `bold ${14 * scale}px Inter`;
-    ctx.fillStyle = accentColor;
-    ctx.textAlign = 'right';
-    ctx.fillText('NFC', w - 50 * scale, 45 * scale);
+    ctx.strokeStyle = innerGrad;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(4, 4, w - 8, h - 8);
+}
+
+function addFilmGrain(ctx, w, h, intensity) {
+    const imageData = ctx.getImageData(0, 0, w, h);
+    const data = imageData.data;
     
-    // ONLY draw text on canvas when NOT zoomed - inputs handle it when zoomed
+    for (let i = 0; i < data.length; i += 4) {
+        const noise = (Math.random() - 0.5) * intensity * 255;
+        data[i] = Math.max(0, Math.min(255, data[i] + noise));
+        data[i+1] = Math.max(0, Math.min(255, data[i+1] + noise));
+        data[i+2] = Math.max(0, Math.min(255, data[i+2] + noise));
+    }
+    
+    ctx.putImageData(imageData, 0, 0);
+}
+
+// Add this function to your JavaScript
+function getContrastColor(backgroundColor) {
+    // Remove # if present
+    const hex = backgroundColor.replace('#', '');
+    
+    // Parse RGB
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    // Calculate relative luminance (WCAG formula)
+    const rsRGB = r / 255;
+    const gsRGB = g / 255;
+    const bsRGB = b / 255;
+    
+    const rLinear = rsRGB <= 0.03928 ? rsRGB / 12.92 : Math.pow((rsRGB + 0.055) / 1.055, 2.4);
+    const gLinear = gsRGB <= 0.03928 ? gsRGB / 12.92 : Math.pow((gsRGB + 0.055) / 1.055, 2.4);
+    const bLinear = bsRGB <= 0.03928 ? bsRGB / 12.92 : Math.pow((bsRGB + 0.055) / 1.055, 2.4);
+    
+    const luminance = 0.2126 * rLinear + 0.7152 * gLinear + 0.0722 * bLinear;
+    
+    // Return black for light backgrounds, white for dark
+    // Threshold 0.179 is the mathematical midpoint for optimal contrast
+    return luminance > 0.179 ? '#1a1a1a' : '#ffffff';
+}
+
+// Enhanced version that also returns secondary text color
+function getTextColorsForMaterial(materialColor) {
+    const primary = getContrastColor(materialColor);
+    return {
+        primary: primary,
+        secondary: primary === '#1a1a1a' ? '#555555' : '#aaaaaa',
+        accent: '#c9a962' // Keep gold accent consistent
+    };
+}
+
+function drawHDRFrontSide(ctx, w, h, mat, isDark) {
+    const scale = w / 600;
+    
+    // Use the existing isDark check but make text colors more robust
+    const textColor = isDark ? '#c9a962' : '#1a1a1a';
+    const subTextColor = isDark ? '#ffffff' : '#1a1a1a';
+    const accentColor = '#c9a962';
+    
+    // For light materials, override to ensure visibility
+    const isLightMaterial = ['maple', 'mother-pearl', 'silver-metal'].includes(mat.id);
+    const finalTextColor = isLightMaterial ? '#1a1a1a' : textColor;
+    const finalSubTextColor = isLightMaterial ? '#555555' : subTextColor;
+    
+    // Corner accents
+    drawCornerAccent(ctx, 30 * scale, 30 * scale, 20 * scale, accentColor, true);
+    drawCornerAccent(ctx, w - 30 * scale, h - 30 * scale, 20 * scale, accentColor, false);
+    
+    // Only draw text when not zoomed (this hides placeholder text when editing)
     if (!state.isZoomed) {
-        // Name
-        ctx.font = `italic ${38 * scale}px "Cormorant Garamond"`;
-        ctx.fillStyle = textColor;
+        const contentX = 60 * scale;
+        const contentY = h / 2 - 20 * scale;
+        
+        // Name with shadow for depth
+        ctx.save();
+        ctx.shadowColor = isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 4 * scale;
+        ctx.shadowOffsetY = 2 * scale;
+        ctx.font = `italic ${42 * scale}px "Cormorant Garamond"`;
+        ctx.fillStyle = finalTextColor;
         ctx.textAlign = 'left';
-        const nameText = state.cardData.name || 'Your Name';
-        ctx.fillText(nameText, 50 * scale, 180 * scale);
         
-        // Card Number
-        ctx.font = `300 ${26 * scale}px Inter`;
-        ctx.fillStyle = subTextColor;
-        const numText = state.cardData.number || '•••• •••• •••• ••••';
-        ctx.fillText(numText, 50 * scale, 235 * scale);
+        // Use state data or fallback to placeholder
+        const displayName = state.cardData.name || 'Your Name';
+        ctx.fillText(displayName, contentX, contentY);
+        ctx.restore();
         
-        // Email
-        ctx.font = `300 ${16 * scale}px Inter`;
-        ctx.fillStyle = isDark ? '#aaaaaa' : '#666666';
-        const emailText = state.cardData.email || 'email@example.com';
-        ctx.fillText(emailText, 50 * scale, 270 * scale);
+        // Title
+        ctx.font = `300 ${13 * scale}px Inter`;
+        ctx.fillStyle = finalSubTextColor;
+        ctx.letterSpacing = '0.2em';
+        const displayTitle = state.cardData.title || 'Creative Director';
+        ctx.fillText(displayTitle, contentX, contentY + 28 * scale);
+        
+        // Divider
+        const divGrad = ctx.createLinearGradient(contentX, 0, contentX + 80 * scale, 0);
+        divGrad.addColorStop(0, accentColor);
+        divGrad.addColorStop(1, isDark ? 'rgba(201,169,98,0.3)' : 'rgba(201,169,98,0.6)');
+        ctx.strokeStyle = divGrad;
+        ctx.lineWidth = 1.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(contentX, contentY + 45 * scale);
+        ctx.lineTo(contentX + 80 * scale, contentY + 45 * scale);
+        ctx.stroke();
+        
+        // Contact info
+        const contactY = h - 70 * scale;
+        
+        ctx.save();
+        ctx.shadowColor = isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)';
+        ctx.shadowBlur = 2 * scale;
+        ctx.font = `400 ${12 * scale}px Inter`;
+        ctx.fillStyle = finalTextColor;
+        const displayNumber = state.cardData.number || '+1 (555) 000-0000';
+        ctx.fillText(displayNumber, contentX, contactY);
+        ctx.restore();
+        
+        ctx.font = `300 ${11 * scale}px Inter`;
+        ctx.fillStyle = finalSubTextColor;
+        const displayEmail = state.cardData.email || 'hello@cardel.com';
+        ctx.fillText(displayEmail, contentX, contactY + 22 * scale);
+        // ─── Improved icons: NFC with text + upside-down waves (opening upwards) ────
+const iconColor = isLightMaterial ? '#1a1a1a' : (isDark ? '#c9a962' : '#ffffff');
+const iconSize = 36 * scale;   // slightly smaller so text fits nicely
+
+// ── NFC icon + "NFC" text ── top right
+{
+    const centerX = w - 85 * scale;
+    const centerY = 55 * scale;
+    
+    // NFC symbol
+    ctx.save();
+    ctx.strokeStyle = iconColor;
+    ctx.lineWidth = iconSize * 0.14;
+    ctx.lineCap = 'round';
+    ctx.strokeRect(centerX - iconSize*0.35, centerY - iconSize*0.35, iconSize*0.7, iconSize*0.7);
+    for(let i = 1; i <= 3; i++){
+        let r = iconSize*0.32 + i*iconSize*0.10;
+        ctx.beginPath();
+        ctx.arc(centerX + iconSize*0.08, centerY, r, Math.PI*1.05, Math.PI*1.95, false);
+        ctx.stroke();
+    }
+    ctx.restore();
+    
+    // "NFC" text below the icon
+    ctx.save();
+    ctx.font = `500 ${11 * scale}px Inter`;
+    ctx.fillStyle = iconColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText("NFC", centerX, centerY + iconSize*0.45);
+    ctx.restore();
+}
+
+// ── Upside-down Wi-Fi / waves icon (curves opening upwards) ── bottom right
+{
+    const centerX = w - 85 * scale;
+    const centerY = h - 55 * scale;
+    
+    ctx.save();
+    ctx.strokeStyle = iconColor;
+    ctx.lineWidth = iconSize * 0.13;
+    ctx.lineCap = 'round';
+    
+    // Draw 4 arcs — but flipped (starting from bottom going up)
+    for(let i = 1; i <= 4; i++){
+        let r = iconSize * 0.18 * i;
+        ctx.globalAlpha = 0.35 + i * 0.16;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY - iconSize*0.12, r, Math.PI * 1.2, Math.PI * 1.8, false);
+        ctx.stroke();
+    }
+    
+    // Center dot
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = iconColor;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY - iconSize*0.12, iconSize*0.09, 0, Math.PI*2);
+    ctx.fill();
+    
+    ctx.restore();
+}
+        
+    }
+    
+    
+    // Geometric decoration
+    drawGeometricDecoration(ctx, w, h, isDark);
+}
+
+function drawHDRBackSide(ctx, w, h, mat, isDark) {
+    const scale = w / 600;
+    const accentColor = '#c9a962';
+    
+    // Elegant circle frame with gradient
+    const centerX = w / 2;
+    const centerY = h / 2;
+    
+    // Outer ring with glow
+    ctx.save();
+    ctx.shadowColor = 'rgba(201,169,98,0.3)';
+    ctx.shadowBlur = 15 * scale;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 80 * scale, 0, Math.PI * 2);
+    ctx.strokeStyle = accentColor;
+    ctx.lineWidth = 1 * scale;
+    ctx.globalAlpha = 0.4;
+    ctx.stroke();
+    ctx.restore();
+    
+    // Inner ring
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 60 * scale, 0, Math.PI * 2);
+    ctx.strokeStyle = accentColor;
+    ctx.lineWidth = 0.5 * scale;
+    ctx.globalAlpha = 0.2;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    
+    // Monogram with metallic effect
+    drawMetallicText(ctx, 'C', centerX, centerY, 
+        `300 ${48 * scale}px "Cormorant Garamond"`, accentColor, true);
+    
+    // Tagline
+    ctx.font = `italic ${12 * scale}px "Cormorant Garamond"`;
+    ctx.fillStyle = isDark ? '#aaaaaa' : '#666666';
+    ctx.textAlign = 'center';
+    ctx.fillText('Bespoke Identity', centerX, centerY + 50 * scale);
+    
+    // Corner accents
+    drawCornerAccent(ctx, w - 30 * scale, 30 * scale, 20 * scale, accentColor, true, true);
+    drawCornerAccent(ctx, 30 * scale, h - 30 * scale, 20 * scale, accentColor, false, true);
+    
+    // NFC indicator
+    if (state.orderConfig.addons.nfc) {
+        ctx.font = `500 ${9 * scale}px Inter`;
+        ctx.fillStyle = accentColor;
+        ctx.letterSpacing = '0.2em';
+        ctx.fillText('NFC ENABLED', centerX, h - 30 * scale);
+    }
+    
+    // QR code if enabled
+    if (state.orderConfig.addons.qr) {
+        drawPremiumQR(ctx, 60 * scale, 60 * scale, 50 * scale);
     }
 }
 
-        function drawBackSide(ctx, w, h, mat, isDark, subTextColor, accentColor) {
-            const scale = w / 600;
-            ctx.fillStyle = '#1a1a1a';
-            ctx.fillRect(0, 55 * scale, w, 50 * scale);
-            ctx.fillStyle = '#f8f8f8';
-            ctx.fillRect(45 * scale, 130 * scale, 220 * scale, 45 * scale);
-            ctx.font = `italic ${18 * scale}px "Cormorant Garamond"`;
-            ctx.fillStyle = '#555';
-            ctx.textAlign = 'left';
-            ctx.fillText('Authorized Signature', 55 * scale, 158 * scale);
-            ctx.font = `bold ${16 * scale}px Inter`;
-            ctx.fillStyle = isDark ? '#fff' : '#1a1a1a';
-            ctx.fillText('CVV: 123', 285 * scale, 158 * scale);
-            if (state.orderConfig.addons.qr) {
-                ctx.fillStyle = '#fff';
-                ctx.fillRect(w - 130 * scale, 200 * scale, 70 * scale, 70 * scale);
-                ctx.fillStyle = '#1a1a1a';
-                ctx.fillRect(w - 125 * scale, 205 * scale, 15 * scale, 15 * scale);
-                ctx.fillRect(w - 95 * scale, 205 * scale, 15 * scale, 15 * scale);
-                ctx.fillRect(w - 65 * scale, 205 * scale, 15 * scale, 15 * scale);
-            }
-            ctx.font = `bold ${10 * scale}px Inter`;
-            ctx.fillStyle = accentColor;
-            ctx.fillText('NFC ENABLED', w / 2, h - 22 * scale);
-        }
+function drawCornerAccent(ctx, x, y, size, color, isTop, isInverted = false) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.6;
+    
+    // Add subtle glow
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 5;
+    
+    ctx.beginPath();
+    if (isTop && !isInverted) {
+        ctx.moveTo(x, y + size);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x + size, y);
+    } else if (!isTop && !isInverted) {
+        ctx.moveTo(x, y - size);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x - size, y);
+    } else if (isTop && isInverted) {
+        ctx.moveTo(x, y + size);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x - size, y);
+    } else {
+        ctx.moveTo(x, y - size);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x + size, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+}
 
-        function isDarkMaterial(id) {
+function drawMetallicText(ctx, text, x, y, font, color, centered = true) {
+    ctx.save();
+    
+    // Create metallic gradient for text
+    const metrics = ctx.measureText(text);
+    const textGrad = ctx.createLinearGradient(x - metrics.width/2, y - 20, x + metrics.width/2, y + 20);
+    textGrad.addColorStop(0, adjustBrightness(color, 20));
+    textGrad.addColorStop(0.3, color);
+    textGrad.addColorStop(0.5, adjustBrightness(color, 30));
+    textGrad.addColorStop(0.7, color);
+    textGrad.addColorStop(1, adjustBrightness(color, 10));
+    
+    ctx.font = font;
+    ctx.fillStyle = textGrad;
+    ctx.textAlign = centered ? 'center' : 'left';
+    ctx.textBaseline = 'middle';
+    
+    // Add subtle shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.4)';
+    ctx.shadowBlur = 3;
+    ctx.shadowOffsetY = 2;
+    
+    ctx.fillText(text, x, y);
+    ctx.restore();
+}
+
+function drawGeometricDecoration(ctx, w, h, isDark) {
+    ctx.save();
+    ctx.globalAlpha = 0.03;
+    ctx.strokeStyle = isDark ? '#fff' : '#000';
+    ctx.lineWidth = 0.5;
+    
+    // Concentric circles
+    for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.arc(w - 100, h - 100, 30 + (i * 15), 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    ctx.restore();
+}
+
+function drawPremiumQR(ctx, x, y, size) {
+    // QR background with shadow
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.2)';
+    ctx.shadowBlur = 5;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(x - 5, y - 5, size + 10, size + 10);
+    ctx.restore();
+    
+    // QR pattern
+    ctx.fillStyle = '#1a1a1a';
+    const moduleSize = size / 7;
+    
+    // Simplified QR with position patterns
+    for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < 7; j++) {
+            // Corner patterns
+            const isCorner = (i < 2 && j < 2) || (i > 4 && j < 2) || (i < 2 && j > 4);
+            // Center pattern
+            const isCenter = (i >= 2 && i <= 4 && j >= 2 && j <= 4);
+            // Random data
+            const isData = Math.random() > 0.5;
+            
+            if (isCorner || isCenter || isData) {
+                ctx.fillRect(x + i * moduleSize, y + j * moduleSize, 
+                    moduleSize - 1, moduleSize - 1);
+            }
+        }
+    }
+    
+    // Label
+    ctx.font = '300 8px Inter';
+    ctx.fillStyle = '#888';
+    ctx.textAlign = 'center';
+    ctx.fillText('SCAN TO CONNECT', x + size/2, y + size + 15);
+}       function isDarkMaterial(id) {
             const darkMaterials = ['black-metal', 'carbon-fiber', 'forged-carbon', 'walnut', 'ebony', 'bamboo', 'meteorite'];
             return darkMaterials.includes(id);
         }
@@ -2503,6 +3595,283 @@ document.addEventListener('keydown', (e) => {
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
+// Intersection Observer for scroll animations and card cloning
+document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Reveal section
+                if (entry.target.classList.contains('reveal-section')) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+                
+                // Clone hero card to this section if it has a card container
+                const cardContainer = entry.target.querySelector('.steps-card-container, .partners-card-container');
+                if (cardContainer && !cardContainer.hasChildNodes()) {
+                    cloneHeroCard(cardContainer);
+                }
+                
+                // Reveal items with stagger
+                const items = entry.target.querySelectorAll('.reveal-item');
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                        if (item.style.transform.includes('scaleX')) {
+                            item.style.transform = 'scaleX(1)';
+                        }
+                    }, index * 100);
+                });
+                
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe sections
+    document.querySelectorAll('.reveal-section').forEach(section => {
+        observer.observe(section);
+    });
+});
+
+// Track which sections have been revealed
+const revealedSections = new Set();
+
+// Intersection Observer for scroll animations
+document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !revealedSections.has(entry.target.id)) {
+                revealedSections.add(entry.target.id);
+                
+                // Reveal section
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                
+                // Render cards for this section
+                if (entry.target.id === 'steps-section') {
+                    renderStepsCard();
+                } else if (entry.target.id === 'partners-section') {
+                    renderPartnersCard();
+                }
+                
+                // Reveal items with stagger
+                const items = entry.target.querySelectorAll('.reveal-item');
+                items.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                        if (item.style.transform.includes('scaleX')) {
+                            item.style.transform = 'scaleX(1)';
+                        }
+                    }, index * 100);
+                });
+            }
+        });
+    }, observerOptions);
+
+    // Observe sections
+    document.querySelectorAll('.reveal-section').forEach(section => {
+        observer.observe(section);
+    });
+});
+
+// Render card for steps section
+function renderStepsCard() {
+    const canvas = document.getElementById('stepsCardCanvas');
+    if (!canvas || typeof drawCard !== 'function') return;
+    
+    // Set canvas size with device pixel ratio for sharpness
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = 380 * dpr;
+    canvas.height = 240 * dpr;
+    
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    
+    // Draw the card using existing function logic
+    drawPreviewCard(ctx, 380, 240, 'front');
+}
+
+// Render card for partners section
+function renderPartnersCard() {
+    const canvas = document.getElementById('partnersCardCanvas');
+    if (!canvas || typeof drawCard !== 'function') return;
+    
+    // Set canvas size with device pixel ratio for sharpness
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = 360 * dpr;
+    canvas.height = 225 * dpr;
+    
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    
+    // Draw the card using existing function logic
+    drawPreviewCard(ctx, 360, 225, 'front');
+}
+
+// Draw preview card using existing state and materials
+function drawPreviewCard(ctx, w, h, side) {
+    const mat = getCurrentMaterial();
+    const isDark = isDarkMaterial(mat.id);
+    const textColor = isDark ? '#c9a962' : '#1a1a1a';
+    const subTextColor = isDark ? '#ffffff' : '#1a1a1a';
+    const accentColor = '#c9a962';
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, w, h);
+    
+    // Draw background using existing function
+    drawBackground(ctx, w, h, mat);
+    
+    // Draw card content
+    if (side === 'front') {
+        drawPreviewFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor);
+    }
+    
+    // Draw border
+    const borderGrad = ctx.createLinearGradient(0, 0, w, h);
+    borderGrad.addColorStop(0, 'rgba(255,255,255,0.35)');
+    borderGrad.addColorStop(0.5, 'rgba(255,255,255,0)');
+    borderGrad.addColorStop(1, 'rgba(255,255,255,0.15)');
+    ctx.strokeStyle = borderGrad;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 1, w - 2, h - 2);
+}
+
+// Draw front side for preview
+function drawPreviewFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor) {
+    const scale = w / 600;
+    
+    // Corner accents
+    drawCornerAccent(ctx, 20 * scale, 20 * scale, 15 * scale, accentColor, true);
+    drawCornerAccent(ctx, w - 20 * scale, h - 20 * scale, 15 * scale, accentColor, false);
+    
+    const contentX = 40 * scale;
+    const contentY = h / 2 - 10 * scale;
+    
+    // Name
+    ctx.save();
+    ctx.shadowColor = isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.2)';
+    ctx.shadowBlur = 3 * scale;
+    ctx.font = `italic ${28 * scale}px "Cormorant Garamond"`;
+    ctx.fillStyle = textColor;
+    ctx.textAlign = 'left';
+    const displayName = state.cardData.name || 'Your Name';
+    ctx.fillText(displayName, contentX, contentY);
+    ctx.restore();
+    
+    // Title
+    ctx.font = `300 ${10 * scale}px Inter`;
+    ctx.fillStyle = subTextColor;
+    ctx.letterSpacing = '0.2em';
+    const displayTitle = state.cardData.title || 'Creative Director';
+    ctx.fillText(displayTitle, contentX, contentY + 20 * scale);
+    
+    // Divider
+    const divGrad = ctx.createLinearGradient(contentX, 0, contentX + 60 * scale, 0);
+    divGrad.addColorStop(0, accentColor);
+    divGrad.addColorStop(1, isDark ? 'rgba(201,169,98,0.3)' : 'rgba(201,169,98,0.6)');
+    ctx.strokeStyle = divGrad;
+    ctx.lineWidth = 1.5 * scale;
+    ctx.beginPath();
+    ctx.moveTo(contentX, contentY + 35 * scale);
+    ctx.lineTo(contentX + 60 * scale, contentY + 35 * scale);
+    ctx.stroke();
+    
+    // Contact info
+    const contactY = h - 50 * scale;
+    
+    ctx.save();
+    ctx.shadowColor = isDark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.1)';
+    ctx.shadowBlur = 2 * scale;
+    ctx.font = `400 ${10 * scale}px Inter`;
+    ctx.fillStyle = textColor;
+    const displayNumber = state.cardData.number || '+1 (555) 000-0000';
+    ctx.fillText(displayNumber, contentX, contactY);
+    ctx.restore();
+    
+    ctx.font = `300 ${9 * scale}px Inter`;
+    ctx.fillStyle = subTextColor;
+    const displayEmail = state.cardData.email || 'hello@cardel.com';
+    ctx.fillText(displayEmail, contentX, contactY + 18 * scale);
+    
+    // NFC Icon
+    const iconColor = isDark ? '#c9a962' : '#1a1a1a';
+    const iconSize = 24 * scale;
+    const nfcX = w - 50 * scale;
+    const nfcY = 25 * scale;
+    
+    ctx.save();
+    ctx.strokeStyle = iconColor;
+    ctx.lineWidth = iconSize * 0.14;
+    ctx.lineCap = 'round';
+    ctx.strokeRect(nfcX - iconSize*0.35, nfcY - iconSize*0.35, iconSize*0.7, iconSize*0.7);
+    for(let i = 1; i <= 3; i++){
+        let r = iconSize*0.32 + i*iconSize*0.10;
+        ctx.beginPath();
+        ctx.arc(nfcX + iconSize*0.08, nfcY, r, Math.PI*1.05, Math.PI*1.95, false);
+        ctx.stroke();
+    }
+    ctx.font = `500 ${8 * scale}px Inter`;
+    ctx.fillStyle = iconColor;
+    ctx.textAlign = 'center';
+    ctx.fillText("NFC", nfcX, nfcY + iconSize*0.6);
+    ctx.restore();
+    
+    // WiFi Icon
+    const wifiX = w - 50 * scale;
+    const wifiY = h - 30 * scale;
+    
+    ctx.save();
+    ctx.strokeStyle = iconColor;
+    ctx.lineWidth = iconSize * 0.13;
+    ctx.lineCap = 'round';
+    
+    for(let i = 1; i <= 4; i++){
+        let r = iconSize * 0.18 * i;
+        ctx.globalAlpha = 0.35 + i * 0.16;
+        ctx.beginPath();
+        ctx.arc(wifiX, wifiY - iconSize*0.12, r, Math.PI * 1.2, Math.PI * 1.8, false);
+        ctx.stroke();
+    }
+    
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = iconColor;
+    ctx.beginPath();
+    ctx.arc(wifiX, wifiY - iconSize*0.12, iconSize*0.09, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+}
+
+// Update preview cards when state changes
+const originalUpdateAllCards = updateAllCards;
+updateAllCards = function() {
+    originalUpdateAllCards();
+    
+    // Re-render preview cards if sections are visible
+    if (revealedSections.has('steps-section')) {
+        renderStepsCard();
+    }
+    if (revealedSections.has('partners-section')) {
+        renderPartnersCard();
+    }
+};
     </script>
 </body>
+
 </html>
