@@ -1341,13 +1341,7 @@ function drawHDRBackSide(ctx, w, h, mat, isDark) {
     drawCornerAccent(ctx, w - 30 * scale, 30 * scale, 20 * scale, accentColor, true, true);
     drawCornerAccent(ctx, 30 * scale, h - 30 * scale, 20 * scale, accentColor, false, true);
     
-    // NFC indicator
-    if (state.orderConfig.addons.nfc) {
-        ctx.font = `500 ${9 * scale}px Inter`;
-        ctx.fillStyle = accentColor;
-        ctx.letterSpacing = '0.2em';
-        ctx.fillText('NFC ENABLED', centerX, h - 30 * scale);
-    }
+   
     
     // QR code if enabled
     if (state.orderConfig.addons.qr) {
