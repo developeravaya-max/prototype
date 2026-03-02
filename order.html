@@ -123,10 +123,26 @@
             </div>
 
             <!-- Right Side - Preview & Summary -->
-            <div class="order-preview-section">
-                <div class="final-card-container">
-                    <div class="final-card" id="finalCard">
-                        <canvas id="finalCanvas" style="width: 100%; height: 100%;"></canvas>
+           <div class="order-preview-section">
+                
+                <div class="final-card-container" style="perspective: 1000px;">
+                    <div class="final-card" id="finalCard" style="transform-style: preserve-3d; transition: transform 0.2s; cursor: pointer;" onclick="flipCard()" title="Click to flip">
+                        
+                        <div id="flipInner" style="position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); transform-style: preserve-3d;">
+                            
+                            <div style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden;">
+                                <canvas id="finalFrontCanvas" style="width: 100%; height: 100%; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);"></canvas>
+                            </div>
+                            
+                            <div style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; transform: rotateY(180deg);">
+                                <canvas id="finalBackCanvas" style="width: 100%; height: 100%; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);"></canvas>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div style="text-align: center; margin-top: 1rem; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: #888;">
+                        ⟳ Click card to flip
                     </div>
                 </div>
 
@@ -163,26 +179,123 @@
     <div class="toast" id="toast"></div>
 
     <script src="shared.js"></script>
-    <script>
+  <script>
+        let isFlipped = false;
+
         // Order page specific initialization
         window.addEventListener('load', () => {
-            loadFromStorage();
+            if (typeof loadFromStorage === 'function') loadFromStorage();
+            
             updateDesignSummary();
-            drawFinalCard();
             updateOrderSummary();
+            renderBothSides();
+
+            // Intercept the toggleAddon function from shared.js to update the canvases live!
+            const originalToggleAddon = window.toggleAddon;
+            if (typeof originalToggleAddon === 'function') {
+                window.toggleAddon = function(addon) {
+                    originalToggleAddon(addon); // Run the original math
+                    renderBothSides(); // Redraw the canvases
+                    
+                    // If they just turned ON the QR code or Laser, automatically flip the card to show them!
+                    if ((addon === 'qr' || addon === 'laser') && state.orderConfig.addons[addon] && !isFlipped) {
+                        flipCard();
+                    }
+                };
+            }
         });
 
         function updateDesignSummary() {
             const mat = getCurrentMaterial();
             document.getElementById('summaryName').textContent = state.cardData.name || 'Your Name';
             document.getElementById('summaryMaterial').textContent = mat.name;
-            document.getElementById('summaryMaterialPreview').style.background = mat.color;
+            
+            let bgStyle = mat.color;
+            if (mat.id === 'carbon-fiber') bgStyle = '#1a1a1a';
+            if (mat.id === 'forged-carbon') bgStyle = '#2a2a2a';
+            if (mat.id === 'meteorite') bgStyle = '#4a4a4a';
+            if (mat.id === 'mother-pearl') bgStyle = 'linear-gradient(135deg, #fff, #f0f0f0, #fff)';
+            document.getElementById('summaryMaterialPreview').style.background = bgStyle;
         }
 
-        // Override proceedToCheckout for this page
+        function renderBothSides() {
+            if (typeof drawCard !== 'function') return;
+
+            // Draw Front
+            drawCard('finalFrontCanvas', 'front', 600, 378);
+            
+            // Draw Back (QR Code is automatically handled inside shared.js drawHDRBackSide)
+            drawCard('finalBackCanvas', 'back', 600, 378);
+
+            // Explicitly draw the Laser Engraving on the back if enabled
+            if (state.orderConfig.addons.laser) {
+                drawLaserEngraving('finalBackCanvas');
+            }
+        }
+
+        function drawLaserEngraving(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            
+            // We don't scale by DPR here because drawCard already scaled the context,
+            // we just need the mathematical width mapping
+            const scale = 600 / 600; 
+            const w = 600;
+            const h = 378;
+            
+            ctx.save();
+            const isDark = isDarkMaterial(state.cardData.material);
+            
+            // Laser etch styling (looks slightly burned/etched into the material)
+            ctx.fillStyle = isDark ? '#c9a962' : '#222222';
+            ctx.shadowColor = isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.4)';
+            ctx.shadowBlur = 1;
+            ctx.shadowOffsetY = 1;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+           
+            // Generate a fake serial number based on their name length for realism
+            const serialNum = (state.cardData.name.length * 1024).toString().padStart(4, '0');
+            ctx.fillText(`EDITION NO. ${serialNum}`, w / 2, h - 35 * scale);
+            
+            ctx.restore();
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            const inner = document.getElementById('flipInner');
+            if (inner) {
+                inner.style.transform = isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+            }
+        }
+
+        // 3D Hover Tilt Effect (Applied to the outer wrapper so it doesn't break the flip!)
+        const finalCardWrapper = document.getElementById('finalCard');
+        if (finalCardWrapper) {
+            finalCardWrapper.addEventListener('mousemove', (e) => {
+                const rect = finalCardWrapper.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -8;
+                const rotateY = ((x - centerX) / centerX) * 8;
+                
+                finalCardWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            finalCardWrapper.addEventListener('mouseleave', () => {
+                finalCardWrapper.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            });
+        }
+
         function proceedToCheckout() {
-            saveToStorage(); // Save before redirect
-            // Your existing checkout logic
+            saveToStorage(); 
             showToast('Redirecting to secure checkout...');
         }
     </script>
