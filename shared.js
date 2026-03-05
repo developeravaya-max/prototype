@@ -2009,12 +2009,18 @@ const ThreeCardController = {
         this.cardGroup.add(edgeMesh);
         this.scene.add(this.cardGroup);
 
-        const ogUpdate = window.updateAllCards || function(){};
-        window.updateAllCards = () => {
-            ogUpdate();
-            this.frontTexture.needsUpdate = true;
-            this.backTexture.needsUpdate = true;
-        };
+       const ogUpdate = window.updateAllCards || function(){};
+window.updateAllCards = () => {
+    ogUpdate();
+    // Force immediate texture refresh when state changes
+    this.frontTexture.needsUpdate = true;
+    this.backTexture.needsUpdate = true;
+    // Also trigger a re-render of hero canvases to ensure sync
+    if (typeof drawCard === 'function') {
+        drawCard('heroFrontCanvas', 'front', 600, 378);
+        drawCard('heroBackCanvas', 'back', 600, 378);
+    }
+};
 
         // 5. Track DOM Anchors
         this.anchors = [
@@ -2099,83 +2105,78 @@ const ThreeCardController = {
     },
 
     renderLoop() {
-        requestAnimationFrame(() => this.renderLoop());
+    requestAnimationFrame(() => this.renderLoop());
 
-        if (!this.anchors[0]) return;
+    if (!this.anchors[0]) return;
 
-        if (this.frameCount < 120) {
-            this.frontTexture.needsUpdate = true;
-            this.backTexture.needsUpdate = true;
-            this.frameCount++;
-        }
+    // CRITICAL FIX: Always update textures to match current state
+    // This ensures name, material, and details are current when scrolling
+    this.frontTexture.needsUpdate = true;
+    this.backTexture.needsUpdate = true;
 
-        const scrollY = window.scrollY;
-        const domCard = this.anchors[0];
+    const scrollY = window.scrollY;
+    const domCard = this.anchors[0];
 
-        if (scrollY < 50 || (typeof state !== 'undefined' && state.isZoomed)) {
-            domCard.style.opacity = '1';
-            domCard.style.pointerEvents = 'auto';
-            this.cardGroup.visible = false;
-        } else {
-            domCard.style.opacity = '0';
-            domCard.style.pointerEvents = 'none';
-            this.cardGroup.visible = true;
-        }
-
-        if (this.cardGroup.visible) {
-            let progress = this.proxy ? this.proxy.progress : 0;
-            
-            let currentIndex = Math.floor(progress);
-            if (currentIndex >= 3) currentIndex = 2; 
-            
-            let nextIndex = Math.min(currentIndex + 1, 3);
-            let rawSegment = progress - currentIndex; 
-
-            // THE DEADZONE MAGIC: 
-            // Creates a 12% buffer where the card locks perfectly into the anchor
-            let segmentProgress = (rawSegment - 0.12) / 0.76;
-            segmentProgress = Math.max(0, Math.min(1, segmentProgress));
-            
-            // Smoothly ease in and out of the deadzone so it doesn't jerk
-            segmentProgress = segmentProgress * segmentProgress * (3 - 2 * segmentProgress);
-
-            const a1 = this.anchors[currentIndex];
-            const a2 = this.anchors[nextIndex];
-
-            if (a1 && a2) {
-                const rect1 = a1.getBoundingClientRect();
-                const rect2 = a2.getBoundingClientRect();
-
-                const x1 = rect1.left + rect1.width / 2 - window.innerWidth / 2;
-                const y1 = -(rect1.top + rect1.height / 2) + window.innerHeight / 2;
-                const scale1 = rect1.width / 600;
-
-                const x2 = rect2.left + rect2.width / 2 - window.innerWidth / 2;
-                const y2 = -(rect2.top + rect2.height / 2) + window.innerHeight / 2;
-                const scale2 = rect2.width / 600;
-
-                const targetX = THREE.MathUtils.lerp(x1, x2, segmentProgress);
-                const targetY = THREE.MathUtils.lerp(y1, y2, segmentProgress);
-                const targetScale = THREE.MathUtils.lerp(scale1, scale2, segmentProgress);
-
-                this.cardGroup.position.set(targetX, targetY, 0);
-                this.cardGroup.scale.set(targetScale, targetScale, targetScale);
-
-                const baseRotation = currentIndex * (Math.PI * 2);
-                const transitionRotation = segmentProgress * (Math.PI * 2);
-                
-                // Tilt logic is zeroed out when resting inside the anchor
-                const isResting = segmentProgress === 0 || segmentProgress === 1;
-                const tilt = isResting ? 0 : (targetX / window.innerWidth) * 0.15;
-
-                this.cardGroup.rotation.y = baseRotation + transitionRotation;
-                this.cardGroup.rotation.z = tilt;
-                this.cardGroup.rotation.x = -tilt;
-            }
-        }
-
-        this.renderer.render(this.scene, this.camera);
+    if (scrollY < 50 || (typeof state !== 'undefined' && state.isZoomed)) {
+        domCard.style.opacity = '1';
+        domCard.style.pointerEvents = 'auto';
+        this.cardGroup.visible = false;
+    } else {
+        domCard.style.opacity = '0';
+        domCard.style.pointerEvents = 'none';
+        this.cardGroup.visible = true;
     }
+
+    if (this.cardGroup.visible) {
+        let progress = this.proxy ? this.proxy.progress : 0;
+        
+        let currentIndex = Math.floor(progress);
+        if (currentIndex >= 3) currentIndex = 2; 
+        
+        let nextIndex = Math.min(currentIndex + 1, 3);
+        let rawSegment = progress - currentIndex; 
+
+        // THE DEADZONE MAGIC: 
+        let segmentProgress = (rawSegment - 0.12) / 0.76;
+        segmentProgress = Math.max(0, Math.min(1, segmentProgress));
+        segmentProgress = segmentProgress * segmentProgress * (3 - 2 * segmentProgress);
+
+        const a1 = this.anchors[currentIndex];
+        const a2 = this.anchors[nextIndex];
+
+        if (a1 && a2) {
+            const rect1 = a1.getBoundingClientRect();
+            const rect2 = a2.getBoundingClientRect();
+
+            const x1 = rect1.left + rect1.width / 2 - window.innerWidth / 2;
+            const y1 = -(rect1.top + rect1.height / 2) + window.innerHeight / 2;
+            const scale1 = rect1.width / 600;
+
+            const x2 = rect2.left + rect2.width / 2 - window.innerWidth / 2;
+            const y2 = -(rect2.top + rect2.height / 2) + window.innerHeight / 2;
+            const scale2 = rect2.width / 600;
+
+            const targetX = THREE.MathUtils.lerp(x1, x2, segmentProgress);
+            const targetY = THREE.MathUtils.lerp(y1, y2, segmentProgress);
+            const targetScale = THREE.MathUtils.lerp(scale1, scale2, segmentProgress);
+
+            this.cardGroup.position.set(targetX, targetY, 0);
+            this.cardGroup.scale.set(targetScale, targetScale, targetScale);
+
+            const baseRotation = currentIndex * (Math.PI * 2);
+            const transitionRotation = segmentProgress * (Math.PI * 2);
+            
+            const isResting = segmentProgress === 0 || segmentProgress === 1;
+            const tilt = isResting ? 0 : (targetX / window.innerWidth) * 0.15;
+
+            this.cardGroup.rotation.y = baseRotation + transitionRotation;
+            this.cardGroup.rotation.z = tilt;
+            this.cardGroup.rotation.x = -tilt;
+        }
+    }
+
+    this.renderer.render(this.scene, this.camera);
+}
 };
 
 document.addEventListener('DOMContentLoaded', () => {
