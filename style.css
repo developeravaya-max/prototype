@@ -499,10 +499,10 @@
     transform: translateZ(0);
 }
 
-/* Show overlay when zoomed */
+/* Input overlay - should be VISIBLE when zoomed */
 .card-container-3d.zoomed .card-input-overlay {
-    opacity: 1;
-    pointer-events: all;
+    opacity: 1 !important;
+    pointer-events: all !important;
 }
 
 /* Input fields - ALWAYS visible text when zoomed */
@@ -520,28 +520,54 @@
     transition: opacity 0.2s ease;
 }
 
-/* VISIBLE when zoomed - with placeholder text showing */
+/* Input fields - should be VISIBLE and clickable */
+.card-container-3d.zoomed .card-input-field {
+    opacity: 1 !important;
+    color: inherit !important;
+}
+
+/* Specific colors */
+.card-container-3d.zoomed .input-name { color: #c9a962 !important; }
+.card-container-3d.zoomed .input-title { color: #aaaaaa !important; }
+.card-container-3d.zoomed .input-number { color: #ffffff !important; }
+.card-container-3d.zoomed .input-email { color: #888888 !important; }
+
+/* ============================================
+   FIX ZOOM TEXT DUPLICATION
+   ============================================ */
+
+/* When zoomed, hide the canvas so only input overlay shows */
+.card-container-3d.zoomed .card-canvas-3d {
+    opacity: 0 !important;
+    transition: opacity 0.3s ease;
+}
+
+/* Ensure input overlay is visible and centered */
+.card-container-3d.zoomed .card-input-overlay {
+    opacity: 1 !important;
+    pointer-events: all !important;
+}
+
+/* Input fields positioning - match canvas exactly */
 .card-container-3d.zoomed .card-input-field {
     opacity: 1 !important;
 }
+/* ============================================
+   FIX ZOOM OUT TEXT DUPLICATION
+   ============================================ */
 
-/* Specific colors for each field - ALWAYS visible */
-.card-container-3d.zoomed .input-name {
-    color: #c9a962 !important;
+/* During zoom out (removing .zoomed class), hide inputs immediately */
+.card-container-3d:not(.zoomed) .card-input-overlay {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease;
 }
 
-.card-container-3d.zoomed .input-title {
-    color: #aaaaaa !important;
+/* Show canvas immediately when not zoomed */
+.card-container-3d:not(.zoomed) .card-canvas-3d {
+    opacity: 1 !important;
+    transition: opacity 0.3s ease 0.1s; /* Slight delay for smooth handoff */
 }
-
-.card-container-3d.zoomed .input-number {
-    color: #ffffff !important;
-}
-
-.card-container-3d.zoomed .input-email {
-    color: #888888 !important;
-}
-
 /* Placeholder ALWAYS visible when zoomed */
 .card-container-3d.zoomed .card-input-field::placeholder {
     color: inherit !important;
@@ -1472,6 +1498,24 @@
         transform: scale(1.1) translateY(-2px);
         cursor: pointer;
     }
+
+    /* FIX SECTION SPACING */
+#steps-section {
+    margin-bottom: 0 !important;
+    padding-bottom: 3rem !important;
+}
+
+#about-section,
+.about-lux-section {
+    margin-top: 0 !important;
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+}
+
+#partners-section {
+    margin-top: 0 !important;
+    padding-top: 3rem !important;
+}
     /* ────────────────────────────────────────────────
    Clean mobile experience for 4 Steps section
    ──────────────────────────────────────────────── */
