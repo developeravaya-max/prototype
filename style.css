@@ -1921,6 +1921,7 @@
 }
 
 .footer-logo {
+    text-align: center;
     font-family: 'Cormorant Garamond', serif;
     font-size: 38px;
     letter-spacing: 3px;
@@ -2040,3 +2041,4 @@
         gap: 12px;
     }
 }
+
