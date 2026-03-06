@@ -99,9 +99,24 @@ function toggleCardZoom(event) {
     // Don't close when clicking the card itself - let the document handler do that
 }
 
-function zoomIn() {
-    state.isZoomed = true;
+
+function getInputColorsForMaterial(materialId) {
+    // Light materials need dark text
+    const lightMaterials = ['gold-metal', 'silver-metal', 'rose-gold', 'maple', 'mother-pearl'];
+    const isLight = lightMaterials.includes(materialId);
     
+    return {
+        name: isLight ? '#1a1a1a' : '#c9a962',
+        title: isLight ? '#555555' : '#aaaaaa',
+        number: isLight ? '#1a1a1a' : '#ffffff',
+        email: isLight ? '#555555' : '#888888',
+        icons: isLight ? '#1a1a1a' : '#c9a962'
+    };
+}
+
+
+function zoomIn() {
+    // Get elements first
     const cardContainer = document.getElementById('cardContainer3d');
     const overlay = document.getElementById('zoomOverlay');
     const closeHint = document.getElementById('closeHint');
@@ -109,7 +124,7 @@ function zoomIn() {
     const materialsSection = document.getElementById('materials');
     const navbar = document.getElementById('navbar');
     
-    // Get card position for FLIP animation
+    // Get position BEFORE any changes
     const rect = cardContainer.getBoundingClientRect();
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
@@ -117,13 +132,43 @@ function zoomIn() {
     const translateX = centerX - (rect.left + rect.width / 2);
     const translateY = centerY - (rect.top + rect.height / 2);
     
-    // Add zoomed class - CSS handles input visibility
+    // CRITICAL: Set isZoomed FIRST, then draw
+    state.isZoomed = true;
+    
+    // NOW draw with isZoomed = true (hides text, shows material only)
+    drawCard('heroFrontCanvas', 'front', 600, 378);
+    drawCard('heroBackCanvas', 'back', 600, 378);
+    
+    // Get dynamic colors based on current material
+    const colors = getInputColorsForMaterial(state.cardData.material);
+    
+    // Apply dynamic colors to input fields
+    const nameInput = document.getElementById('inputName');
+    const titleInput = document.getElementById('inputTitle');
+    const numberInput = document.getElementById('inputNumber');
+    const emailInput = document.getElementById('inputEmail');
+    
+    nameInput.style.color = colors.name;
+    titleInput.style.color = colors.title;
+    numberInput.style.color = colors.number;
+    emailInput.style.color = colors.email;
+    
+    // Update CSS custom property for icons (if you use CSS variables)
+    cardContainer.style.setProperty('--icon-color', colors.icons);
+    
+    // Add zoomed class for CSS
     cardContainer.classList.add('zoomed');
     overlay.classList.add('active');
     closeHint.classList.add('visible');
     
     // Pause floating animation
     cardContainer.style.animation = 'none';
+    
+    // Sync input values
+    nameInput.value = state.cardData.name;
+    titleInput.value = state.cardData.title;
+    numberInput.value = state.cardData.number;
+    emailInput.value = state.cardData.email;
     
     // Kill existing tweens
     gsap.killTweensOf(cardContainer);
@@ -141,12 +186,9 @@ function zoomIn() {
             duration: 0.6,
             ease: 'power3.out',
             onComplete: () => {
-                updateAllCards();
-                // Focus first empty field
                 setTimeout(() => {
-                    const nameInput = document.getElementById('inputName');
                     if (!state.cardData.name) nameInput.focus();
-                    else document.getElementById('inputTitle').focus();
+                    else titleInput.focus();
                 }, 100);
             }
         }
@@ -154,25 +196,43 @@ function zoomIn() {
     
     // Fade background
     gsap.to([heroContent, materialsSection, navbar], {
-        opacity: 1,
-        filter: 'blur(1.5px)',
+        opacity: 0.3,
         duration: 0.4,
         ease: 'power2.out'
     });
 }
-
 function closeCardZoom() {
-    state.isZoomed = false;
-    
     const cardContainer = document.getElementById('cardContainer3d');
+    const canvas = cardContainer.querySelector('.card-canvas-3d');
+    const inputOverlay = document.getElementById('cardInputOverlay');
     const overlay = document.getElementById('zoomOverlay');
     const closeHint = document.getElementById('closeHint');
     const heroContent = document.getElementById('heroContent');
     const materialsSection = document.getElementById('materials');
     const navbar = document.getElementById('navbar');
     
-    // Blur all inputs
-    document.querySelectorAll('.card-input-field').forEach(input => input.blur());
+    // INSTANT hide inputs before any animation starts
+    inputOverlay.style.opacity = '0';
+    inputOverlay.style.pointerEvents = 'none';
+    
+    // INSTANT show canvas
+    canvas.style.opacity = '1';
+    
+    // Remove zoomed class immediately to trigger CSS changes
+    cardContainer.classList.remove('zoomed');
+    
+    // NOW set state and re-render
+    state.isZoomed = false;
+    drawCard('heroFrontCanvas', 'front', 600, 378);
+    drawCard('heroBackCanvas', 'back', 600, 378);
+    
+    // Reset input colors
+    const inputs = document.querySelectorAll('.card-input-field');
+    inputs.forEach(input => {
+        input.style.color = '';
+        input.blur();
+    });
+    cardContainer.style.removeProperty('--icon-color');
     
     // Hide hint
     closeHint.classList.remove('visible');
@@ -180,7 +240,7 @@ function closeCardZoom() {
     // Kill tweens
     gsap.killTweensOf(cardContainer);
     
-    // Animate card back
+    // Animate card back (canvas is already visible)
     gsap.to(cardContainer, {
         x: 0,
         y: 0,
@@ -188,10 +248,13 @@ function closeCardZoom() {
         duration: 0.5,
         ease: 'power3.inOut',
         onComplete: () => {
-            cardContainer.classList.remove('zoomed');
             cardContainer.style.transform = '';
             cardContainer.style.animation = '';
-            updateAllCards();
+            
+            // Clear forced styles after animation
+            inputOverlay.style.opacity = '';
+            inputOverlay.style.pointerEvents = '';
+            canvas.style.opacity = '';
         }
     });
     
@@ -206,11 +269,12 @@ function closeCardZoom() {
     // Restore background
     gsap.to([heroContent, materialsSection, navbar], {
         opacity: 1,
-        filter: 'blur(0px)',
         duration: 0.4,
         ease: 'power2.out'
     });
-}// Close zoom when clicking outside card
+}
+
+// Close zoom when clicking outside card
 document.addEventListener('click', (e) => {
     if (state.isZoomed) {
         const cardContainer = document.getElementById('cardContainer3d');
@@ -668,6 +732,133 @@ document.addEventListener('keydown', (e) => {
                 drawMetalFinish(ctx, w, h, mat.color, isMirror, isDarkMaterial(mat.id));
             }
         }
+
+function drawFrontSide(ctx, w, h, mat, isDark, textColor, subTextColor, accentColor) {
+    const scale = w / 600;
+    
+    // Corner accents
+    ctx.strokeStyle = accentColor;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(30 * scale, 50 * scale);
+    ctx.lineTo(30 * scale, 30 * scale);
+    ctx.lineTo(50 * scale, 30 * scale);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(w - 30 * scale, h - 50 * scale);
+    ctx.lineTo(w - 30 * scale, h - 30 * scale);
+    ctx.lineTo(w - 50 * scale, h - 30 * scale);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    
+    // Only draw text when NOT zoomed
+    if (!state.isZoomed) {
+        const contentX = w * 0.10;  // 10% from left
+    const contentY = h * 0.35;  // 35% from top (matches CSS)
+        
+        // Name
+        ctx.save();
+        ctx.font = `italic ${42 * scale}px "Cormorant Garamond"`;
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'left';
+        ctx.fillText(state.cardData.name || 'Your Name', contentX, contentY);
+        ctx.restore();
+        
+        // Title
+        ctx.font = `300 ${13 * scale}px Inter`;
+        ctx.fillStyle = subTextColor;
+        ctx.fillText(state.cardData.title || 'Creative Director', contentX, contentY + 28 * scale);
+        
+        // Divider
+        ctx.strokeStyle = accentColor;
+        ctx.lineWidth = 1.5 * scale;
+        ctx.beginPath();
+        ctx.moveTo(contentX, contentY + 45 * scale);
+        ctx.lineTo(contentX + 80 * scale, contentY + 45 * scale);
+        ctx.stroke();
+        
+        // Contact info
+        const contactY = h - 70 * scale;
+        ctx.font = `400 ${12 * scale}px Inter`;
+        ctx.fillStyle = textColor;
+        ctx.fillText(state.cardData.number || '+1 (555) 000-0000', contentX, contactY);
+        
+        ctx.font = `300 ${11 * scale}px Inter`;
+        ctx.fillStyle = subTextColor;
+        ctx.fillText(state.cardData.email || 'hello@cardel.com', contentX, contactY + 22 * scale);
+    }
+    
+    // Icons (always show)
+    const iconColor = isDark ? '#c9a962' : '#1a1a1a';
+    const iconSize = 36 * scale;
+    
+    // NFC icon
+    const nfcX = w - 85 * scale;
+    const nfcY = 55 * scale;
+    ctx.save();
+    ctx.strokeStyle = iconColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(nfcX - 12, nfcY - 12, 24, 24);
+    for(let i = 1; i <= 3; i++){
+        ctx.beginPath();
+        ctx.arc(nfcX + 2, nfcY, 8 + i * 3, Math.PI * 1.1, Math.PI * 1.9);
+        ctx.stroke();
+    }
+    ctx.restore();
+    
+    // WiFi icon
+    const wifiX = w - 85 * scale;
+    const wifiY = h - 55 * scale;
+    ctx.save();
+    ctx.strokeStyle = iconColor;
+    ctx.lineWidth = 2;
+    for(let i = 1; i <= 4; i++){
+        ctx.globalAlpha = 0.3 + i * 0.15;
+        ctx.beginPath();
+        ctx.arc(wifiX, wifiY, 6 + i * 4, Math.PI * 1.2, Math.PI * 1.8);
+        ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = iconColor;
+    ctx.beginPath();
+    ctx.arc(wifiX, wifiY, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+}
+
+
+function drawBackSide(ctx, w, h, mat, isDark, subTextColor, accentColor) {
+    const scale = w / 600;
+    
+    // Center monogram
+    ctx.save();
+    ctx.font = `300 ${48 * scale}px "Cormorant Garamond"`;
+    ctx.fillStyle = accentColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('C', w / 2, h / 2);
+    ctx.restore();
+    
+    // Corner accents
+    ctx.strokeStyle = accentColor;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(w - 30 * scale, 50 * scale);
+    ctx.lineTo(w - 30 * scale, 30 * scale);
+    ctx.lineTo(w - 50 * scale, 30 * scale);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(30 * scale, h - 50 * scale);
+    ctx.lineTo(30 * scale, h - 30 * scale);
+    ctx.lineTo(50 * scale, h - 30 * scale);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+}
+
 
         function drawMetalFinish(ctx, w, h, color, isMirror, isDark) {
             const grad = ctx.createLinearGradient(0, 0, w, h);
