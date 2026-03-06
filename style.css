@@ -485,7 +485,10 @@
     opacity: 1;
     transform: translateX(0);
 }
-/* Input overlay - controlled by zoom state only */
+/* ============================================
+   INPUT OVERLAY - ZOOM STATE
+   ============================================ */
+
 .card-input-overlay {
     position: absolute;
     top: 0;
@@ -496,16 +499,18 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    transform: translateZ(0);
 }
 
-/* Input overlay - should be VISIBLE when zoomed */
+/* Show overlay when zoomed */
 .card-container-3d.zoomed .card-input-overlay {
     opacity: 1 !important;
     pointer-events: all !important;
 }
 
-/* Input fields - ALWAYS visible text when zoomed */
+/* ============================================
+   INPUT FIELDS
+   ============================================ */
+
 .card-input-field {
     position: absolute;
     background: transparent;
@@ -520,10 +525,9 @@
     transition: opacity 0.2s ease;
 }
 
-/* Input fields - should be VISIBLE and clickable */
+/* Show inputs when zoomed */
 .card-container-3d.zoomed .card-input-field {
     opacity: 1 !important;
-    color: inherit !important;
 }
 
 /* Specific colors */
@@ -532,46 +536,39 @@
 .card-container-3d.zoomed .input-number { color: #ffffff !important; }
 .card-container-3d.zoomed .input-email { color: #888888 !important; }
 
+/* Placeholder visible when zoomed */
+.card-container-3d.zoomed .card-input-field::placeholder {
+    color: inherit !important;
+    opacity: 1 !important;
+}
+
+.card-container-3d.zoomed .card-input-field:focus::placeholder {
+    opacity: 0.3 !important;
+}
+
 /* ============================================
-   FIX ZOOM TEXT DUPLICATION
+   CANVAS - ALWAYS VISIBLE
    ============================================ */
 
-/* When zoomed, hide the canvas so only input overlay shows */
-.card-container-3d.zoomed .card-canvas-3d {
-    opacity: 0 !important;
+/* CRITICAL: Keep canvas visible, just hide its text via JS */
+.card-canvas-3d {
+    opacity: 1 !important;
     transition: opacity 0.3s ease;
 }
 
-/* Ensure input overlay is visible and centered */
-.card-container-3d.zoomed .card-input-overlay {
-    opacity: 1 !important;
-    pointer-events: all !important;
-}
-
-/* Input fields positioning - match canvas exactly */
-.card-container-3d.zoomed .card-input-field {
-    opacity: 1 !important;
-}
 /* ============================================
-   FIX ZOOM OUT TEXT DUPLICATION
+   ZOOM OUT TRANSITION
    ============================================ */
 
-/* During zoom out (removing .zoomed class), hide inputs immediately */
+/* Hide inputs immediately when zooming out */
 .card-container-3d:not(.zoomed) .card-input-overlay {
     opacity: 0 !important;
     pointer-events: none !important;
     transition: opacity 0.2s ease;
 }
 
-/* Show canvas immediately when not zoomed */
-.card-container-3d:not(.zoomed) .card-canvas-3d {
-    opacity: 1 !important;
-    transition: opacity 0.3s ease 0.1s; /* Slight delay for smooth handoff */
-}
-/* Placeholder ALWAYS visible when zoomed */
-.card-container-3d.zoomed .card-input-field::placeholder {
-    color: inherit !important;
-    opacity: 1 !important;
+.card-container-3d:not(.zoomed) .card-input-field {
+    opacity: 0 !important;
 }
 
 /* Focus states - slightly brighter */
